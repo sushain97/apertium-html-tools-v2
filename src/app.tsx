@@ -1,4 +1,7 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import Button from 'react-bootstrap/Button';
 
-ReactDOM.render(<h1>Hello, world!</h1>, document.getElementById('react-mount'));
+ReactDOM.render(<Button>Hello, world</Button>, document.getElementById('react-mount'));

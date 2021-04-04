@@ -8,6 +8,7 @@ const DIST = 'dist/';
   await require('esbuild').build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
+    incremental: process.argv.includes('--watch'),
     outfile: path.join(DIST, 'bundle.js'),
   });
 })();
