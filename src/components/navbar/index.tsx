@@ -57,7 +57,11 @@ const TagLine = () => (
   </p>
 );
 
-export default () => {
+export default ({
+  updateLocale,
+}: {
+  updateLocale: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   return (
     <Navbar bg="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
@@ -68,8 +72,13 @@ export default () => {
           </div>
           <TagLine />
         </div>
-        <div className="float-right d-none d-md-block align-self-start">
-          <LocaleSelector />
+        <div
+          className="float-right d-none d-md-block align-self-start"
+          style={{
+            width: '35%',
+          }}
+        >
+          <LocaleSelector updateLocale={updateLocale} />
         </div>
         <Navbar.Toggle></Navbar.Toggle>
         <Navbar.Collapse>
