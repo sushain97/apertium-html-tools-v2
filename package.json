@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "author": "Sushain Cherivirala <sushain@skc.name>",
   "license": "GPL-3.0-or-later",
+  "scripts": {
+    "build": "ts-node build.ts",
+    "serve": "python3 -m http.server --directory dist"
+  },
   "dependencies": {
     "bootstrap": "^4.6.0",
     "react": "^17.0.2",
@@ -10,6 +14,11 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "esbuild": "^0.11.5"
+    "@types/node": "^14.14.37",
+    "@types/react-dom": "^17.0.3",
+    "esbuild": "^0.11.5",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   }
 }
