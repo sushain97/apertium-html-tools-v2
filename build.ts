@@ -1,6 +1,8 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
+
 import axios from 'axios';
+import * as esbuild from 'esbuild';
 
 import Config from './config';
 
@@ -35,7 +37,7 @@ const watch = process.argv.includes('--watch');
 
   await Promise.all(STATIC_FILES.map((f) => fs.copyFile(path.join('src', f), path.join(DIST, f))));
 
-  await require('esbuild').build({
+  await esbuild.build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
     loader: { '.png': 'dataurl' },
@@ -45,6 +47,13 @@ const watch = process.argv.includes('--watch');
     sourcemap: prod,
 
     incremental: watch,
-    watch,
+    watch: watch
+      ? {
+          onRebuild(error: esbuild.BuildFailure | null, result: esbuild.BuildResult | null) {
+            if (error) console.error('❌ watch build failed');
+            else console.log('✅ watch build succeeded');
+          },
+        }
+      : undefined,
   });
 })();
