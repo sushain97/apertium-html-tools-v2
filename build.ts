@@ -5,7 +5,17 @@ const DIST = 'dist/';
 const STATIC_FILES = ['index.html', 'favicon.ico'];
 
 (async () => {
-  await Promise.all(STATIC_FILES.map((f) => fs.copyFile(path.join('src', f), path.join(DIST, f))));
+  await Promise.all(
+    [
+      ...STATIC_FILES,
+      ...(await fs.readdir('src/strings'))
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => path.join('strings', f)),
+    ].map(async (f) => {
+      await fs.mkdir(path.dirname(path.join(DIST, f)), { recursive: true });
+      await fs.copyFile(path.join('src', f), path.join(DIST, f));
+    }),
+  );
 
   await require('esbuild').build({
     entryPoints: ['src/app.tsx'],
