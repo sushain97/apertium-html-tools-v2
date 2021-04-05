@@ -8,6 +8,8 @@
     "serve": "python3 -m http.server --directory dist"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "axios-jsonp": "^1.0.4",
     "bootstrap": "^4.6.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
