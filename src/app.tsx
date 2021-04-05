@@ -11,7 +11,7 @@ import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import Navbar from './components/navbar';
 import { LocaleContext, StringsContext } from './context';
-import { DEFAULT_STRINGS } from './util/localization';
+import { DEFAULT_STRINGS, tt } from './util/localization';
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
@@ -84,8 +84,9 @@ const App = () => {
   React.useEffect(() => {
     (async () => {
       document.getElementsByTagName('html')[0].dir = langDirection(locale);
+      document.title = tt('title', locale, strings);
     })();
-  }, [locale]);
+  }, [locale, strings]);
 
   return (
     <StringsContext.Provider value={strings}>
