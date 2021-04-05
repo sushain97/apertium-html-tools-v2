@@ -2,20 +2,26 @@ import * as React from 'react';
 
 // Modeled after https://usehooks.com/useLocalStorage/.
 
+const storeValue = <T>(key: string, value: T) => {
+  const serializedValue = JSON.stringify(value);
+  try {
+    window.localStorage.setItem(key, serializedValue);
+  } catch (error) {
+    console.warn(`Failed to set LocalStorage[${key}] = ${serializedValue}: ${error}`);
+  }
+};
+
 export default <T>(
   key: string,
   initialValue: T | (() => T),
+  overrideValue?: T | null,
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const storeValue = (key: string, value: T) => {
-    const serializedValue = JSON.stringify(value);
-    try {
-      window.localStorage.setItem(key, serializedValue);
-    } catch (error) {
-      console.warn(`Failed to set LocalStorage[${key}] = ${serializedValue}: ${error}`);
-    }
-  };
-
   const [stateValue, setStateValue] = React.useState<T>(() => {
+    if (overrideValue) {
+      storeValue(key, overrideValue);
+      return overrideValue;
+    }
+
     try {
       const item = window.localStorage.getItem(key);
       if (item) {

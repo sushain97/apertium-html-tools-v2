@@ -2,15 +2,16 @@ import './bootstrap.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as queryString from 'query-string';
 
 import Config from '../config';
 import { get } from './util/jsonp';
-import { iso639Codes, iso639CodesInverse } from './util/languages';
+import { toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import Navbar from './components/navbar';
 import { LocaleContext } from './context';
 
-const loadDefaultLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
+const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
     (async () => {
       let locales: Array<string>;
@@ -28,12 +29,9 @@ const loadDefaultLocale = (setLocale: React.Dispatch<React.SetStateAction<string
           localeGuess = localeGuess.split('-')[0];
         }
 
-        if (localeGuess in iso639Codes) {
-          setLocale(localeGuess);
-          return;
-        } else if (localeGuess in iso639CodesInverse) {
-          setLocale(iso639CodesInverse[localeGuess]);
-          return;
+        const locale = toAlpha3Code(localeGuess);
+        if (locale) {
+          setLocale(locale);
         }
       }
     })();
@@ -41,15 +39,25 @@ const loadDefaultLocale = (setLocale: React.Dispatch<React.SetStateAction<string
 };
 
 const App = () => {
-  // Attempt to load locale from LocalStorage. If that fails, use the default
-  // unless/until we're able to fetch the browser's preferred locale from APy.
-  let localeDefault = false;
-  const [locale, setLocale] = useLocalStorage('locale', () => {
-    localeDefault = true;
-    return Config.defaultLocale;
-  });
-  if (localeDefault) {
-    loadDefaultLocale(setLocale);
+  // Locale selection priority:
+  // 1. `lang` parameter from URL
+  // 2. `locale` key from LocalStorage
+  // 3. browser's preferred locale from APy
+  const langParam = queryString.parse(location.search)['lang'];
+  const urlLocale =
+    langParam &&
+    toAlpha3Code(langParam instanceof Array ? langParam[0] : langParam)?.replace('/', '');
+  let shouldLoadBrowserLocale = false;
+  const [locale, setLocale] = useLocalStorage(
+    'locale',
+    () => {
+      shouldLoadBrowserLocale = true;
+      return Config.defaultLocale;
+    },
+    urlLocale,
+  );
+  if (shouldLoadBrowserLocale) {
+    loadBrowserLocale(setLocale);
   }
 
   return (

@@ -291,4 +291,16 @@ const rtlLanguages = ['heb', 'ara', 'pes', 'urd', 'uig'];
 const iso639CodesInverse: { [alpha2: string]: string } = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
 
-export { languages, iso639Codes, rtlLanguages, iso639CodesInverse };
+const toAlpha3Code = (code: string) => {
+  if (code in iso639Codes) {
+    return code;
+  }
+
+  if (code in iso639CodesInverse) {
+    return iso639CodesInverse[code];
+  }
+
+  return null;
+};
+
+export { toAlpha3Code };
