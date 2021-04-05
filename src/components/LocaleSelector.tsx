@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { LocaleContext } from '../../context';
-import locales from '../../strings/locales.json';
+import { LocaleContext } from '../context';
+import locales from '../strings/locales.json';
 
 export default ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }) => {
   const locale = React.useContext(LocaleContext);

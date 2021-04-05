@@ -10,7 +10,7 @@ const STATIC_FILES = ['index.html', 'favicon.ico'];
   await require('esbuild').build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
-    incremental: true,
+    incremental: process.argv.includes('--watch'),
     loader: { '.png': 'dataurl' },
     outfile: path.join(DIST, 'bundle.js'),
 
