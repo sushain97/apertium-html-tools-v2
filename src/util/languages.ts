@@ -286,7 +286,7 @@ const iso639Codes = {
   pes: 'fa',
 };
 
-const rtlLanguages = ['heb', 'ara', 'pes', 'urd', 'uig'];
+const rtlLanguages = new Set(['heb', 'ara', 'pes', 'urd', 'uig']);
 
 const iso639CodesInverse: { [alpha2: string]: string } = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
@@ -303,4 +303,8 @@ const toAlpha3Code = (code: string) => {
   return null;
 };
 
-export { toAlpha3Code };
+const langDirection = (code: string) => {
+  return rtlLanguages.has(code) ? 'rtl' : 'ltr';
+};
+
+export { toAlpha3Code, langDirection };

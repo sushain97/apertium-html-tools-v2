@@ -6,7 +6,7 @@ import * as queryString from 'query-string';
 
 import Config from '../config';
 import { get } from './util/jsonp';
-import { toAlpha3Code } from './util/languages';
+import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import Navbar from './components/navbar';
 import { LocaleContext } from './context';
@@ -59,6 +59,12 @@ const App = () => {
   if (shouldLoadBrowserLocale) {
     loadBrowserLocale(setLocale);
   }
+
+  React.useEffect(() => {
+    (async () => {
+      document.getElementsByTagName('html')[0].dir = langDirection(locale);
+    })();
+  }, [locale]);
 
   return (
     <LocaleContext.Provider value={locale}>
