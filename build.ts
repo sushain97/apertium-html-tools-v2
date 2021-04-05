@@ -13,6 +13,8 @@ const prod = process.argv.includes('--prod');
 const watch = process.argv.includes('--watch');
 
 (async () => {
+  let defaultStrings;
+
   await Promise.all(
     (await fs.readdir('src/strings'))
       .filter((f) => f.endsWith('.json') && f != 'locales.json')
@@ -31,6 +33,10 @@ const watch = process.argv.includes('--watch');
         delete outData['@metadata'];
         outData['@langNames'] = response.data;
 
+        if (f === `${Config.defaultLocale}.json`) {
+          defaultStrings = outData;
+        }
+
         await fs.writeFile(outPath, JSON.stringify(outData));
       }),
   );
@@ -42,6 +48,10 @@ const watch = process.argv.includes('--watch');
     bundle: true,
     loader: { '.png': 'dataurl' },
     outfile: path.join(DIST, 'bundle.js'),
+
+    define: {
+      'window.DEFAULT_STRINGS': JSON.stringify(defaultStrings),
+    },
 
     minify: prod,
     sourcemap: prod,

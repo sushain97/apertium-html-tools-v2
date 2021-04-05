@@ -1,5 +1,9 @@
 import * as React from 'react';
 
-const LocaleContext = React.createContext('eng');
+import Config from '../config';
+import { DEFAULT_STRINGS } from './util/localization';
 
-export { LocaleContext };
+const LocaleContext = React.createContext(Config.defaultLocale);
+const StringsContext = React.createContext({ [Config.defaultLocale]: DEFAULT_STRINGS });
+
+export { LocaleContext, StringsContext };

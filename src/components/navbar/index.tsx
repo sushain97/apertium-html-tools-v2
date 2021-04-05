@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 
 import LocaleSelector from '../LocaleSelector';
 import logo from './Apertium_box_white_small.png';
+import { t } from '../../util/localization';
 
 const Logo = () => (
   <img
@@ -53,7 +54,7 @@ const TagLine = () => (
       margin: '0 0 10px',
     }}
   >
-    A free/open-source machine translation platform
+    {t('tagline')}
   </p>
 );
 

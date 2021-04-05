@@ -5,11 +5,13 @@ import * as ReactDOM from 'react-dom';
 import * as queryString from 'query-string';
 
 import Config from '../config';
+import axios from 'axios';
 import { get } from './util/jsonp';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import Navbar from './components/navbar';
-import { LocaleContext } from './context';
+import { LocaleContext, StringsContext } from './context';
+import { DEFAULT_STRINGS } from './util/localization';
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
@@ -60,6 +62,25 @@ const App = () => {
     loadBrowserLocale(setLocale);
   }
 
+  const [strings, setStrings] = React.useState({ [Config.defaultLocale]: DEFAULT_STRINGS });
+  React.useEffect(() => {
+    (async () => {
+      let localeStrings;
+      try {
+        localeStrings = (
+          await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 })
+        ).data;
+      } catch (error) {
+        console.warn(
+          `Failed to fetch strings, falling back to default ${Config.defaultLocale}: ${error}`,
+        );
+        return;
+      }
+
+      setStrings({ ...strings, [locale]: localeStrings });
+    })();
+  }, [locale]);
+
   React.useEffect(() => {
     (async () => {
       document.getElementsByTagName('html')[0].dir = langDirection(locale);
@@ -67,9 +88,11 @@ const App = () => {
   }, [locale]);
 
   return (
-    <LocaleContext.Provider value={locale}>
-      <Navbar setLocale={setLocale} />
-    </LocaleContext.Provider>
+    <StringsContext.Provider value={strings}>
+      <LocaleContext.Provider value={locale}>
+        <Navbar setLocale={setLocale} />
+      </LocaleContext.Provider>
+    </StringsContext.Provider>
   );
 };
 
