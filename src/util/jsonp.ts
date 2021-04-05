@@ -1,4 +1,4 @@
-import { AxiosPromise, default as axios } from 'axios';
+import axios, { AxiosPromise } from 'axios';
 import jsonpAdapter from 'axios-jsonp';
 
 const _ = {
