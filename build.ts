@@ -4,6 +4,9 @@ import * as path from 'path';
 const DIST = 'dist/';
 const STATIC_FILES = ['index.html', 'favicon.ico'];
 
+const prod = process.argv.includes('--prod');
+const watch = process.argv.includes('--watch');
+
 (async () => {
   await Promise.all(
     [
@@ -20,11 +23,13 @@ const STATIC_FILES = ['index.html', 'favicon.ico'];
   await require('esbuild').build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
-    incremental: process.argv.includes('--watch'),
     loader: { '.png': 'dataurl' },
     outfile: path.join(DIST, 'bundle.js'),
 
-    minify: process.argv.includes('--prod'),
-    watch: process.argv.includes('--watch'),
+    minify: prod,
+    sourcemap: prod,
+
+    incremental: watch,
+    watch,
   });
 })();
