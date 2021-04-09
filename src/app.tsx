@@ -62,6 +62,7 @@ const App = () => {
     loadBrowserLocale(setLocale);
   }
 
+  // Fetch strings on locale change.
   const [strings, setStrings] = React.useState({ [Config.defaultLocale]: DEFAULT_STRINGS });
   React.useEffect(() => {
     (async () => {
@@ -81,6 +82,7 @@ const App = () => {
     })();
   }, [locale]);
 
+  // Update global strings on locale change.
   React.useEffect(() => {
     (async () => {
       document.getElementsByTagName('html')[0].dir = langDirection(locale);

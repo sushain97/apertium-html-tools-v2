@@ -4,9 +4,10 @@ import { LocaleContext, StringsContext } from '../context';
 
 type Strings = { [id: string]: string };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DEFAULT_STRINGS: Strings = (window as any).DEFAULT_STRINGS;
 
-const t = (id: string) => {
+const t = (id: string): string => {
   const strings = React.useContext(StringsContext);
   const locale = React.useContext(LocaleContext);
 
