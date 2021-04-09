@@ -2,7 +2,7 @@ import axios, { AxiosPromise } from 'axios';
 import jsonpAdapter from 'axios-jsonp';
 
 const _ = {
-  get: (url: string): AxiosPromise<any> => {
+  get: (url: string): AxiosPromise<unknown> => {
     return axios({
       url,
       adapter: jsonpAdapter,

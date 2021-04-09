@@ -3,7 +3,7 @@ import './navbar.css';
 import * as React from 'react';
 
 import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 
 import LocaleSelector from '../LocaleSelector';
@@ -58,9 +58,13 @@ const TagLine = () => (
   </p>
 );
 
-export default ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }) => {
+const Navbar = ({
+  setLocale,
+}: {
+  setLocale: React.Dispatch<React.SetStateAction<string>>;
+}): React.ReactNode => {
   return (
-    <Navbar bg="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
+    <BootstrapNavbar bg="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
         <div>
           <div>
@@ -77,11 +81,13 @@ export default ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
         >
           <LocaleSelector setLocale={setLocale} />
         </div>
-        <Navbar.Toggle></Navbar.Toggle>
-        <Navbar.Collapse>
+        <BootstrapNavbar.Toggle></BootstrapNavbar.Toggle>
+        <BootstrapNavbar.Collapse>
           <Nav></Nav>
-        </Navbar.Collapse>
+        </BootstrapNavbar.Collapse>
       </Container>
-    </Navbar>
+    </BootstrapNavbar>
   );
 };
+
+export default Navbar;

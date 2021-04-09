@@ -18,7 +18,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
     (async () => {
       let locales: Array<string>;
       try {
-        locales = (await get(`${Config.apyURL}/getLocale`)).data;
+        locales = (await get(`${Config.apyURL}/getLocale`)).data as Array<string>;
       } catch (error) {
         console.warn(
           `Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`,

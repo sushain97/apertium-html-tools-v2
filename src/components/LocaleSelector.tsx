@@ -3,7 +3,11 @@ import * as React from 'react';
 import { LocaleContext } from '../context';
 import locales from '../strings/locales.json';
 
-export default ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }) => {
+const LocaleSelector = ({
+  setLocale,
+}: {
+  setLocale: React.Dispatch<React.SetStateAction<string>>;
+}): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
 
   return (
@@ -34,3 +38,5 @@ export default ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
     </>
   );
 };
+
+export default LocaleSelector;
