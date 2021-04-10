@@ -91,11 +91,24 @@ const App = () => {
     })();
   }, [locale, strings]);
 
+  const wrapRef = React.createRef<HTMLDivElement>();
+  const pushRef = React.createRef<HTMLDivElement>();
+
   return (
     <StringsContext.Provider value={strings}>
       <LocaleContext.Provider value={locale}>
-        <Navbar setLocale={setLocale} />
-        <Footer />
+        <div
+          ref={wrapRef}
+          style={{
+            height: 'auto !important',
+            margin: '0 auto -60px',
+            minHeight: '99.5%',
+          }}
+        >
+          <Navbar setLocale={setLocale} />
+          <div ref={pushRef} style={{ height: '60px' }} />
+        </div>
+        <Footer wrapRef={wrapRef} pushRef={pushRef} />
       </LocaleContext.Provider>
     </StringsContext.Provider>
   );

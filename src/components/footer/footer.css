@@ -1,17 +1,7 @@
 html,
-body {
+body,
+#react-mount {
   height: 100%; /* The html and body elements cannot have any padding or margin. */
-}
-
-/* Wrapper for page content to push down footer */
-#wrap {
-  height: auto !important;
-  margin: 0 auto -60px; /* Negative indent footer by it's height */
-  min-height: 99.5%;
-}
-
-#push {
-  height: 60px; /* Set the fixed height of the footer */
 }
 
 @media print {
@@ -20,15 +10,15 @@ body {
   }
 }
 
-#version {
+.version {
   position: absolute;
   right: 15px;
   top: 40px;
 }
 
-#version:hover,
-#version:active,
-#version:focus {
+.version:hover,
+.version:active,
+.version:focus {
   text-decoration: none;
 }
 

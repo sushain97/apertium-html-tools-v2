@@ -62,7 +62,7 @@ const Navbar = ({
   setLocale,
 }: {
   setLocale: React.Dispatch<React.SetStateAction<string>>;
-}): React.ReactNode => {
+}): React.ReactElement => {
   return (
     <BootstrapNavbar bg="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>

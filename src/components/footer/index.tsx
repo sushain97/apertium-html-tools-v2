@@ -14,12 +14,34 @@ const version: string = (window as any).VERSION;
 
 type Tab = 'about' | 'download' | 'documentation' | 'contact';
 
-const Footer = (): React.ReactFragment => {
+const Footer = ({
+  wrapRef,
+  pushRef,
+}: {
+  wrapRef: React.RefObject<HTMLElement>;
+  pushRef: React.RefObject<HTMLElement>;
+}): React.ReactElement => {
   const [openTab, setOpenTab] = React.useState<Tab | undefined>(undefined);
+
+  const footerRef = React.createRef<HTMLDivElement>();
+  React.useLayoutEffect(() => {
+    const refreshSizes = () => {
+      const footerHeight = footerRef.current?.offsetHeight;
+      if (footerHeight && pushRef.current && wrapRef.current) {
+        pushRef.current.style.height = `${footerHeight}px`;
+        wrapRef.current.style.marginBottom = `-${footerHeight}px`;
+      }
+    };
+
+    window.addEventListener('resize', refreshSizes);
+    refreshSizes();
+
+    return () => window.removeEventListener('resize', refreshSizes);
+  }, [footerRef, wrapRef, pushRef]);
 
   return (
     <>
-      <div id="footer" className="d-flex flex-column container">
+      <div ref={footerRef} className="d-flex flex-column container">
         <div className="d-flex flex-column container">
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
             <Nav variant="pills" as="ul" style={{ cursor: 'pointer' }}>
@@ -53,7 +75,7 @@ const Footer = (): React.ReactFragment => {
             </div>
 
             <a
-              className="text-muted d-none d-lg-block"
+              className="text-muted d-none d-lg-block version"
               href="https://github.com/apertium/apertium-html-tools"
               target="_blank"
               rel="noreferrer"
