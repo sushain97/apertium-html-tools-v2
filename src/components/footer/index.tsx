@@ -41,6 +41,13 @@ const Footer = (): React.ReactFragment => {
                 </a>
               </Nav.Item>
             </Nav>
+
+            <div className="card d-inline-block bg-light mr-3 mb-4 ml-3 p-2">
+              <span>{t('Notice_Mistake')}</span>{' '}
+              <a tabIndex={0} onClick={() => setOpenTab('about')} style={{ cursor: 'pointer' }}>
+                {t('Help_Improve')}
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -49,6 +56,13 @@ const Footer = (): React.ReactFragment => {
       <DownloadModal show={openTab === 'download'} onHide={() => setOpenTab(undefined)} />
       <DocumentationModal show={openTab === 'documentation'} onHide={() => setOpenTab(undefined)} />
       <ContactModal show={openTab === 'contact'} onHide={() => setOpenTab(undefined)} />
+
+      <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
+        <span>{t('Notice_Mistake')}</span>
+        <a tabIndex={0} onClick={() => setOpenTab('about')} style={{ cursor: 'pointer' }}>
+          {t('Help_Improve')}
+        </a>
+      </div>
     </>
   );
 };
