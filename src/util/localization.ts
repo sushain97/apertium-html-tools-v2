@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import Config from '../../config';
 import { LocaleContext, StringsContext } from '../context';
 
 type Strings = { [id: string]: string };
@@ -11,7 +12,7 @@ const t = (id: string): string => {
   const strings = React.useContext(StringsContext);
   const locale = React.useContext(LocaleContext);
 
-  return tt(id, locale, strings);
+  return tt(id, locale, strings).replace('{{maintainer}}', Config.maintainer);
 };
 
 const tt = (id: string, locale: string, strings: { [locale: string]: Strings }): string => {

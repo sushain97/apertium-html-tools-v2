@@ -27,7 +27,10 @@ const AboutModal = ({
       </Modal.Header>
       <Modal.Body>
         <div dangerouslySetInnerHTML={{ __html: t('What_Is_Apertium') }} />
-        <div style={{ paddingBottom: '2em' }}>{t('Maintainer')}</div>
+        <div
+          style={{ paddingBottom: '2em' }}
+          dangerouslySetInnerHTML={{ __html: t('Maintainer') }}
+        />
 
         <div className="row lead">
           <div className="col-md-6">
