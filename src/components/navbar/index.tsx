@@ -7,7 +7,7 @@ import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 
 import LocaleSelector from '../LocaleSelector';
-import logo from './Apertium_box_white_small.png';
+import logo from './Apertium_box_white_small.embed.png';
 import { t } from '../../util/localization';
 
 const Logo = () => (

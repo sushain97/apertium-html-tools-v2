@@ -1,0 +1,131 @@
+import * as React from 'react';
+import Modal from 'react-bootstrap/Modal';
+
+import { t } from '../../util/localization';
+
+import githubLogo from './github.png';
+import prompsitLogo from './prompsit150x52.png';
+import alicanteLogo from './logouapp.gif';
+import bytemarkLogo from './logo_bytemark.gif';
+import catalunyaLogo from './stsi.gif';
+import mineturLogo from './logomitc120.jpg';
+import maeLogo from './logo_mae_ro_75pc.jpg';
+import ccLogo from './cc-by-sa-3.0-88x31.png';
+import gplLogo from './gplv3-88x31.png';
+
+const AboutModal = ({
+  show,
+  onHide,
+}: {
+  show: boolean;
+  onHide: () => void;
+}): React.ReactElement => {
+  return (
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>{t('About_Apertium')}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div dangerouslySetInnerHTML={{ __html: t('What_Is_Apertium') }} />
+        <div style={{ paddingBottom: '2em' }}>{t('Maintainer')}</div>
+
+        <div className="row lead">
+          <div className="col-md-6">
+            <div className="mx-auto">
+              <a
+                href="https://developers.google.com/open-source/soc/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  alt="Google Summer of Code"
+                  src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg"
+                  style={{ height: '2.5em' }}
+                />
+              </a>
+              <a
+                href="https://developers.google.com/open-source/gci/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  alt="Google Code-In"
+                  src="https://developers.google.com/open-source/gci/images/logo-icon.png"
+                  style={{ height: '2.5em', paddingLeft: '0.5em' }}
+                />
+              </a>
+            </div>
+          </div>
+
+          <div className="col-md-3 text-center">
+            <a href="http://www.bytemark.co.uk/" target="_blank" rel="noreferrer">
+              <img
+                alt="Bytemark"
+                className="w-100"
+                src={bytemarkLogo}
+                style={{ marginTop: '0.5em' }}
+              />
+            </a>
+          </div>
+          <div className="col-md-3 text-center">
+            <a href="https://www.github.com/apertium" target="_blank" rel="noreferrer">
+              <img alt="GitHub" src={githubLogo} style={{ height: '1.5em' }} />
+            </a>
+          </div>
+        </div>
+
+        <div className="row lead">
+          <div className="col-md-6 text-center">
+            <a href="http://www.minetur.gob.es/" target="_blank" rel="noreferrer">
+              <img alt="Ministry of Industry, Energy and Tourism" src={mineturLogo} />
+            </a>
+          </div>
+          <div className="col-md-6 text-center">
+            <a href="http://www.ua.es/" target="_blank" rel="noreferrer">
+              <img alt="Universidad de Alicante" src={alicanteLogo} />
+            </a>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-4 text-center">
+            <a href="http://www.prompsit.com/" target="_blank" rel="noreferrer">
+              <img alt="Prompsit Language Engineering S.L." src={prompsitLogo} />
+            </a>
+          </div>
+          <div className="col-md-4 text-center">
+            <a href="http://www10.gencat.net" target="_blank" rel="noreferrer">
+              <img alt="Generalitat de Catalunya" src={catalunyaLogo} />
+            </a>
+          </div>
+          <div className="col-md-4 text-center">
+            <a href="http://www.mae.ro/" target="_blank" rel="noreferrer">
+              <img alt="ROMÂNIA  Ministerul Afacerilor Externe" src={maeLogo} />
+            </a>
+          </div>
+        </div>
+        <div className="row">
+          <div
+            className="d-inline-block my-o"
+            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
+          >
+            <a href="http://creativecommons.org/licenses/by-sa/3.0/">
+              <img alt="Creative Commons licence" src={ccLogo} />
+            </a>
+          </div>
+
+          <div
+            className="d-inline-block my-0"
+            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
+          >
+            <a href="https://www.gnu.org/licenses/gpl.html">
+              <img alt="GNU GPL License" src={gplLogo} />
+            </a>
+          </div>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default AboutModal;

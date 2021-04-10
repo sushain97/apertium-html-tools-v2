@@ -46,7 +46,7 @@ const watch = process.argv.includes('--watch');
   await esbuild.build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
-    loader: { '.png': 'dataurl' },
+    loader: { '.embed.png': 'dataurl', '.png': 'file', '.gif': 'file', '.jpg': 'file' },
     outfile: path.join(DIST, 'bundle.js'),
 
     define: {

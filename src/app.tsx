@@ -3,15 +3,16 @@ import './bootstrap.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as queryString from 'query-string';
+import axios from 'axios';
 
 import Config from '../config';
-import axios from 'axios';
+import { LocaleContext, StringsContext } from './context';
 import { get } from './util/jsonp';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
-import Navbar from './components/navbar';
-import { LocaleContext, StringsContext } from './context';
 import { DEFAULT_STRINGS, tt } from './util/localization';
+import Navbar from './components/navbar';
+import Footer from './components/footer';
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
@@ -94,6 +95,7 @@ const App = () => {
     <StringsContext.Provider value={strings}>
       <LocaleContext.Provider value={locale}>
         <Navbar setLocale={setLocale} />
+        <Footer />
       </LocaleContext.Provider>
     </StringsContext.Provider>
   );
