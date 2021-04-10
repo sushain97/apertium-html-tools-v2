@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import * as child_process from 'child_process';
 
 import axios from 'axios';
 import * as esbuild from 'esbuild';
@@ -11,6 +12,8 @@ const STATIC_FILES = ['index.html', 'favicon.ico'];
 
 const prod = process.argv.includes('--prod');
 const watch = process.argv.includes('--watch');
+
+const version = child_process.execSync('git describe --tags --always').toString().trim();
 
 (async () => {
   let defaultStrings;
@@ -51,6 +54,7 @@ const watch = process.argv.includes('--watch');
 
     define: {
       'window.DEFAULT_STRINGS': JSON.stringify(defaultStrings),
+      'window.VERSION': JSON.stringify(version),
     },
 
     minify: prod,

@@ -9,6 +9,9 @@ import DownloadModal from './DownloadModal';
 import DocumentationModal from './DocumentationModal';
 import ContactModal from './ContactModal';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const version: string = (window as any).VERSION;
+
 type Tab = 'about' | 'download' | 'documentation' | 'contact';
 
 const Footer = (): React.ReactFragment => {
@@ -48,6 +51,15 @@ const Footer = (): React.ReactFragment => {
                 {t('Help_Improve')}
               </a>
             </div>
+
+            <a
+              className="text-muted d-none d-lg-block"
+              href="https://github.com/apertium/apertium-html-tools"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>{version}</small>
+            </a>
           </div>
         </div>
       </div>
