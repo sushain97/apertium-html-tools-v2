@@ -32,6 +32,11 @@ body {
   text-decoration: none;
 }
 
+.footer-link {
+  font-size: 16px;
+  padding: 0.5rem 1rem;
+}
+
 .footer-link:hover {
   text-decoration: none;
 }

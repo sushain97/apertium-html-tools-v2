@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Modal from 'react-bootstrap/Modal';
+import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
 import { t } from '../../util/localization';
 
@@ -13,15 +13,9 @@ import maeLogo from './logo_mae_ro_75pc.jpg';
 import ccLogo from './cc-by-sa-3.0-88x31.png';
 import gplLogo from './gplv3-88x31.png';
 
-const AboutModal = ({
-  show,
-  onHide,
-}: {
-  show: boolean;
-  onHide: () => void;
-}): React.ReactElement => {
+const AboutModal = (props: ModalProps): React.ReactElement => {
   return (
-    <Modal show={show} onHide={onHide} size="lg">
+    <Modal {...props} size="lg">
       <Modal.Header closeButton>
         <Modal.Title>{t('About_Apertium')}</Modal.Title>
       </Modal.Header>
