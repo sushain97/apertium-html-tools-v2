@@ -4,15 +4,19 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as queryString from 'query-string';
 import axios from 'axios';
+import Container from 'react-bootstrap/Container';
 
 import Config from '../config';
 import { LocaleContext, StringsContext } from './context';
+
 import { get } from './util/jsonp';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import { DEFAULT_STRINGS, tt } from './util/localization';
+
 import Navbar from './components/navbar';
 import Footer from './components/footer';
+import LocaleSelector from './components/LocaleSelector';
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
@@ -106,6 +110,11 @@ const App = () => {
           }}
         >
           <Navbar setLocale={setLocale} />
+          <Container>
+            <div className="d-block d-sm-none float-left my-2">
+              <LocaleSelector setLocale={setLocale} />
+            </div>
+          </Container>
           <div ref={pushRef} style={{ height: '60px' }} />
         </div>
         <Footer wrapRef={wrapRef} pushRef={pushRef} />

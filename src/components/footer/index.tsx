@@ -96,19 +96,18 @@ const Footer = ({
               <small>{version}</small>
             </a>
           </div>
+          <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
+            <span>{t('Notice_Mistake')}</span>{' '}
+            <a tabIndex={0} onClick={() => setOpenTab(Tab.About)} role="button" href="#">
+              {t('Help_Improve')}
+            </a>
+          </div>
         </div>
       </div>
 
       {Object.entries(Tabs).map(([tab, Modal]) => (
         <Modal key={tab} show={openTab === tab} onHide={() => setOpenTab(undefined)} />
       ))}
-
-      <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
-        <span>{t('Notice_Mistake')}</span>
-        <a tabIndex={0} onClick={() => setOpenTab(Tab.About)} style={{ cursor: 'pointer' }}>
-          {t('Help_Improve')}
-        </a>
-      </div>
     </>
   );
 };
