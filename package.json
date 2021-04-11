@@ -6,7 +6,7 @@
   "scripts": {
     "build": "ts-node build.ts",
     "serve": "python3 -m http.server --directory dist",
-    "check": "tsc --noEmit",
+    "tsc": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
