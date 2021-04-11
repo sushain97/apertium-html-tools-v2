@@ -4,7 +4,7 @@ import * as React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
-import { generatePath, useRouteMatch, useLocation } from 'react-router-dom';
+import { generatePath, useLocation } from 'react-router-dom';
 
 import Config from '../../../config';
 import { Mode } from '../../types';
