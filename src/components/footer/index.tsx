@@ -2,6 +2,13 @@ import './footer.css';
 
 import * as React from 'react';
 import Nav from 'react-bootstrap/Nav';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faQuestionCircle,
+  faDownload,
+  faBook,
+  faEnvelope,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { t } from '../../util/localization';
 import AboutModal from './AboutModal';
@@ -60,22 +67,22 @@ const Footer = ({
             <Nav variant="pills" as="ul" style={{ cursor: 'pointer' }}>
               <Nav.Item as="li">
                 <Nav.Link onClick={() => setOpenTab(Tab.About)} className="footer-link">
-                  <i className="fa fa-question-circle"></i> {t('About')}
+                  <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
                 <Nav.Link onClick={() => setOpenTab(Tab.Download)} className="footer-link">
-                  <i className="fa fa-download"></i> {t('Download')}
+                  <FontAwesomeIcon icon={faDownload} /> {t('Download')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
                 <Nav.Link onClick={() => setOpenTab(Tab.Documentation)} className="footer-link">
-                  <i className="fa fa-book"></i> {t('Documentation')}
+                  <FontAwesomeIcon icon={faBook} /> {t('Documentation')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
                 <Nav.Link onClick={() => setOpenTab(Tab.Contact)} className="footer-link">
-                  <i className="fa fa-envelope"></i> {t('Contact')}
+                  <FontAwesomeIcon icon={faEnvelope} /> {t('Contact')}
                 </Nav.Link>
               </Nav.Item>
             </Nav>
