@@ -5,8 +5,10 @@ import * as ReactDOM from 'react-dom';
 import * as queryString from 'query-string';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
+import { HashRouter, Route } from 'react-router-dom';
 
 import Config from '../config';
+import { Mode } from './types';
 import { LocaleContext, StringsContext } from './context';
 
 import { get } from './util/jsonp';
@@ -99,27 +101,41 @@ const App = () => {
   const pushRef = React.createRef<HTMLDivElement>();
 
   return (
-    <StringsContext.Provider value={strings}>
-      <LocaleContext.Provider value={locale}>
-        <div
-          ref={wrapRef}
-          style={{
-            height: 'auto !important',
-            margin: '0 auto -60px',
-            minHeight: '99.5%',
-          }}
-        >
-          <Navbar setLocale={setLocale} />
-          <Container>
-            <div className="d-block d-sm-none float-left my-2">
-              <LocaleSelector setLocale={setLocale} />
-            </div>
-          </Container>
-          <div ref={pushRef} style={{ height: '60px' }} />
-        </div>
-        <Footer wrapRef={wrapRef} pushRef={pushRef} />
-      </LocaleContext.Provider>
-    </StringsContext.Provider>
+    <HashRouter>
+      <StringsContext.Provider value={strings}>
+        <LocaleContext.Provider value={locale}>
+          <div
+            ref={wrapRef}
+            style={{
+              height: 'auto !important',
+              margin: '0 auto -60px',
+              minHeight: '99.5%',
+            }}
+          >
+            <Navbar setLocale={setLocale} />
+            <Container>
+              {Object.values(Mode).map(
+                (mode) =>
+                  Config.enabledModes.has(mode) && (
+                    <Route
+                      key={mode}
+                      exact
+                      path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
+                    >
+                      TODO: {`${mode}`}
+                    </Route>
+                  ),
+              )}
+              <div className="d-block d-sm-none float-left my-2">
+                <LocaleSelector setLocale={setLocale} />
+              </div>
+            </Container>
+            <div ref={pushRef} style={{ height: '60px' }} />
+          </div>
+          <Footer wrapRef={wrapRef} pushRef={pushRef} />
+        </LocaleContext.Provider>
+      </StringsContext.Provider>
+    </HashRouter>
   );
 };
 

@@ -5,5 +5,6 @@ export default {
   apyURL: 'https://apertium.org/apy',
   maintainer:
     "<a href='http://wiki.apertium.org/wiki/Apertium' target='_blank' rel='noopener'>Apertium</a>",
+  defaultMode: Mode.Translation,
   enabledModes: new Set([Mode.Translation, Mode.Analysis, Mode.Generation]),
 } as Config;
