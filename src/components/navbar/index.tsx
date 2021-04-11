@@ -6,9 +6,10 @@ import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 
+import Config, { Mode } from '../../../config';
+import { t } from '../../util/localization';
 import LocaleSelector from '../LocaleSelector';
 import logo from './Apertium_box_white_small.embed.png';
-import { t } from '../../util/localization';
 
 const Logo = () => (
   <img
@@ -64,7 +65,12 @@ const Navbar = ({
   setLocale: React.Dispatch<React.SetStateAction<string>>;
 }): React.ReactElement => {
   return (
-    <BootstrapNavbar bg="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
+    <BootstrapNavbar
+      bg="dark"
+      variant="dark"
+      expand="md"
+      className="navbar navbar-default mb-4 pt-0"
+    >
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
         <div>
           <div>
@@ -83,7 +89,27 @@ const Navbar = ({
         </div>
         <BootstrapNavbar.Toggle></BootstrapNavbar.Toggle>
         <BootstrapNavbar.Collapse>
-          <Nav></Nav>
+          <Nav className="mt-1 ml-auto" as="ul">
+            {Config.enabledModes.size > 1 && (
+              <>
+                {Config.enabledModes.has(Mode.Translation) && (
+                  <Nav.Item className="p-1" as="li">
+                    <Nav.Link>{t('Translation')}</Nav.Link>
+                  </Nav.Item>
+                )}
+                {Config.enabledModes.has(Mode.Analysis) && (
+                  <Nav.Item className="p-1" as="li">
+                    <Nav.Link>{t('Morphological_Analysis')}</Nav.Link>
+                  </Nav.Item>
+                )}
+                {Config.enabledModes.has(Mode.Generation) && (
+                  <Nav.Item className="p-1" as="li">
+                    <Nav.Link>{t('Morphological_Generation')}</Nav.Link>
+                  </Nav.Item>
+                )}
+              </>
+            )}
+          </Nav>
         </BootstrapNavbar.Collapse>
       </Container>
     </BootstrapNavbar>
