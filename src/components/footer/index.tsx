@@ -59,28 +59,24 @@ const Footer = ({
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
             <Nav variant="pills" as="ul" style={{ cursor: 'pointer' }}>
               <Nav.Item as="li">
-                <a tabIndex={0} onClick={() => setOpenTab(Tab.About)} className="footer-link">
+                <Nav.Link onClick={() => setOpenTab(Tab.About)} className="footer-link">
                   <i className="fa fa-question-circle"></i> {t('About')}
-                </a>
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <a tabIndex={0} onClick={() => setOpenTab(Tab.Download)} className="footer-link">
+                <Nav.Link onClick={() => setOpenTab(Tab.Download)} className="footer-link">
                   <i className="fa fa-download"></i> {t('Download')}
-                </a>
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <a
-                  tabIndex={0}
-                  onClick={() => setOpenTab(Tab.Documentation)}
-                  className="footer-link"
-                >
+                <Nav.Link onClick={() => setOpenTab(Tab.Documentation)} className="footer-link">
                   <i className="fa fa-book"></i> {t('Documentation')}
-                </a>
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <a tabIndex={0} onClick={() => setOpenTab(Tab.Contact)} className="footer-link">
+                <Nav.Link onClick={() => setOpenTab(Tab.Contact)} className="footer-link">
                   <i className="fa fa-envelope"></i> {t('Contact')}
-                </a>
+                </Nav.Link>
               </Nav.Item>
             </Nav>
 
