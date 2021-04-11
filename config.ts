@@ -1,15 +1,4 @@
-export const enum Mode {
-  Translation = 'translation',
-  Generation = 'generation',
-  Analysis = 'analysis',
-}
-
-type Config = {
-  defaultLocale: string;
-  apyURL: string;
-  maintainer: string;
-  enabledModes: Set<Mode>;
-};
+import { Config, Mode } from './src/types';
 
 export default {
   defaultLocale: 'eng',

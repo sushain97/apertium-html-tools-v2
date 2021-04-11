@@ -6,7 +6,8 @@ import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 
-import Config, { Mode } from '../../../config';
+import Config from '../../../config';
+import { Mode } from '../../types';
 import { t } from '../../util/localization';
 import LocaleSelector from '../LocaleSelector';
 import logo from './Apertium_box_white_small.embed.png';
