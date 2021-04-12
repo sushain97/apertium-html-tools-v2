@@ -1,4 +1,4 @@
-const languages = {
+const languages: Readonly<Record<string, string>> = {
   af: 'Afrikaans',
   id: 'Bahasa Indonesia',
   cy: 'Cymraeg',
@@ -96,7 +96,7 @@ const languages = {
   tyv: 'тыва дылда',
 };
 
-const iso639Codes = {
+const iso639Codes: Readonly<Record<string, string>> = {
   abk: 'ab',
   aar: 'aa',
   afr: 'af',

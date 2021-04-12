@@ -23,7 +23,7 @@ import Analyzer from './components/Analyzer';
 import Translator from './components/Translator';
 import Generator from './components/Generator';
 
-const Interfaces: { [mode in Mode]: () => React.ReactElement } = {
+const Interfaces: Record<Mode, () => React.ReactElement> = {
   [Mode.Translation]: Translator,
   [Mode.Analysis]: Analyzer,
   [Mode.Generation]: Generator,

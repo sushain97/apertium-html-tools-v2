@@ -27,7 +27,7 @@ const enum Tab {
   Contact = 'contact',
 }
 
-const Tabs: { [tab in Tab]: (props: ModalProps) => React.ReactElement } = {
+const Tabs: Record<Tab, (props: ModalProps) => React.ReactElement> = {
   [Tab.About]: AboutModal,
   [Tab.Download]: DownloadModal,
   [Tab.Documentation]: DocumentationModal,
