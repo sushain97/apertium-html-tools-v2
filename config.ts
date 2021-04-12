@@ -2,7 +2,7 @@ import { Config, Mode } from './src/types';
 
 export default {
   defaultLocale: 'eng',
-  apyURL: 'https://apertium.org/apy',
+  apyURL: 'https://beta.apertium.org/apy',
   maintainer:
     "<a href='http://wiki.apertium.org/wiki/Apertium' target='_blank' rel='noopener'>Apertium</a>",
   defaultMode: Mode.Translation,
