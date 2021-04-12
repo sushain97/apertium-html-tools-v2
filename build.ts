@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as child_process from 'child_process';
 
-import axios from 'axios';
+import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import * as esbuild from 'esbuild';
 
 import Config from './config';
@@ -15,17 +15,26 @@ const watch = process.argv.includes('--watch');
 
 const version = child_process.execSync('git describe --tags --always').toString().trim();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>> =>
+  await axios({
+    url: `${Config.apyURL}/${path}`,
+    params,
+    validateStatus: (status) => status == 200,
+  });
+
 (async () => {
   let defaultStrings;
+
+  const pairs = (await apyGet(`list`, { q: 'pairs' })).data['responseData'];
+  const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data;
+  const generators = (await apyGet(`list`, { q: 'generators' })).data;
 
   await Promise.all(
     (await fs.readdir('src/strings'))
       .filter((f) => f.endsWith('.json') && f != 'locales.json')
       .map(async (f) => {
-        const response = await axios({
-          url: `${Config.apyURL}/listLanguageNames?locale=${path.parse(f).name}`,
-          validateStatus: (status) => status == 200,
-        });
+        const response = await apyGet('listLanguageNames', { locale: path.parse(f).name });
 
         const inPath = path.join('src/strings', f);
         const outPath = path.join(DIST, 'strings', f);
@@ -55,6 +64,10 @@ const version = child_process.execSync('git describe --tags --always').toString(
     define: {
       'window.DEFAULT_STRINGS': JSON.stringify(defaultStrings),
       'window.VERSION': JSON.stringify(version),
+
+      'window.PAIRS': JSON.stringify(pairs),
+      'window.ANALYZERS': JSON.stringify(analyzers),
+      'window.GENERATORS': JSON.stringify(generators),
     },
 
     minify: prod,
@@ -63,7 +76,7 @@ const version = child_process.execSync('git describe --tags --always').toString(
     incremental: watch,
     watch: watch
       ? {
-          onRebuild(error: esbuild.BuildFailure | null, result: esbuild.BuildResult | null) {
+          onRebuild(error: esbuild.BuildFailure | null) {
             if (error) console.error('❌ watch build failed');
             else console.log('✅ watch build succeeded');
           },

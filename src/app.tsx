@@ -19,6 +19,15 @@ import { DEFAULT_STRINGS, tt } from './util/localization';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import LocaleSelector from './components/LocaleSelector';
+import Analyzer from './components/Analyzer';
+import Translator from './components/Translator';
+import Generator from './components/Generator';
+
+const Interfaces: { [mode in Mode]: () => React.ReactElement } = {
+  [Mode.Translation]: Translator,
+  [Mode.Analysis]: Analyzer,
+  [Mode.Generation]: Generator,
+};
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   React.useEffect(() => {
@@ -121,9 +130,8 @@ const App = () => {
                       key={mode}
                       exact
                       path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
-                    >
-                      TODO: {`${mode}`}
-                    </Route>
+                      component={Interfaces[mode]}
+                    />
                   ),
               )}
               <div className="d-block d-sm-none float-left my-2">
