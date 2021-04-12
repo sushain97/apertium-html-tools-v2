@@ -3,11 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
-import { t } from '../util/localization';
+import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyzers: { [code: string]: string } = (window as any).ANALYZERS;
+const Analyzers: Readonly<Record<string, string>> = (window as any).ANALYZERS;
 
 const Analyzer = (): React.ReactElement => {
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0]);
@@ -26,9 +26,14 @@ const Analyzer = (): React.ReactElement => {
             onChange={({ target: { value } }) => setLang(value)}
             required
           >
-            {Object.keys(Analyzers).map((code) => (
-              <option key={code}>{code}</option>
-            ))}
+            {Object.keys(Analyzers)
+              .map((code) => [code, tLang(code)])
+              .sort(([, a], [, b]) => {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+              })
+              .map(([code, name]) => (
+                <option key={code}>{name}</option>
+              ))}
           </Form.Control>
         </Col>
       </Form.Group>

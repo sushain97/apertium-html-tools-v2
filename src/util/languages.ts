@@ -288,8 +288,20 @@ const iso639Codes: Readonly<Record<string, string>> = {
 
 const rtlLanguages = new Set(['heb', 'ara', 'pes', 'urd', 'uig']);
 
-const iso639CodesInverse: { [alpha2: string]: string } = {};
+const iso639CodesInverse: Record<string, string> = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
+
+const toAlpha2Code = (code: string): string | null => {
+  if (code in iso639CodesInverse) {
+    return code;
+  }
+
+  if (code in iso639Codes) {
+    return iso639Codes[code];
+  }
+
+  return null;
+};
 
 const toAlpha3Code = (code: string): string | null => {
   if (code in iso639Codes) {
@@ -307,4 +319,4 @@ const langDirection = (code: string): string => {
   return rtlLanguages.has(code) ? 'rtl' : 'ltr';
 };
 
-export { toAlpha3Code, langDirection, languages };
+export { toAlpha3Code, toAlpha2Code, langDirection, languages };
