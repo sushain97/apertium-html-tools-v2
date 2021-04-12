@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Col from 'react-bootstrap/Col';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
 import { t } from '../../util/localization';
@@ -27,7 +28,7 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
         />
 
         <div className="row lead">
-          <div className="col-md-6">
+          <Col md="6">
             <div className="mx-auto">
               <a
                 href="https://developers.google.com/open-source/soc/"
@@ -52,9 +53,9 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
                 />
               </a>
             </div>
-          </div>
+          </Col>
 
-          <div className="col-md-3 text-center">
+          <Col md="3" className="text-center">
             <a href="http://www.bytemark.co.uk/" target="_blank" rel="noreferrer">
               <img
                 alt="Bytemark"
@@ -63,43 +64,43 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
                 style={{ marginTop: '0.5em' }}
               />
             </a>
-          </div>
-          <div className="col-md-3 text-center">
+          </Col>
+          <Col md="3" className="text-center">
             <a href="https://www.github.com/apertium" target="_blank" rel="noreferrer">
               <img alt="GitHub" src={githubLogo} style={{ height: '1.5em' }} />
             </a>
-          </div>
+          </Col>
         </div>
 
         <div className="row lead">
-          <div className="col-md-6 text-center">
+          <Col md="6" className="text-center">
             <a href="http://www.minetur.gob.es/" target="_blank" rel="noreferrer">
               <img alt="Ministry of Industry, Energy and Tourism" src={mineturLogo} />
             </a>
-          </div>
-          <div className="col-md-6 text-center">
+          </Col>
+          <Col md="6" className="text-center">
             <a href="http://www.ua.es/" target="_blank" rel="noreferrer">
               <img alt="Universidad de Alicante" src={alicanteLogo} />
             </a>
-          </div>
+          </Col>
         </div>
 
         <div className="row">
-          <div className="col-md-4 text-center">
+          <Col md="4" className="text-center">
             <a href="http://www.prompsit.com/" target="_blank" rel="noreferrer">
               <img alt="Prompsit Language Engineering S.L." src={prompsitLogo} />
             </a>
-          </div>
-          <div className="col-md-4 text-center">
+          </Col>
+          <Col md="4" className="text-center">
             <a href="http://www10.gencat.net" target="_blank" rel="noreferrer">
               <img alt="Generalitat de Catalunya" src={catalunyaLogo} />
             </a>
-          </div>
-          <div className="col-md-4 text-center">
+          </Col>
+          <Col md="4" className="text-center">
             <a href="http://www.mae.ro/" target="_blank" rel="noreferrer">
               <img alt="ROMÂNIA  Ministerul Afacerilor Externe" src={maeLogo} />
             </a>
-          </div>
+          </Col>
         </div>
         <div className="row">
           <div
