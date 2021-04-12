@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { LocaleContext } from '../context';
 import locales from '../strings/locales.json';
@@ -12,10 +14,13 @@ const LocaleSelector = ({
 
   return (
     <>
-      <i
-        className="fa fa-globe fa-2x fa-inverse float-right locale-globe pt-2 pr-1"
-        style={{ color: '#fff', fontSize: '1.8em', padding: '0 5px 0 0', marginLeft: '0.3em' }}
-      ></i>
+      <FontAwesomeIcon
+        icon={faGlobe}
+        size="2x"
+        inverse
+        className="float-right pt-2"
+        style={{ padding: '0 5px 0 0', marginLeft: '0.3em', marginTop: '1px' }}
+      ></FontAwesomeIcon>
       <select
         onChange={({ target: { value } }) => setLocale(value)}
         value={locale}
