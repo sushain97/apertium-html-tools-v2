@@ -32,7 +32,9 @@ const Generator = (): React.ReactElement => {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
               })
               .map(([code, name]) => (
-                <option key={code}>{name}</option>
+                <option key={code} value={code}>
+                  {name}
+                </option>
               ))}
           </Form.Control>
         </Col>
@@ -44,7 +46,6 @@ const Generator = (): React.ReactElement => {
         <Col md="10">
           <Form.Control
             as="textarea"
-            className="form-control"
             rows={5}
             spellCheck={false}
             value={text}

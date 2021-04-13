@@ -1,13 +1,20 @@
-import axios, { AxiosPromise } from 'axios';
+import axios, { AxiosPromise, CancelTokenSource } from 'axios';
 import jsonpAdapter from 'axios-jsonp';
 
 const _ = {
-  get: (url: string): AxiosPromise<unknown> => {
-    return axios({
-      url,
-      adapter: jsonpAdapter,
-      validateStatus: (status) => status == 200,
-    });
+  get: (url: string, params?: unknown): [CancelTokenSource, AxiosPromise<unknown>] => {
+    const source = axios.CancelToken.source();
+
+    return [
+      source,
+      axios({
+        url,
+        adapter: jsonpAdapter,
+        params,
+        cancelToken: source.token,
+        validateStatus: (status) => status == 200,
+      }),
+    ];
   },
 };
 
