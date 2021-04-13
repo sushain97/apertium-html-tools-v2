@@ -1,6 +1,7 @@
 import * as React from 'react';
 import axios, { CancelTokenSource } from 'axios';
 import classNames from 'classnames';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -52,6 +53,7 @@ const Analyzer = (): React.ReactElement => {
 
   const [loading, setLoading] = React.useState(false);
   const [analysis, setAnalysis] = React.useState<Array<[string, string]>>([]);
+  const [error, setError] = React.useState<Error | null>(null);
   const analysisRef = React.useRef<CancelTokenSource | null>(null);
 
   const handleSubmit = () => {
@@ -67,12 +69,16 @@ const Analyzer = (): React.ReactElement => {
         setLoading(true);
         const [ref, request] = get(`${Config.apyURL}/analyze`, { lang, q: text });
         analysisRef.current = ref;
+
         setAnalysis((await request).data as Array<[string, string]>);
+        setError(null);
         setLoading(false);
+
         analysisRef.current = null;
       } catch (error) {
         if (!axios.isCancel(error)) {
-          console.error('Analysis request failed', error);
+          setAnalysis([]);
+          setError(error);
           setLoading(false);
         }
       }
@@ -130,14 +136,14 @@ const Analyzer = (): React.ReactElement => {
           </Col>
         </Form.Group>
       </Form>
-      {analysis.length ? (
-        <AnalysisResult
-          analysis={analysis}
-          className={classNames({
-            blurred: loading,
-          })}
-        />
-      ) : null}
+      <div
+        className={classNames({
+          blurred: loading,
+        })}
+      >
+        {analysis.length ? <AnalysisResult analysis={analysis} /> : null}
+        {error && <Alert variant="danger">{error.toString()}</Alert>}
+      </div>
     </>
   );
 };
