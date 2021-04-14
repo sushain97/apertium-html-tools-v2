@@ -15,6 +15,22 @@ import useLocalStorage from '../util/use-local-storage';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Analyzers: Readonly<Record<string, string>> = (window as any).ANALYZERS;
 
+const formatUnit = (unit: string) => {
+  const tagRegex = /<([^>]+)>/g,
+    tags = [];
+  let tagMatch = tagRegex.exec(unit);
+  while (tagMatch) {
+    tags.push(tagMatch[1]);
+    tagMatch = tagRegex.exec(unit);
+  }
+
+  const tagStartLoc = unit.indexOf('<');
+  return (
+    unit.substring(0, tagStartLoc !== -1 ? tagStartLoc : unit.length) +
+    (tags.length > 0 ? `  ↤  ${tags.join(' ⋅ ')}` : '')
+  );
+};
+
 const AnalysisResult = ({
   analysis,
   className,
@@ -22,23 +38,58 @@ const AnalysisResult = ({
   analysis: Array<[string, string]>;
   className?: string;
 }): React.ReactElement => {
+  const unitRegex = /([^<]*)((<[^>]+>)*)/g;
+
   return (
     <Table hover className={className}>
       <tbody>
         {analysis.map(([unit, stem], i) => {
           const splitUnit = unit.split('/');
 
+          const morphemes: Array<React.ReactElement> = [];
+          const joinedMorphemes: Record<string, Array<string>> = {};
+          splitUnit.slice(1).forEach((unit, i) => {
+            const matches = unit.match(unitRegex);
+
+            if (matches && matches.length > 2) {
+              matches.slice(1, matches.length - 1).forEach((match) => {
+                if (joinedMorphemes[match]) {
+                  joinedMorphemes[match].push(unit);
+                } else {
+                  joinedMorphemes[match] = [unit];
+                }
+              });
+            } else {
+              morphemes.push(<div key={`split-${i}`}>{formatUnit(unit)}</div>);
+            }
+          });
+          Object.entries(joinedMorphemes).forEach(([joinedMorpheme, units], i) => {
+            morphemes.push(<div key={`joined-${i}`}>{formatUnit(joinedMorpheme)}</div>);
+            units.forEach((unit, j) => {
+              const unitMatch = unit.match(unitRegex);
+              if (unitMatch) {
+                morphemes.push(
+                  <div key={`joined-unitt-${j}`} style={{ marginLeft: '30px' }}>
+                    {formatUnit(unitMatch[0])}
+                  </div>,
+                );
+              }
+            });
+          });
+
           return (
             <tr key={i}>
               <td className="text-right">
                 <strong>{stem.trim()}</strong>
-                <span>&nbsp;&nbsp;{'↬'}</span>
+                <span>{'  ↬'}</span>
               </td>
               <td
                 className={classNames('text-left', {
                   'text-danger': splitUnit[1][0] === '*',
                 })}
-              ></td>
+              >
+                {morphemes}
+              </td>
             </tr>
           );
         })}
