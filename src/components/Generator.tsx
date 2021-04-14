@@ -1,7 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import axios, { CancelTokenSource } from 'axios';
-import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -9,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import { apyFetch } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
+import ErrorAlert from './ErrorAlert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;
@@ -129,7 +129,7 @@ const Generator = (): React.ReactElement => {
             </span>
           </div>
         ))}
-        {error && <Alert variant="danger">{error.toString()}</Alert>}
+        {error && <ErrorAlert error={error} />}
       </div>
     </>
   );

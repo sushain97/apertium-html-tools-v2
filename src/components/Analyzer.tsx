@@ -1,7 +1,6 @@
 import * as React from 'react';
 import axios, { CancelTokenSource } from 'axios';
 import classNames from 'classnames';
-import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -10,6 +9,7 @@ import Table from 'react-bootstrap/Table';
 import { apyFetch } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
+import ErrorAlert from './ErrorAlert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Analyzers: Readonly<Record<string, string>> = (window as any).ANALYZERS;
@@ -204,7 +204,7 @@ const Analyzer = (): React.ReactElement => {
         })}
       >
         {analysis.length ? <AnalysisResult analysis={analysis} /> : null}
-        {error && <Alert variant="danger">{error.toString()}</Alert>}
+        {error && <ErrorAlert error={error} />}
       </div>
     </>
   );
