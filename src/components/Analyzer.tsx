@@ -193,6 +193,7 @@ const Analyzer = (): React.ReactElement => {
   return (
     <>
       <AnalysisForm setLoading={setLoading} setAnalysis={setAnalysis} setError={setError} />
+      <hr />
       <div
         className={classNames({
           blurred: loading,
