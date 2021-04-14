@@ -37,9 +37,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
       try {
         locales = (await get(`${Config.apyURL}/getLocale`)[1]).data as Array<string>;
       } catch (error) {
-        console.warn(
-          `Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`,
-        );
+        console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`);
         return;
       }
 
@@ -63,9 +61,7 @@ const App = () => {
   // 2. `locale` key from LocalStorage
   // 3. browser's preferred locale from APy
   const langParam = queryString.parse(location.search)['lang'];
-  const urlLocale =
-    langParam &&
-    toAlpha3Code(langParam instanceof Array ? langParam[0] : langParam)?.replace('/', '');
+  const urlLocale = langParam && toAlpha3Code(langParam instanceof Array ? langParam[0] : langParam)?.replace('/', '');
   let shouldLoadBrowserLocale = false;
   const [locale, setLocale] = useLocalStorage(
     'locale',
@@ -85,13 +81,10 @@ const App = () => {
     (async () => {
       let localeStrings;
       try {
-        localeStrings = (
-          await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 })
-        ).data;
+        localeStrings = (await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 }))
+          .data;
       } catch (error) {
-        console.warn(
-          `Failed to fetch strings, falling back to default ${Config.defaultLocale}: ${error}`,
-        );
+        console.warn(`Failed to fetch strings, falling back to default ${Config.defaultLocale}: ${error}`);
         return;
       }
 

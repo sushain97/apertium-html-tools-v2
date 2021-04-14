@@ -60,20 +60,11 @@ const TagLine = () => (
   </p>
 );
 
-const Navbar = ({
-  setLocale,
-}: {
-  setLocale: React.Dispatch<React.SetStateAction<string>>;
-}): React.ReactElement => {
+const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
   const { pathname } = useLocation();
 
   return (
-    <BootstrapNavbar
-      bg="dark"
-      variant="dark"
-      expand="md"
-      className="navbar navbar-default mb-4 pt-0"
-    >
+    <BootstrapNavbar bg="dark" variant="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
         <div>
           <div>
@@ -99,10 +90,7 @@ const Navbar = ({
                   <Nav.Item className="p-1" as="li">
                     <Nav.Link
                       href={`#${generatePath('/translation')}`}
-                      active={
-                        pathname == '/translation' ||
-                        (pathname == '/' && Config.defaultMode == Mode.Translation)
-                      }
+                      active={pathname == '/translation' || (pathname == '/' && Config.defaultMode == Mode.Translation)}
                     >
                       {t('Translation')}
                     </Nav.Link>
@@ -112,10 +100,7 @@ const Navbar = ({
                   <Nav.Item className="p-1" as="li">
                     <Nav.Link
                       href={`#${generatePath('/analysis')}`}
-                      active={
-                        pathname == '/analysis' ||
-                        (pathname == '/' && Config.defaultMode == Mode.Analysis)
-                      }
+                      active={pathname == '/analysis' || (pathname == '/' && Config.defaultMode == Mode.Analysis)}
                     >
                       {t('Morphological_Analysis')}
                     </Nav.Link>
@@ -125,10 +110,7 @@ const Navbar = ({
                   <Nav.Item className="p-1" as="li">
                     <Nav.Link
                       href={`#${generatePath('/generation')}`}
-                      active={
-                        pathname == '/generation' ||
-                        (pathname == '/' && Config.defaultMode == Mode.Generation)
-                      }
+                      active={pathname == '/generation' || (pathname == '/' && Config.defaultMode == Mode.Generation)}
                     >
                       {t('Morphological_Generation')}
                     </Nav.Link>

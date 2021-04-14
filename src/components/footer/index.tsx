@@ -3,12 +3,7 @@ import './footer.css';
 import * as React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faQuestionCircle,
-  faDownload,
-  faBook,
-  faEnvelope,
-} from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faDownload, faBook, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 import { t } from '../../util/localization';
 import AboutModal from './AboutModal';

@@ -22,30 +22,19 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
       </Modal.Header>
       <Modal.Body>
         <div dangerouslySetInnerHTML={{ __html: t('What_Is_Apertium') }} />
-        <div
-          style={{ paddingBottom: '2em' }}
-          dangerouslySetInnerHTML={{ __html: t('Maintainer') }}
-        />
+        <div style={{ paddingBottom: '2em' }} dangerouslySetInnerHTML={{ __html: t('Maintainer') }} />
 
         <div className="row lead">
           <Col md="6">
             <div className="mx-auto">
-              <a
-                href="https://developers.google.com/open-source/soc/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://developers.google.com/open-source/soc/" target="_blank" rel="noreferrer">
                 <img
                   alt="Google Summer of Code"
                   src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg"
                   style={{ height: '2.5em' }}
                 />
               </a>
-              <a
-                href="https://developers.google.com/open-source/gci/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://developers.google.com/open-source/gci/" target="_blank" rel="noreferrer">
                 <img
                   alt="Google Code-In"
                   src="https://developers.google.com/open-source/gci/images/logo-icon.png"
@@ -57,12 +46,7 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
 
           <Col md="3" className="text-center">
             <a href="http://www.bytemark.co.uk/" target="_blank" rel="noreferrer">
-              <img
-                alt="Bytemark"
-                className="w-100"
-                src={bytemarkLogo}
-                style={{ marginTop: '0.5em' }}
-              />
+              <img alt="Bytemark" className="w-100" src={bytemarkLogo} style={{ marginTop: '0.5em' }} />
             </a>
           </Col>
           <Col md="3" className="text-center">
@@ -103,19 +87,13 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
           </Col>
         </div>
         <div className="row">
-          <div
-            className="d-inline-block my-o"
-            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
-          >
+          <div className="d-inline-block my-o" style={{ marginLeft: '0.5em', marginRight: '0.5em' }}>
             <a href="http://creativecommons.org/licenses/by-sa/3.0/">
               <img alt="Creative Commons licence" src={ccLogo} />
             </a>
           </div>
 
-          <div
-            className="d-inline-block my-0"
-            style={{ marginLeft: '0.5em', marginRight: '0.5em' }}
-          >
+          <div className="d-inline-block my-0" style={{ marginLeft: '0.5em', marginRight: '0.5em' }}>
             <a href="https://www.gnu.org/licenses/gpl.html">
               <img alt="GNU GPL License" src={gplLogo} />
             </a>

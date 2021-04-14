@@ -140,16 +140,9 @@ const Analyzer = (): React.ReactElement => {
     <>
       <Form>
         <Form.Group controlId="analysis-lang" className="row">
-          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">
-            {t('Language')}
-          </Form.Label>
+          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
           <Col md="3">
-            <Form.Control
-              as="select"
-              value={lang}
-              onChange={({ target: { value } }) => setLang(value)}
-              required
-            >
+            <Form.Control as="select" value={lang} onChange={({ target: { value } }) => setLang(value)} required>
               {Object.keys(Analyzers)
                 .map((code) => [code, tLang(code)])
                 .sort(([, a], [, b]) => {
@@ -164,9 +157,7 @@ const Analyzer = (): React.ReactElement => {
           </Col>
         </Form.Group>
         <Form.Group controlId="analysis-input" className="row">
-          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">
-            {t('Input_Text')}
-          </Form.Label>
+          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Input_Text')}</Form.Label>
           <Col md="10">
             <Form.Control
               as="textarea"

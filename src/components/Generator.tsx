@@ -16,16 +16,9 @@ const Generator = (): React.ReactElement => {
   return (
     <Form>
       <Form.Group controlId="generator-lang" className="row">
-        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">
-          {t('Language')}
-        </Form.Label>
+        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
         <Col md="3">
-          <Form.Control
-            as="select"
-            value={lang}
-            onChange={({ target: { value } }) => setLang(value)}
-            required
-          >
+          <Form.Control as="select" value={lang} onChange={({ target: { value } }) => setLang(value)} required>
             {Object.keys(Generators)
               .map((code) => [code, tLang(code)])
               .sort(([, a], [, b]) => {
@@ -40,9 +33,7 @@ const Generator = (): React.ReactElement => {
         </Col>
       </Form.Group>
       <Form.Group controlId="generator-input" className="row">
-        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">
-          {t('Input_Text')}
-        </Form.Label>
+        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Input_Text')}</Form.Label>
         <Col md="10">
           <Form.Control
             as="textarea"
