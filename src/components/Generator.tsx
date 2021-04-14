@@ -122,7 +122,7 @@ const Generator = (): React.ReactElement => {
         })}
       >
         {generation.map(([analysis, stem], i) => (
-          <div key={i} data-toggle="tooltip" data-placement="auto" data-html="true">
+          <div key={i}>
             <strong>{stem.trim()}</strong>
             <span>
               {'  ↬  '}
