@@ -98,13 +98,18 @@ const AnalysisResult = ({
   );
 };
 
-const Analyzer = (): React.ReactElement => {
+const AnalysisForm = ({
+  setLoading,
+  setAnalysis,
+  setError,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setAnalysis: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
+  setError: React.Dispatch<React.SetStateAction<Error | null>>;
+}): React.ReactElement => {
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0]);
   const [text, setText] = useLocalStorage('analyzerText', '');
 
-  const [loading, setLoading] = React.useState(false);
-  const [analysis, setAnalysis] = React.useState<Array<[string, string]>>([]);
-  const [error, setError] = React.useState<Error | null>(null);
   const analysisRef = React.useRef<CancelTokenSource | null>(null);
 
   const handleSubmit = () => {
@@ -137,47 +142,57 @@ const Analyzer = (): React.ReactElement => {
   };
 
   return (
+    <Form>
+      <Form.Group controlId="analysis-lang" className="row">
+        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
+        <Col md="3">
+          <Form.Control as="select" value={lang} onChange={({ target: { value } }) => setLang(value)} required>
+            {Object.keys(Analyzers)
+              .map((code) => [code, tLang(code)])
+              .sort(([, a], [, b]) => {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+              })
+              .map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+          </Form.Control>
+        </Col>
+      </Form.Group>
+      <Form.Group controlId="analysis-input" className="row">
+        <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Input_Text')}</Form.Label>
+        <Col md="10">
+          <Form.Control
+            as="textarea"
+            rows={5}
+            spellCheck={false}
+            value={text}
+            onChange={({ target: { value } }) => setText(value)}
+            placeholder={t('Morphological_Analysis_Help')}
+            required
+          ></Form.Control>
+        </Col>
+      </Form.Group>
+      <Form.Group className="row">
+        <Col md="10" className="offset-md-2 col-md-10 offset-lg-1">
+          <Button type="submit" variant="primary" onClick={handleSubmit}>
+            {t('Analyze')}
+          </Button>
+        </Col>
+      </Form.Group>
+    </Form>
+  );
+};
+
+const Analyzer = (): React.ReactElement => {
+  const [loading, setLoading] = React.useState(false);
+  const [analysis, setAnalysis] = React.useState<Array<[string, string]>>([]);
+  const [error, setError] = React.useState<Error | null>(null);
+
+  return (
     <>
-      <Form>
-        <Form.Group controlId="analysis-lang" className="row">
-          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
-          <Col md="3">
-            <Form.Control as="select" value={lang} onChange={({ target: { value } }) => setLang(value)} required>
-              {Object.keys(Analyzers)
-                .map((code) => [code, tLang(code)])
-                .sort(([, a], [, b]) => {
-                  return a.toLowerCase().localeCompare(b.toLowerCase());
-                })
-                .map(([code, name]) => (
-                  <option key={code} value={code}>
-                    {name}
-                  </option>
-                ))}
-            </Form.Control>
-          </Col>
-        </Form.Group>
-        <Form.Group controlId="analysis-input" className="row">
-          <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Input_Text')}</Form.Label>
-          <Col md="10">
-            <Form.Control
-              as="textarea"
-              rows={5}
-              spellCheck={false}
-              value={text}
-              onChange={({ target: { value } }) => setText(value)}
-              placeholder={t('Morphological_Analysis_Help')}
-              required
-            ></Form.Control>
-          </Col>
-        </Form.Group>
-        <Form.Group className="row">
-          <Col md="10" className="offset-md-2 col-md-10 offset-lg-1">
-            <Button type="submit" variant="primary" onClick={handleSubmit}>
-              {t('Analyze')}
-            </Button>
-          </Col>
-        </Form.Group>
-      </Form>
+      <AnalysisForm setLoading={setLoading} setAnalysis={setAnalysis} setError={setError} />
       <div
         className={classNames({
           blurred: loading,
