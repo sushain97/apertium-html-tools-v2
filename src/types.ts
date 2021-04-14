@@ -8,7 +8,7 @@ export enum Mode {
 export type Config = {
   defaultLocale: string;
   apyURL: string;
-  maintainer: string;
+  stringReplacements: Record<string, string>;
 
   defaultMode: Mode;
   enabledModes: Set<Mode>;

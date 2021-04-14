@@ -20,7 +20,12 @@ const t = (id: string): string => {
   const strings = React.useContext(StringsContext);
   const locale = React.useContext(LocaleContext);
 
-  return tt(id, locale, strings).replace('{{maintainer}}', Config.maintainer);
+  let translated = tt(id, locale, strings);
+  Object.entries(Config.stringReplacements).forEach(([placeholder, replacement]) => {
+    translated = translated.replace(placeholder, replacement);
+  });
+
+  return translated;
 };
 
 const tLang = (code: string): string => {
