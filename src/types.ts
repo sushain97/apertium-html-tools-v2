@@ -1,7 +1,8 @@
 export enum Mode {
   Translation = 'translation',
-  Generation = 'generation',
   Analysis = 'analysis',
+  Generation = 'generation',
+  Sandbox = 'sandbox',
 }
 
 export type Config = {

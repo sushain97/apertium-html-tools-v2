@@ -102,6 +102,16 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                     </Nav.Link>
                   </Nav.Item>
                 )}
+                {Config.enabledModes.has(Mode.Sandbox) && (
+                  <Nav.Item className="p-1" as="li">
+                    <Nav.Link
+                      href={`#${generatePath('/sandbox')}`}
+                      active={pathname == '/sandbox' || (pathname == '/' && Config.defaultMode == Mode.Sandbox)}
+                    >
+                      {t('APy_Sandbox')}
+                    </Nav.Link>
+                  </Nav.Item>
+                )}
               </>
             )}
           </Nav>

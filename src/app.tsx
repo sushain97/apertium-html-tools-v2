@@ -20,14 +20,16 @@ import { DEFAULT_STRINGS, tt, Strings } from './util/localization';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import LocaleSelector from './components/LocaleSelector';
-import Analyzer from './components/Analyzer';
 import Translator from './components/Translator';
+import Analyzer from './components/Analyzer';
 import Generator from './components/Generator';
+import Sandbox from './components/Sandbox';
 
 const Interfaces: Record<Mode, () => React.ReactElement> = {
   [Mode.Translation]: Translator,
   [Mode.Analysis]: Analyzer,
   [Mode.Generation]: Generator,
+  [Mode.Sandbox]: Sandbox,
 };
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
