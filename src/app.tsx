@@ -15,7 +15,7 @@ import { LocaleContext, StringsContext } from './context';
 import { get } from './util/jsonp';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
-import { DEFAULT_STRINGS, tt } from './util/localization';
+import { DEFAULT_STRINGS, tt, Strings } from './util/localization';
 
 import Navbar from './components/navbar';
 import Footer from './components/footer';
@@ -31,28 +31,26 @@ const Interfaces: Record<Mode, () => React.ReactElement> = {
 };
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
-  React.useEffect(() => {
-    (async () => {
-      let locales: Array<string>;
-      try {
-        locales = (await get(`${Config.apyURL}/getLocale`)[1]).data as Array<string>;
-      } catch (error) {
-        console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`);
-        return;
+  (async () => {
+    let locales: Array<string>;
+    try {
+      locales = (await get(`${Config.apyURL}/getLocale`)[1]).data as Array<string>;
+    } catch (error) {
+      console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`);
+      return;
+    }
+
+    for (let localeGuess of locales) {
+      if (localeGuess.indexOf('-') !== -1) {
+        localeGuess = localeGuess.split('-')[0];
       }
 
-      for (let localeGuess of locales) {
-        if (localeGuess.indexOf('-') !== -1) {
-          localeGuess = localeGuess.split('-')[0];
-        }
-
-        const locale = toAlpha3Code(localeGuess);
-        if (locale) {
-          setLocale(locale);
-        }
+      const locale = toAlpha3Code(localeGuess);
+      if (locale) {
+        setLocale(locale);
       }
-    })();
-  }, []);
+    }
+  })();
 };
 
 const App = () => {
@@ -71,15 +69,17 @@ const App = () => {
     },
     urlLocale,
   );
-  if (shouldLoadBrowserLocale) {
-    loadBrowserLocale(setLocale);
-  }
+  React.useEffect(() => {
+    if (shouldLoadBrowserLocale) {
+      loadBrowserLocale(setLocale);
+    }
+  }, [shouldLoadBrowserLocale, setLocale]);
 
   // Fetch strings on locale change.
   const [strings, setStrings] = React.useState({ [Config.defaultLocale]: DEFAULT_STRINGS });
   React.useEffect(() => {
     (async () => {
-      let localeStrings;
+      let localeStrings: Strings;
       try {
         localeStrings = (await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 }))
           .data;
@@ -88,7 +88,7 @@ const App = () => {
         return;
       }
 
-      setStrings({ ...strings, [locale]: localeStrings });
+      setStrings((strings) => ({ ...strings, [locale]: localeStrings }));
     })();
   }, [locale]);
 

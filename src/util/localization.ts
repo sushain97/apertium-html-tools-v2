@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import * as React from 'react';
 
 import Config from '../../config';
 import { LocaleContext, StringsContext } from '../context';
 import { languages, toAlpha2Code } from './languages';
 
-type Strings = {
+export type Strings = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   readonly '@langNames': Record<string, string>;
