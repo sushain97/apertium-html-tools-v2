@@ -28,25 +28,6 @@ const Logo = () => (
   />
 );
 
-const WordMark = () => (
-  <span
-    style={{
-      color: 'gray',
-      display: 'inline-block',
-      fontFamily: `DejaVu Sans','DejaVu Sans Fallback','Arial #000',Arial`,
-      fontSize: '2.25em',
-      fontStyle: 'italic',
-      fontWeight: 'bold',
-      left: '2.25em',
-      marginBottom: '-.25em',
-      top: '.5em',
-      position: 'absolute',
-    }}
-  >
-    Apertium
-  </span>
-);
-
 const TagLine = () => (
   <p
     style={{
@@ -69,7 +50,12 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
         <div>
           <div>
             <Logo />
-            <WordMark />
+            {Config.subtitle && (
+              <span className="apertium-sublogo" style={Config.subtitleColor ? { color: Config.subtitleColor } : {}}>
+                {Config.subtitle}
+              </span>
+            )}
+            <span className="apertium-logo">Apertium</span>
           </div>
           <TagLine />
         </div>
