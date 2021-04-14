@@ -169,6 +169,12 @@ const AnalysisForm = ({
             spellCheck={false}
             value={text}
             onChange={({ target: { value } }) => setText(value)}
+            onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+              if (event.code === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleSubmit();
+              }
+            }}
             placeholder={t('Morphological_Analysis_Help')}
             required
           ></Form.Control>
@@ -193,7 +199,6 @@ const Analyzer = (): React.ReactElement => {
   return (
     <>
       <AnalysisForm setLoading={setLoading} setAnalysis={setAnalysis} setError={setError} />
-      <hr />
       <div
         className={classNames({
           blurred: loading,

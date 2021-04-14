@@ -85,6 +85,12 @@ const GeneratorForm = ({
             spellCheck={false}
             value={text}
             onChange={({ target: { value } }) => setText(value)}
+            onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+              if (event.code === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleSubmit();
+              }
+            }}
             placeholder={t('Morphological_Generation_Help')}
             required
           ></Form.Control>
