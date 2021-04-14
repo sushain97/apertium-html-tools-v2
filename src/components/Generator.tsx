@@ -6,9 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
-import Config from '../../config';
+import { apyFetch } from '../util';
 import { t, tLang } from '../util/localization';
-import { get } from '../util/jsonp';
 import useLocalStorage from '../util/use-local-storage';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,7 +38,7 @@ const GeneratorForm = ({
     (async () => {
       try {
         setLoading(true);
-        const [ref, request] = get(`${Config.apyURL}/generate`, { lang, q: text });
+        const [ref, request] = apyFetch('generate', { lang, q: text });
         generationRef.current = ref;
 
         setGeneration((await request).data as Array<[string, string]>);

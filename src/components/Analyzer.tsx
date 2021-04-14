@@ -7,9 +7,8 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-import Config from '../../config';
+import { apyFetch } from '../util';
 import { t, tLang } from '../util/localization';
-import { get } from '../util/jsonp';
 import useLocalStorage from '../util/use-local-storage';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,7 +122,7 @@ const AnalysisForm = ({
     (async () => {
       try {
         setLoading(true);
-        const [ref, request] = get(`${Config.apyURL}/analyze`, { lang, q: text });
+        const [ref, request] = apyFetch('analyze', { lang, q: text });
         analysisRef.current = ref;
 
         setAnalysis((await request).data as Array<[string, string]>);

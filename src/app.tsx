@@ -12,7 +12,7 @@ import Config from '../config';
 import { Mode } from './types';
 import { LocaleContext, StringsContext } from './context';
 
-import { get } from './util/jsonp';
+import { apyFetch } from './util';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import { DEFAULT_STRINGS, tt, Strings } from './util/localization';
@@ -34,7 +34,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
   (async () => {
     let locales: Array<string>;
     try {
-      locales = (await get(`${Config.apyURL}/getLocale`)[1]).data as Array<string>;
+      locales = (await apyFetch('getLocale')[1]).data as Array<string>;
     } catch (error) {
       console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`);
       return;
