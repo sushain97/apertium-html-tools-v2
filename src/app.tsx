@@ -79,6 +79,10 @@ const App = () => {
   // Fetch strings on locale change.
   const [strings, setStrings] = React.useState({ [Config.defaultLocale]: DEFAULT_STRINGS });
   React.useEffect(() => {
+    if (locale in strings) {
+      return;
+    }
+
     (async () => {
       let localeStrings: Strings;
       try {
@@ -91,7 +95,7 @@ const App = () => {
 
       setStrings((strings) => ({ ...strings, [locale]: localeStrings }));
     })();
-  }, [locale]);
+  }, [locale, strings]);
 
   // Update global strings on locale change.
   React.useEffect(() => {
