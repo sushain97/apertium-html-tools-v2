@@ -1,3 +1,5 @@
+const variantSeperator = '_';
+
 const languages: Readonly<Record<string, string>> = {
   af: 'Afrikaans',
   id: 'Bahasa Indonesia',
@@ -292,24 +294,32 @@ const iso639CodesInverse: Record<string, string> = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
 
 const toAlpha2Code = (code: string): string | null => {
-  if (code in iso639CodesInverse) {
-    return code;
+  const splitCode = code.split(variantSeperator, 2);
+  const parentCode = splitCode[0];
+  const variant = splitCode[1] ? `${variantSeperator}${splitCode[1]}` : '';
+
+  if (parentCode in iso639CodesInverse) {
+    return `${parentCode}${variant}`;
   }
 
-  if (code in iso639Codes) {
-    return iso639Codes[code];
+  if (parentCode in iso639Codes) {
+    return `${iso639Codes[parentCode]}${variant}`;
   }
 
   return null;
 };
 
 const toAlpha3Code = (code: string): string | null => {
-  if (code in iso639Codes) {
-    return code;
+  const splitCode = code.split(variantSeperator, 2);
+  const parentCode = splitCode[0];
+  const variant = splitCode[1] ? `${variantSeperator}${splitCode[1]}` : '';
+
+  if (parentCode in iso639Codes) {
+    return `${parentCode}${variant}`;
   }
 
-  if (code in iso639CodesInverse) {
-    return iso639CodesInverse[code];
+  if (parentCode in iso639CodesInverse) {
+    return `${iso639CodesInverse[parentCode]}${variant}`;
   }
 
   return null;
@@ -319,4 +329,6 @@ const langDirection = (code: string): string => {
   return rtlLanguages.has(code) ? 'rtl' : 'ltr';
 };
 
-export { toAlpha3Code, toAlpha2Code, langDirection, languages };
+const parentLang = (code: string): string => code.split(variantSeperator, 2)[0];
+
+export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, languages };
