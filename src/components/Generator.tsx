@@ -5,13 +5,16 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
-import { apyFetch } from '../util';
+import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;
+
+const langUrlParam = 'gLang';
+const textUrlParam = 'gQ';
 
 const GeneratorForm = ({
   setLoading,
@@ -22,8 +25,16 @@ const GeneratorForm = ({
   setGeneration: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
-  const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0]);
-  const [text, setText] = useLocalStorage('generatorText', '');
+  const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], getUrlParam(langUrlParam));
+  const [text, setText] = useLocalStorage('generatorText', '', getUrlParam(textUrlParam));
+
+  React.useEffect(() => {
+    let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
+    if (newUrl.length > MaxURLLength) {
+      newUrl = buildNewUrl({ [langUrlParam]: lang });
+    }
+    window.history.replaceState({}, document.title, newUrl);
+  }, [lang, text]);
 
   const generationRef = React.useRef<CancelTokenSource | null>(null);
 

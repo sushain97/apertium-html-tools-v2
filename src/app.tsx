@@ -3,7 +3,6 @@ import './app.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as queryString from 'query-string';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import { HashRouter, Route } from 'react-router-dom';
@@ -12,7 +11,7 @@ import Config from '../config';
 import { Mode } from './types';
 import { LocaleContext, StringsContext } from './context';
 
-import { apyFetch } from './util';
+import { apyFetch, getUrlParam } from './util';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import { DEFAULT_STRINGS, tt, Strings } from './util/localization';
@@ -60,8 +59,8 @@ const App = () => {
   // 1. `lang` parameter from URL
   // 2. `locale` key from LocalStorage
   // 3. browser's preferred locale from APy
-  const langParam = queryString.parse(location.search)['lang'];
-  const urlLocale = langParam && toAlpha3Code(langParam instanceof Array ? langParam[0] : langParam)?.replace('/', '');
+  const langParam = getUrlParam('lang');
+  const urlLocale = langParam && toAlpha3Code(langParam)?.replace('/', '');
   let shouldLoadBrowserLocale = false;
   const [locale, setLocale] = useLocalStorage(
     'locale',

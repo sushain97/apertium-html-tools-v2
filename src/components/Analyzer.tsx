@@ -6,13 +6,16 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-import { apyFetch } from '../util';
+import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Analyzers: Readonly<Record<string, string>> = (window as any).ANALYZERS;
+
+const langUrlParam = 'aLang';
+const textUrlParam = 'aQ';
 
 const formatUnit = (unit: string) => {
   const tagRegex = /<([^>]+)>/g,
@@ -106,8 +109,16 @@ const AnalysisForm = ({
   setAnalysis: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
-  const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0]);
-  const [text, setText] = useLocalStorage('analyzerText', '');
+  const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], getUrlParam(langUrlParam));
+  const [text, setText] = useLocalStorage('analyzerText', '', getUrlParam(textUrlParam));
+
+  React.useEffect(() => {
+    let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
+    if (newUrl.length > MaxURLLength) {
+      newUrl = buildNewUrl({ [langUrlParam]: lang });
+    }
+    window.history.replaceState({}, document.title, newUrl);
+  }, [lang, text]);
 
   const analysisRef = React.useRef<CancelTokenSource | null>(null);
 
