@@ -72,8 +72,14 @@ const Translator = (): React.ReactElement => {
   // TODO: Port the complex logic.
   const initialDstLang = Pairs[initialSrcLang].values().next().value;
 
-  const [srcLang, setSrcLang] = useLocalStorage<string>('srcLang', initialSrcLang, urlSrcLang);
-  const [dstLang, setDstLang] = useLocalStorage<string>('dstLang', initialDstLang, urlDstLang);
+  const [srcLang, setSrcLang] = useLocalStorage<string>('srcLang', initialSrcLang, {
+    overrideValue: urlSrcLang,
+    validateValue: (l) => l in Pairs,
+  });
+  const [dstLang, setDstLang] = useLocalStorage<string>('dstLang', initialDstLang, {
+    overrideValue: urlDstLang,
+    validateValue: (l) => Pairs[srcLang].has(l),
+  });
 
   React.useEffect(() => {
     const newUrl = buildNewUrl({ [pairUrlParam]: `${srcLang}-${dstLang}` });

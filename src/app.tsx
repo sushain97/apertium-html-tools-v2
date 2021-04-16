@@ -14,7 +14,7 @@ import { LocaleContext, StringsContext } from './context';
 import { apyFetch, getUrlParam } from './util';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
-import { DEFAULT_STRINGS, tt, Strings } from './util/localization';
+import { DEFAULT_STRINGS, tt, Strings, validLocale } from './util/localization';
 
 import Navbar from './components/navbar';
 import Footer from './components/footer';
@@ -47,7 +47,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
       }
 
       const locale = toAlpha3Code(localeGuess);
-      if (locale) {
+      if (validLocale(locale)) {
         setLocale(locale);
       }
     }
@@ -60,7 +60,7 @@ const App = () => {
   // 2. `locale` key from LocalStorage
   // 3. browser's preferred locale from APy
   const langParam = getUrlParam('lang');
-  const urlLocale = langParam && toAlpha3Code(langParam)?.replace('/', '');
+  const urlLocale = toAlpha3Code(langParam)?.replace('/', '');
   let shouldLoadBrowserLocale = false;
   const [locale, setLocale] = useLocalStorage(
     'locale',
@@ -68,7 +68,7 @@ const App = () => {
       shouldLoadBrowserLocale = true;
       return Config.defaultLocale;
     },
-    urlLocale,
+    { overrideValue: urlLocale, validateValue: validLocale },
   );
   React.useEffect(() => {
     if (shouldLoadBrowserLocale) {

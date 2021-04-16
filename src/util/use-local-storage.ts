@@ -14,10 +14,16 @@ const storeValue = <T>(key: string, value: T) => {
 export default <T>(
   key: string,
   initialValue: T | (() => T),
-  overrideValue?: T | null,
+  options?: {
+    overrideValue?: T | null;
+    validateValue?: (value: T) => boolean;
+  },
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  const { overrideValue, validateValue } = options || {};
+  const validateValueFinal = validateValue || (() => true);
+
   const [stateValue, setStateValue] = React.useState<T>(() => {
-    if (overrideValue) {
+    if (overrideValue && validateValueFinal(overrideValue)) {
       storeValue(key, overrideValue);
       return overrideValue;
     }
@@ -25,7 +31,10 @@ export default <T>(
     try {
       const item = window.localStorage.getItem(key);
       if (item) {
-        return JSON.parse(item);
+        const parsedItem = JSON.parse(item);
+        if (validateValueFinal(parsedItem)) {
+          return parsedItem;
+        }
       }
     } catch (error) {
       console.warn(`Failed to parse LocalStorage[${key}]: ${error}`);

@@ -4,7 +4,8 @@ import * as React from 'react';
 
 import Config from '../../config';
 import { LocaleContext, StringsContext } from '../context';
-import { languages, toAlpha2Code } from './languages';
+import { languages, toAlpha2Code, toAlpha3Code } from './languages';
+import locales from '../strings/locales.json';
 
 export type Strings = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -58,4 +59,9 @@ const tt = (id: string, locale: string, strings: Record<string, Strings>): strin
   return (localeStrings ? localeStrings[id] : undefined) || DEFAULT_STRINGS[id] || id;
 };
 
-export { t, tt, tLang, DEFAULT_STRINGS };
+const validLocale = (code: string): boolean => {
+  const alpha3Code = toAlpha3Code(code);
+  return alpha3Code != null && alpha3Code in locales;
+};
+
+export { t, tt, tLang, validLocale, DEFAULT_STRINGS };

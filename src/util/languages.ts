@@ -293,7 +293,13 @@ const rtlLanguages = new Set(['heb', 'ara', 'pes', 'urd', 'uig']);
 const iso639CodesInverse: Record<string, string> = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
 
-const toAlpha2Code = (code: string): string | null => {
+function toAlpha2Code(code: string): string;
+function toAlpha2Code(code: string | null): string | null;
+function toAlpha2Code(code: string | null): string | null {
+  if (!code) {
+    return code;
+  }
+
   const splitCode = code.split(variantSeperator, 2);
   const parentCode = splitCode[0];
   const variant = splitCode[1] ? `${variantSeperator}${splitCode[1]}` : '';
@@ -307,9 +313,15 @@ const toAlpha2Code = (code: string): string | null => {
   }
 
   return null;
-};
+}
 
-const toAlpha3Code = (code: string): string | null => {
+function toAlpha3Code(code: string): string;
+function toAlpha3Code(code: string | null): string | null;
+function toAlpha3Code(code: string | null): string | null {
+  if (!code) {
+    return code;
+  }
+
   const splitCode = code.split(variantSeperator, 2);
   const parentCode = splitCode[0];
   const variant = splitCode[1] ? `${variantSeperator}${splitCode[1]}` : '';
@@ -323,7 +335,7 @@ const toAlpha3Code = (code: string): string | null => {
   }
 
   return null;
-};
+}
 
 const langDirection = (code: string): string => {
   return rtlLanguages.has(code) ? 'rtl' : 'ltr';

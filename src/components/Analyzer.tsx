@@ -109,8 +109,11 @@ const AnalysisForm = ({
   setAnalysis: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
-  const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], getUrlParam(langUrlParam));
-  const [text, setText] = useLocalStorage('analyzerText', '', getUrlParam(textUrlParam));
+  const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], {
+    overrideValue: getUrlParam(langUrlParam),
+    validateValue: (l) => l in Analyzers,
+  });
+  const [text, setText] = useLocalStorage('analyzerText', '', { overrideValue: getUrlParam(textUrlParam) });
 
   React.useEffect(() => {
     let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });

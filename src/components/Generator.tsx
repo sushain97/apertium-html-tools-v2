@@ -9,6 +9,7 @@ import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
+import { toAlpha3Code } from '../util/languages';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;
@@ -25,8 +26,11 @@ const GeneratorForm = ({
   setGeneration: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
-  const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], getUrlParam(langUrlParam));
-  const [text, setText] = useLocalStorage('generatorText', '', getUrlParam(textUrlParam));
+  const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], {
+    overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
+    validateValue: (l) => l in Generators,
+  });
+  const [text, setText] = useLocalStorage('generatorText', '', { overrideValue: getUrlParam(textUrlParam) });
 
   React.useEffect(() => {
     let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
