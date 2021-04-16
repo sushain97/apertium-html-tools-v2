@@ -1,0 +1,11 @@
+.language-dropdown-button > button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.language-button:disabled {
+  color: #808080;
+  background-color: #474949;
+  border-color: #474949;
+  opacity: 1;
+}

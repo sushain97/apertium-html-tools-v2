@@ -19,7 +19,7 @@ import { DEFAULT_STRINGS, tt, Strings, validLocale } from './util/localization';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import LocaleSelector from './components/LocaleSelector';
-import Translator from './components/Translator';
+import Translator from './components/translator';
 import Analyzer from './components/Analyzer';
 import Generator from './components/Generator';
 import Sandbox from './components/Sandbox';
