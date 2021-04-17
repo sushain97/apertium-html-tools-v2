@@ -17,6 +17,7 @@ const LanguageSelector = ({
   setDstLang,
   recentSrcLangs,
   recentDstLangs,
+  onTranslate,
 }: {
   srcLang: string;
   setSrcLang: React.Dispatch<React.SetStateAction<string>>;
@@ -24,6 +25,7 @@ const LanguageSelector = ({
   setDstLang: React.Dispatch<React.SetStateAction<string>>;
   recentSrcLangs: Array<string>;
   recentDstLangs: Array<string>;
+  onTranslate: () => void;
 }): React.ReactElement => {
   return (
     <form>
@@ -86,7 +88,7 @@ const LanguageSelector = ({
               className="language-dropdown-button"
             ></DropdownButton>
           </ButtonGroup>
-          <Button type="button" size="sm">
+          <Button type="button" size="sm" onClick={onTranslate}>
             {t('Translate')}
           </Button>
         </Col>

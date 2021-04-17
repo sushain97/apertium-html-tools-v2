@@ -1,7 +1,9 @@
 import './translator.css';
 
 import * as React from 'react';
+import axios, { CancelTokenSource } from 'axios';
 
+import { apyFetch } from '../../util';
 import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import useLocalStorage from '../../util/use-local-storage';
@@ -128,6 +130,7 @@ const Translator = (): React.ReactElement => {
   );
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
+  const [dstText, setDstText] = React.useState('');
 
   React.useEffect(() => {
     const pair = `${srcLang}-${dstLang}`;
@@ -138,6 +141,39 @@ const Translator = (): React.ReactElement => {
     window.history.replaceState({}, document.title, newUrl);
   }, [srcLang, dstLang, srcText]);
 
+  const [error, setError] = React.useState(false);
+  const translationRef = React.useRef<CancelTokenSource | null>(null);
+
+  const onTranslate = async () => {
+    if (srcText.trim().length == 0) {
+      return;
+    }
+
+    translationRef.current?.cancel();
+    translationRef.current = null;
+
+    const [ref, request] = apyFetch('translate', {
+      q: srcText,
+      langpair: `${srcLang}${dstLang}`,
+    });
+    translationRef.current = ref;
+
+    try {
+      const response = (await request).data as {
+        responseData: { translatedText: string };
+        responseDetails: unknown;
+        responseStatus: number;
+      };
+      setDstText(response.responseData.translatedText);
+      setError(false);
+    } catch (error) {
+      if (!axios.isCancel(error)) {
+        console.warn('Translation failed', error);
+        setError(true);
+      }
+    }
+  };
+
   return (
     <>
       <LanguageSelector
@@ -147,8 +183,16 @@ const Translator = (): React.ReactElement => {
         dstLang={dstLang}
         setDstLang={setDstLang}
         recentDstLangs={recentDstLangs}
+        onTranslate={onTranslate}
       />
-      <TextTranslationForm srcLang={srcLang} dstLang={dstLang} srcText={srcText} setSrcText={setSrcText} />
+      <TextTranslationForm
+        srcLang={srcLang}
+        dstLang={dstLang}
+        srcText={srcText}
+        dstText={dstText}
+        dstTextError={error}
+        setSrcText={setSrcText}
+      />
     </>
   );
 };
