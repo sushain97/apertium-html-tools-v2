@@ -39,6 +39,7 @@ const TextTranslationForm = ({
           value={srcText}
           onChange={({ target: { value } }) => setSrcText(value)}
           ref={srcTextareaRef}
+          className="mb-2"
         />
         <Button
           className="position-absolute clear-text-button"
@@ -54,7 +55,7 @@ const TextTranslationForm = ({
       <Col xs="12" md="6">
         <Form.Control
           as="textarea"
-          className={classNames('bg-light', { 'text-danger': dstTextError })}
+          className={classNames('bg-light mb-2', { 'text-danger': dstTextError })}
           spellCheck={false}
           rows={15}
           dir={langDirection(dstLang)}

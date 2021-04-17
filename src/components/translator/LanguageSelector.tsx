@@ -37,6 +37,7 @@ const LanguageSelector = ({
             value={srcLang}
             className="d-inline-block mb-2 mr-2"
             style={{ maxWidth: '60%' }}
+            onChange={({ target: { value } }) => setSrcLang(value)}
           >
             {Object.keys(Pairs)
               .map((code) => [code, tLang(code)])
@@ -52,19 +53,32 @@ const LanguageSelector = ({
           <Button type="button" variant="secondary" size="sm" className="mb-2">
             <FontAwesomeIcon icon={faExchangeAlt} />
           </Button>
-          <Form.Control as="select" size="sm" value={dstLang} className="d-inline-block" style={{ maxWidth: '60%' }}>
+          <Form.Control
+            as="select"
+            size="sm"
+            value={dstLang}
+            className="d-inline-block"
+            style={{ maxWidth: '60%' }}
+            onChange={({ target: { value } }) => setDstLang(value)}
+          >
             {[...new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))))]
               .map((code) => [code, tLang(code)])
               .sort(([, a], [, b]) => {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
               })
               .map(([code, name]) => (
-                <option key={code} value={code} disabled={Pairs[srcLang].has(code)}>
+                <option key={code} value={code} disabled={!Pairs[srcLang].has(code)}>
                   {name}
                 </option>
               ))}
           </Form.Control>
-          <Button type="button" variant="primary" size="sm" className="btn-sm translateBtn ml-auto">
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            className="btn-sm translateBtn ml-auto"
+            onClick={onTranslate}
+          >
             {t('Translate')}
           </Button>
         </div>

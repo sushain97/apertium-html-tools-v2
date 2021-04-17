@@ -160,7 +160,7 @@ const Translator = (): React.ReactElement => {
 
     const [ref, request] = apyFetch('translate', {
       q: srcText,
-      langpair: `${srcLang}${dstLang}`,
+      langpair: `${srcLang}|${dstLang}`,
     });
     translationRef.current = ref;
 
