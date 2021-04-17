@@ -27,6 +27,11 @@ const LanguageSelector = ({
   recentDstLangs: Array<string>;
   onTranslate: () => void;
 }): React.ReactElement => {
+  const swapLangs = () => {
+    setSrcLang(dstLang);
+    setDstLang(srcLang);
+  };
+
   return (
     <form>
       <Form.Group className="d-flex d-md-none flex-column">
@@ -50,7 +55,7 @@ const LanguageSelector = ({
                 </option>
               ))}
           </Form.Control>
-          <Button type="button" variant="secondary" size="sm" className="mb-2">
+          <Button type="button" variant="secondary" size="sm" className="mb-2" onClick={swapLangs}>
             <FontAwesomeIcon icon={faExchangeAlt} />
           </Button>
           <Form.Control
@@ -112,7 +117,7 @@ const LanguageSelector = ({
               className="language-dropdown-button"
             ></DropdownButton>
           </ButtonGroup>
-          <Button type="button" variant="secondary" size="sm">
+          <Button type="button" variant="secondary" size="sm" onClick={swapLangs}>
             <FontAwesomeIcon icon={faExchangeAlt} />
           </Button>
         </Col>
