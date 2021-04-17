@@ -129,16 +129,16 @@ const Translator = (): React.ReactElement => {
     }
 
     // Unless currently selected destination language works.
-    if (!isPair(srcLang, dstLang)) {
+    if (!isPair(lang, dstLang)) {
       // Prefer a recently selected destination language.
       for (const recentDstLang of recentDstLangs) {
-        if (isPair(srcLang, recentDstLang)) {
+        if (isPair(lang, recentDstLang)) {
           return setDstLang(recentDstLang);
         }
       }
 
       // Otherwise, pick the first possible destination language.
-      setDstLang((Pairs[srcLang] || new Set()).values().next().value);
+      setDstLang((Pairs[lang] || new Set()).values().next().value);
     }
   };
 
