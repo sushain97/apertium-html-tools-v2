@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import Button from 'react-bootstrap/esm/Button';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -29,45 +29,43 @@ const TextTranslationForm = ({
   const notAvailableText = t('Not_Available');
 
   return (
-    <Form.Group>
-      <Row>
-        <Col xs="12" md="6">
-          <Form.Control
-            as="textarea"
-            spellCheck={false}
-            rows={15}
-            dir={langDirection(srcLang)}
-            value={srcText}
-            onChange={({ target: { value } }) => setSrcText(value)}
-            ref={srcTextareaRef}
-          />
-          <Button
-            className="position-absolute clear-text-button"
-            variant="muted"
-            onClick={() => {
-              setSrcText('');
-              srcTextareaRef.current?.focus();
-            }}
-          >
-            <FontAwesomeIcon icon={faTimes} fixedWidth />
-          </Button>
-        </Col>
-        <Col xs="12" md="6">
-          <Form.Control
-            as="textarea"
-            className={classNames('bg-light', { 'text-danger': dstTextError })}
-            spellCheck={false}
-            rows={15}
-            dir={langDirection(dstLang)}
-            value={dstTextError ? notAvailableText : dstText}
-            readOnly
-          />
-          <Button className="position-absolute copy-text-button" variant="muted">
-            <FontAwesomeIcon icon={faCopy} fixedWidth />
-          </Button>
-        </Col>
-      </Row>
-    </Form.Group>
+    <Row>
+      <Col xs="12" md="6">
+        <Form.Control
+          as="textarea"
+          spellCheck={false}
+          rows={15}
+          dir={langDirection(srcLang)}
+          value={srcText}
+          onChange={({ target: { value } }) => setSrcText(value)}
+          ref={srcTextareaRef}
+        />
+        <Button
+          className="position-absolute clear-text-button"
+          variant="muted"
+          onClick={() => {
+            setSrcText('');
+            srcTextareaRef.current?.focus();
+          }}
+        >
+          <FontAwesomeIcon icon={faTimes} fixedWidth />
+        </Button>
+      </Col>
+      <Col xs="12" md="6">
+        <Form.Control
+          as="textarea"
+          className={classNames('bg-light', { 'text-danger': dstTextError })}
+          spellCheck={false}
+          rows={15}
+          dir={langDirection(dstLang)}
+          value={dstTextError ? notAvailableText : dstText}
+          readOnly
+        />
+        <Button className="position-absolute copy-text-button" variant="muted">
+          <FontAwesomeIcon icon={faCopy} fixedWidth />
+        </Button>
+      </Col>
+    </Row>
   );
 };
 

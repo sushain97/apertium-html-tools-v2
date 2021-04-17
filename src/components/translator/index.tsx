@@ -2,11 +2,17 @@ import './translator.css';
 
 import * as React from 'react';
 import axios, { CancelTokenSource } from 'axios';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLink, faFile } from '@fortawesome/free-solid-svg-icons';
 
 import { apyFetch } from '../../util';
 import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import useLocalStorage from '../../util/use-local-storage';
+import { t } from '../../util/localization';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 
@@ -193,6 +199,16 @@ const Translator = (): React.ReactElement => {
         dstTextError={error}
         setSrcText={setSrcText}
       />
+      <Row className="mt-2 mb-3">
+        <Col xs="12" md="6" className="d-flex d-sm-block flex-wrap">
+          <Button variant="secondary" className="mt-3" style={{ marginRight: '5px' }}>
+            <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
+          </Button>
+          <Button variant="secondary" className="mt-3">
+            <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
+          </Button>
+        </Col>
+      </Row>
     </>
   );
 };
