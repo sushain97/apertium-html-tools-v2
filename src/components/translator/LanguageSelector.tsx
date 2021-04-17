@@ -51,11 +51,11 @@ const MobileLanguageSelector = ({
       <div className="d-flex flex-wrap">
         <Form.Control
           as="select"
-          size="sm"
-          value={srcLang}
           className="d-inline-block mb-2 mr-2"
-          style={{ maxWidth: '60%' }}
           onChange={({ target: { value } }) => setSrcLang(value)}
+          size="sm"
+          style={{ maxWidth: '60%' }}
+          value={srcLang}
         >
           {srcLangs.map(([code, name]) => (
             <option key={code} value={code}>
@@ -63,24 +63,24 @@ const MobileLanguageSelector = ({
             </option>
           ))}
         </Form.Control>
-        <Button type="button" variant="secondary" size="sm" className="mb-2" onClick={swapLangs} disabled={!swapLangs}>
+        <Button className="mb-2" disabled={!swapLangs} onClick={swapLangs} size="sm" type="button" variant="secondary">
           <FontAwesomeIcon icon={faExchangeAlt} />
         </Button>
         <Form.Control
           as="select"
-          size="sm"
-          value={dstLang}
           className="d-inline-block"
-          style={{ maxWidth: '60%' }}
           onChange={({ target: { value } }) => setDstLang(value)}
+          size="sm"
+          style={{ maxWidth: '60%' }}
+          value={dstLang}
         >
           {dstLangs.map(([code, name]) => (
-            <option key={code} value={code} disabled={!Pairs[srcLang].has(code)}>
+            <option disabled={!Pairs[srcLang].has(code)} key={code} value={code}>
               {name}
             </option>
           ))}
         </Form.Control>
-        <Button type="button" variant="primary" size="sm" className="btn-sm translateBtn ml-auto" onClick={onTranslate}>
+        <Button className="btn-sm translateBtn ml-auto" onClick={onTranslate} size="sm" type="button" variant="primary">
           {t('Translate')}
         </Button>
       </div>
@@ -184,8 +184,8 @@ const DesktopLanguageSelector = ({
       const [code, name] = srcLangs[j];
       srcLangElems.push(
         <div
-          key={code}
           className={classNames('language-name', { 'variant-language-name': isVariant(code) })}
+          key={code}
           onClick={() => {
             setSrcLang(code);
             document.body.click();
@@ -196,7 +196,7 @@ const DesktopLanguageSelector = ({
       );
     }
     srcLangCols.push(
-      <div key={i} className="language-name-col" style={{ width: `${100.0 / numSrcCols}%` }}>
+      <div className="language-name-col" key={i} style={{ width: `${100.0 / numSrcCols}%` }}>
         {srcLangElems}
       </div>,
     );
@@ -211,11 +211,11 @@ const DesktopLanguageSelector = ({
       const valid = Pairs[srcLang].has(code);
       dstLangElems.push(
         <div
-          key={code}
           className={classNames('language-name', {
             'variant-language-name': isVariant(code),
             'text-muted': !valid,
           })}
+          key={code}
           onClick={
             valid
               ? () => {
@@ -230,7 +230,7 @@ const DesktopLanguageSelector = ({
       );
     }
     dstLangCols.push(
-      <div key={i} className="language-name-col" style={{ width: `${100.0 / numDstCols}%` }}>
+      <div className="language-name-col" key={i} style={{ width: `${100.0 / numDstCols}%` }}>
         {dstLangElems}
       </div>,
     );
@@ -238,76 +238,76 @@ const DesktopLanguageSelector = ({
 
   return (
     <Form.Group className="row d-none d-md-block">
-      <Col xs="6" className="d-inline-flex align-items-start justify-content-between">
+      <Col className="d-inline-flex align-items-start justify-content-between" xs="6">
         <ButtonGroup className="d-flex flex-wrap pl-0">
           {recentSrcLangs.map((lang) => (
             <Button
-              key={lang}
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="language-button"
               active={lang === srcLang}
+              className="language-button"
+              key={lang}
               onClick={({ currentTarget }) => {
                 setSrcLang(lang);
                 currentTarget.blur();
               }}
+              size="sm"
+              type="button"
+              variant="secondary"
             >
               {tLang(lang)}
             </Button>
           ))}
-          <Button type="button" variant="secondary" size="sm">
+          <Button size="sm" type="button" variant="secondary">
             {t('Detect_Language')}
           </Button>
           <DropdownButton
-            size="sm"
-            variant="secondary"
-            title=""
             className="language-dropdown-button"
             ref={srcLangsDropdownTriggerRef}
+            size="sm"
+            title=""
+            variant="secondary"
           >
             <Row className="d-flex" style={{ minWidth: numSrcCols * langListMinColumnWidth }}>
               {srcLangCols}
             </Row>
           </DropdownButton>
         </ButtonGroup>
-        <Button type="button" variant="secondary" size="sm" onClick={swapLangs} disabled={!swapLangs}>
+        <Button disabled={!swapLangs} onClick={swapLangs} size="sm" type="button" variant="secondary">
           <FontAwesomeIcon icon={faExchangeAlt} />
         </Button>
       </Col>
-      <Col xs="6" className="d-inline-flex align-items-start justify-content-between">
+      <Col className="d-inline-flex align-items-start justify-content-between" xs="6">
         <ButtonGroup className="d-flex flex-wrap pl-0">
           {recentDstLangs.map((lang) => (
             <Button
-              key={lang}
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="language-button"
               active={lang === dstLang}
+              className="language-button"
+              disabled={!Pairs[srcLang].has(lang)}
+              key={lang}
               onClick={({ currentTarget }) => {
                 setDstLang(lang);
                 currentTarget.blur();
               }}
-              disabled={!Pairs[srcLang].has(lang)}
+              size="sm"
+              type="button"
+              variant="secondary"
             >
               {tLang(lang)}
             </Button>
           ))}
           <DropdownButton
-            size="sm"
-            variant="secondary"
-            title=""
-            className="language-dropdown-button"
             alignRight
+            className="language-dropdown-button"
             ref={dstLangsDropdownTriggerRef}
+            size="sm"
+            title=""
+            variant="secondary"
           >
             <Row className="d-flex" style={{ minWidth: numDstCols * langListMinColumnWidth }}>
               {dstLangCols}
             </Row>
           </DropdownButton>
         </ButtonGroup>
-        <Button type="button" size="sm" onClick={onTranslate}>
+        <Button onClick={onTranslate} size="sm" type="button">
           {t('Translate')}
         </Button>
       </Col>

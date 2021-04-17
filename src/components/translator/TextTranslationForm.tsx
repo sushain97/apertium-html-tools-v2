@@ -32,40 +32,40 @@ const TextTranslationForm = ({
 
   return (
     <Row>
-      <Col xs="12" md="6">
+      <Col md="6" xs="12">
         <Form.Control
           as="textarea"
-          spellCheck={false}
-          rows={15}
+          className="mb-2"
           dir={langDirection(srcLang)}
-          value={srcText}
           onChange={({ target: { value } }) => setSrcText(value)}
           ref={srcTextareaRef}
-          className="mb-2"
+          rows={15}
+          spellCheck={false}
+          value={srcText}
         />
         <Button
           className="position-absolute clear-text-button"
-          variant="muted"
           onClick={() => {
             setSrcText('');
             srcTextareaRef.current?.focus();
           }}
+          variant="muted"
         >
-          <FontAwesomeIcon icon={faTimes} fixedWidth />
+          <FontAwesomeIcon fixedWidth icon={faTimes} />
         </Button>
       </Col>
-      <Col xs="12" md="6">
+      <Col md="6" xs="12">
         <Form.Control
           as="textarea"
           className={classNames('bg-light mb-2', { 'text-danger': dstTextError })}
-          spellCheck={false}
-          rows={15}
           dir={langDirection(dstLang)}
-          value={dstTextError ? notAvailableText : dstText}
           readOnly
+          rows={15}
+          spellCheck={false}
+          value={dstTextError ? notAvailableText : dstText}
         />
         <Button className="position-absolute copy-text-button" variant="muted">
-          <FontAwesomeIcon icon={faCopy} fixedWidth />
+          <FontAwesomeIcon fixedWidth icon={faCopy} />
         </Button>
       </Col>
     </Row>

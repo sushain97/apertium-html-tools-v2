@@ -15,27 +15,27 @@ const LocaleSelector = ({
   return (
     <>
       <FontAwesomeIcon
-        icon={faGlobe}
-        size="2x"
-        inverse
         className="float-right pt-2"
+        icon={faGlobe}
+        inverse
+        size="2x"
         style={{ padding: '0 5px 0 0', marginLeft: '0.3em', marginTop: '1px' }}
       ></FontAwesomeIcon>
       <select
-        onChange={({ target: { value } }) => setLocale(value)}
-        value={locale}
         className="float-right mt-2"
+        onChange={({ target: { value } }) => setLocale(value)}
         style={{
           fontSize: '14px',
           height: '25px',
         }}
+        value={locale}
       >
         {Object.entries(locales)
           .sort(([, a], [, b]) => {
             return a.toLowerCase().localeCompare(b.toLowerCase());
           })
           .map(([locale, name]) => (
-            <option value={locale} key={locale}>
+            <option key={locale} value={locale}>
               {name}
             </option>
           ))}

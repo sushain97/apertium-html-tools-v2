@@ -126,10 +126,10 @@ const App = () => {
                 (mode) =>
                   Config.enabledModes.has(mode) && (
                     <Route
-                      key={mode}
-                      exact
-                      path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
                       component={Interfaces[mode]}
+                      exact
+                      key={mode}
+                      path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
                     />
                   ),
               )}
@@ -139,7 +139,7 @@ const App = () => {
             </Container>
             <div ref={pushRef} style={{ height: '60px' }} />
           </div>
-          <Footer wrapRef={wrapRef} pushRef={pushRef} />
+          <Footer pushRef={pushRef} wrapRef={wrapRef} />
         </LocaleContext.Provider>
       </StringsContext.Provider>
     </HashRouter>

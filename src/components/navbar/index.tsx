@@ -14,8 +14,8 @@ import { useLocalization } from '../../util/localization';
 
 const Logo = (): React.ReactElement => (
   <img
-    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     alt="Apertium Box"
+    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     style={{
       backgroundImage: `url(${logo})`,
       backgroundRepeat: 'no-repeat',
@@ -50,7 +50,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
   const { pathname } = useLocation();
 
   return (
-    <BootstrapNavbar bg="dark" variant="dark" expand="md" className="navbar navbar-default mb-4 pt-0">
+    <BootstrapNavbar bg="dark" className="navbar navbar-default mb-4 pt-0" expand="md" variant="dark">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
         <div>
           <div>
@@ -74,44 +74,44 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
         </div>
         <BootstrapNavbar.Toggle></BootstrapNavbar.Toggle>
         <BootstrapNavbar.Collapse>
-          <Nav className="mt-1 ml-auto" as="ul">
+          <Nav as="ul" className="mt-1 ml-auto">
             {Config.enabledModes.size > 1 && (
               <>
                 {Config.enabledModes.has(Mode.Translation) && (
-                  <Nav.Item className="p-1" as="li">
+                  <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      href={`#${generatePath('/translation')}`}
                       active={pathname == '/translation' || (pathname == '/' && Config.defaultMode == Mode.Translation)}
+                      href={`#${generatePath('/translation')}`}
                     >
                       {t('Translation')}
                     </Nav.Link>
                   </Nav.Item>
                 )}
                 {Config.enabledModes.has(Mode.Analysis) && (
-                  <Nav.Item className="p-1" as="li">
+                  <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      href={`#${generatePath('/analysis')}`}
                       active={pathname == '/analysis' || (pathname == '/' && Config.defaultMode == Mode.Analysis)}
+                      href={`#${generatePath('/analysis')}`}
                     >
                       {t('Morphological_Analysis')}
                     </Nav.Link>
                   </Nav.Item>
                 )}
                 {Config.enabledModes.has(Mode.Generation) && (
-                  <Nav.Item className="p-1" as="li">
+                  <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      href={`#${generatePath('/generation')}`}
                       active={pathname == '/generation' || (pathname == '/' && Config.defaultMode == Mode.Generation)}
+                      href={`#${generatePath('/generation')}`}
                     >
                       {t('Morphological_Generation')}
                     </Nav.Link>
                   </Nav.Item>
                 )}
                 {Config.enabledModes.has(Mode.Sandbox) && (
-                  <Nav.Item className="p-1" as="li">
+                  <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      href={`#${generatePath('/sandbox')}`}
                       active={pathname == '/sandbox' || (pathname == '/' && Config.defaultMode == Mode.Sandbox)}
+                      href={`#${generatePath('/sandbox')}`}
                     >
                       {t('APy_Sandbox')}
                     </Nav.Link>

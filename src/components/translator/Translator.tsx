@@ -199,28 +199,28 @@ const Translator = (): React.ReactElement => {
   return (
     <>
       <LanguageSelector
-        srcLang={srcLang}
-        setSrcLang={setSrcLang}
-        recentSrcLangs={recentSrcLangs}
         dstLang={dstLang}
-        setDstLang={setDstLang}
-        recentDstLangs={recentDstLangs}
         onTranslate={onTranslate}
+        recentDstLangs={recentDstLangs}
+        recentSrcLangs={recentSrcLangs}
+        setDstLang={setDstLang}
+        setSrcLang={setSrcLang}
+        srcLang={srcLang}
       />
       <TextTranslationForm
-        srcLang={srcLang}
         dstLang={dstLang}
-        srcText={srcText}
         dstText={dstText}
         dstTextError={error}
         setSrcText={setSrcText}
+        srcLang={srcLang}
+        srcText={srcText}
       />
       <Row className="mt-2 mb-3">
-        <Col xs="12" md="6" className="d-flex d-sm-block flex-wrap">
-          <Button type="button" variant="secondary" className="mt-2" style={{ marginRight: '5px' }}>
+        <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">
+          <Button className="mt-2" style={{ marginRight: '5px' }} type="button" variant="secondary">
             <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
           </Button>
-          <Button type="button" variant="secondary" className="mt-2">
+          <Button className="mt-2" type="button" variant="secondary">
             <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
           </Button>
         </Col>

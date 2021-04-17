@@ -76,10 +76,10 @@ const GeneratorForm = ({
 
   return (
     <Form>
-      <Form.Group controlId="generator-lang" className="row">
+      <Form.Group className="row" controlId="generator-lang">
         <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
         <Col md="3">
-          <Form.Control as="select" value={lang} onChange={({ target: { value } }) => setLang(value)} required>
+          <Form.Control as="select" onChange={({ target: { value } }) => setLang(value)} required value={lang}>
             {Object.keys(Generators)
               .map((code) => [code, tLang(code)])
               .sort(([, a], [, b]) => {
@@ -93,14 +93,12 @@ const GeneratorForm = ({
           </Form.Control>
         </Col>
       </Form.Group>
-      <Form.Group controlId="generator-input" className="row">
+      <Form.Group className="row" controlId="generator-input">
         <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Input_Text')}</Form.Label>
         <Col md="10">
           <Form.Control
             as="textarea"
-            rows={5}
-            spellCheck={false}
-            value={text}
+            dir={langDirection(lang)}
             onChange={({ target: { value } }) => setText(value)}
             onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
               if (event.code === 'Enter' && !event.shiftKey) {
@@ -109,14 +107,16 @@ const GeneratorForm = ({
               }
             }}
             placeholder={t('Morphological_Generation_Help')}
-            dir={langDirection(lang)}
             required
+            rows={5}
+            spellCheck={false}
+            value={text}
           />
         </Col>
       </Form.Group>
       <Form.Group className="row">
-        <Col md="10" className="offset-md-2 col-md-10 offset-lg-1">
-          <Button type="submit" variant="primary" onClick={handleSubmit}>
+        <Col className="offset-md-2 col-md-10 offset-lg-1" md="10">
+          <Button onClick={handleSubmit} type="submit" variant="primary">
             {t('Generate')}
           </Button>
         </Col>
@@ -132,7 +132,7 @@ const Generator = (): React.ReactElement => {
 
   return (
     <>
-      <GeneratorForm setLoading={setLoading} setGeneration={setGeneration} setError={setError} />
+      <GeneratorForm setError={setError} setGeneration={setGeneration} setLoading={setLoading} />
       <hr />
       <div
         className={classNames({

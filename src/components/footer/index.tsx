@@ -58,27 +58,27 @@ const Footer = ({
 
   return (
     <>
-      <div ref={footerRef} className="d-flex flex-column container">
+      <div className="d-flex flex-column container" ref={footerRef}>
         <div className="d-flex flex-column container">
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
-            <Nav variant="pills" as="ul" style={{ cursor: 'pointer' }}>
+            <Nav as="ul" style={{ cursor: 'pointer' }} variant="pills">
               <Nav.Item as="li">
-                <Nav.Link onClick={() => setOpenTab(Tab.About)} className="footer-link">
+                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.About)}>
                   <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <Nav.Link onClick={() => setOpenTab(Tab.Download)} className="footer-link">
+                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Download)}>
                   <FontAwesomeIcon icon={faDownload} /> {t('Download')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <Nav.Link onClick={() => setOpenTab(Tab.Documentation)} className="footer-link">
+                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Documentation)}>
                   <FontAwesomeIcon icon={faBook} /> {t('Documentation')}
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <Nav.Link onClick={() => setOpenTab(Tab.Contact)} className="footer-link">
+                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Contact)}>
                   <FontAwesomeIcon icon={faEnvelope} /> {t('Contact')}
                 </Nav.Link>
               </Nav.Item>
@@ -86,7 +86,7 @@ const Footer = ({
 
             <div className="card d-inline-block bg-light mr-3 mb-4 ml-3 p-2">
               <span>{t('Notice_Mistake')}</span>{' '}
-              <a tabIndex={0} onClick={() => setOpenTab(Tab.About)} style={{ cursor: 'pointer' }}>
+              <a onClick={() => setOpenTab(Tab.About)} style={{ cursor: 'pointer' }} tabIndex={0}>
                 {t('Help_Improve')}
               </a>
             </div>
@@ -94,15 +94,15 @@ const Footer = ({
             <a
               className="text-muted d-none d-lg-block version"
               href="https://github.com/apertium/apertium-html-tools"
-              target="_blank"
               rel="noreferrer"
+              target="_blank"
             >
               <small>{version}</small>
             </a>
           </div>
           <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
             <span>{t('Notice_Mistake')}</span>{' '}
-            <a tabIndex={0} onClick={() => setOpenTab(Tab.About)} role="button" href="#">
+            <a href="#" onClick={() => setOpenTab(Tab.About)} role="button" tabIndex={0}>
               {t('Help_Improve')}
             </a>
           </div>
@@ -110,7 +110,7 @@ const Footer = ({
       </div>
 
       {Object.entries(Tabs).map(([tab, Modal]) => (
-        <Modal key={tab} show={openTab === tab} onHide={() => setOpenTab(undefined)} />
+        <Modal key={tab} onHide={() => setOpenTab(undefined)} show={openTab === tab} />
       ))}
     </>
   );

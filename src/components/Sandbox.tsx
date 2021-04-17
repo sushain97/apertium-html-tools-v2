@@ -64,18 +64,15 @@ const SandboxForm = ({
     <Form>
       <legend>
         <span>{t('APy_Sandbox_Help')}</span>
-        <a href="http://wiki.apertium.org/wiki/Apertium-apy" target="_blank" className="float-right" rel="noreferrer">
+        <a className="float-right" href="http://wiki.apertium.org/wiki/Apertium-apy" rel="noreferrer" target="_blank">
           <abbr title="Apertium API in Python">APy</abbr> <FontAwesomeIcon icon={faQuestionCircle} />
         </a>
       </legend>
-      <Form.Group controlId="sandbox-input" className="row">
+      <Form.Group className="row" controlId="sandbox-input">
         <Form.Label className="col-md-2 col-form-label text-md-right">{t('APy_Request')}</Form.Label>
         <Col md="10">
           <Form.Control
             as="textarea"
-            rows={3}
-            spellCheck={false}
-            value={requestText}
             onChange={({ target: { value } }) => setRequestText(value)}
             onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
               if (event.code === 'Enter' && !event.shiftKey) {
@@ -84,6 +81,9 @@ const SandboxForm = ({
               }
             }}
             required
+            rows={3}
+            spellCheck={false}
+            value={requestText}
           ></Form.Control>
           <div className="form-text text-muted">
             {'e.g. /perWord?lang=en-es&amp;modes=morph+translate+biltrans&amp;q=let+there+be+light'}
@@ -91,8 +91,8 @@ const SandboxForm = ({
         </Col>
       </Form.Group>
       <Form.Group className="row">
-        <Col md="10" className="offset-md-2 col-md-10 offset-lg-1">
-          <Button type="submit" variant="primary" onClick={handleSubmit}>
+        <Col className="offset-md-2 col-md-10 offset-lg-1" md="10">
+          <Button onClick={handleSubmit} type="submit" variant="primary">
             {t('Request')}
           </Button>
         </Col>
@@ -108,7 +108,7 @@ const Sandbox = (): React.ReactElement => {
 
   return (
     <>
-      <SandboxForm setLoading={setLoading} setResult={setResult} setError={setError} />
+      <SandboxForm setError={setError} setLoading={setLoading} setResult={setResult} />
       <hr />
       <div
         className={classNames({

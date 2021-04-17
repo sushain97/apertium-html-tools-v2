@@ -24,19 +24,19 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
       </Modal.Header>
       <Modal.Body>
         <div dangerouslySetInnerHTML={{ __html: t('What_Is_Apertium') }} />
-        <div style={{ paddingBottom: '2em' }} dangerouslySetInnerHTML={{ __html: t('Maintainer') }} />
+        <div dangerouslySetInnerHTML={{ __html: t('Maintainer') }} style={{ paddingBottom: '2em' }} />
 
         <div className="row lead">
           <Col md="6">
             <div className="mx-auto">
-              <a href="https://developers.google.com/open-source/soc/" target="_blank" rel="noreferrer">
+              <a href="https://developers.google.com/open-source/soc/" rel="noreferrer" target="_blank">
                 <img
                   alt="Google Summer of Code"
                   src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg"
                   style={{ height: '2.5em' }}
                 />
               </a>
-              <a href="https://developers.google.com/open-source/gci/" target="_blank" rel="noreferrer">
+              <a href="https://developers.google.com/open-source/gci/" rel="noreferrer" target="_blank">
                 <img
                   alt="Google Code-In"
                   src="https://developers.google.com/open-source/gci/images/logo-icon.png"
@@ -46,44 +46,44 @@ const AboutModal = (props: ModalProps): React.ReactElement => {
             </div>
           </Col>
 
-          <Col md="3" className="text-center">
-            <a href="http://www.bytemark.co.uk/" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="3">
+            <a href="http://www.bytemark.co.uk/" rel="noreferrer" target="_blank">
               <img alt="Bytemark" className="w-100" src={bytemarkLogo} style={{ marginTop: '0.5em' }} />
             </a>
           </Col>
-          <Col md="3" className="text-center">
-            <a href="https://www.github.com/apertium" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="3">
+            <a href="https://www.github.com/apertium" rel="noreferrer" target="_blank">
               <img alt="GitHub" src={githubLogo} style={{ height: '1.5em' }} />
             </a>
           </Col>
         </div>
 
         <div className="row lead">
-          <Col md="6" className="text-center">
-            <a href="http://www.minetur.gob.es/" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="6">
+            <a href="http://www.minetur.gob.es/" rel="noreferrer" target="_blank">
               <img alt="Ministry of Industry, Energy and Tourism" src={mineturLogo} />
             </a>
           </Col>
-          <Col md="6" className="text-center">
-            <a href="http://www.ua.es/" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="6">
+            <a href="http://www.ua.es/" rel="noreferrer" target="_blank">
               <img alt="Universidad de Alicante" src={alicanteLogo} />
             </a>
           </Col>
         </div>
 
         <div className="row">
-          <Col md="4" className="text-center">
-            <a href="http://www.prompsit.com/" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="4">
+            <a href="http://www.prompsit.com/" rel="noreferrer" target="_blank">
               <img alt="Prompsit Language Engineering S.L." src={prompsitLogo} />
             </a>
           </Col>
-          <Col md="4" className="text-center">
-            <a href="http://www10.gencat.net" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="4">
+            <a href="http://www10.gencat.net" rel="noreferrer" target="_blank">
               <img alt="Generalitat de Catalunya" src={catalunyaLogo} />
             </a>
           </Col>
-          <Col md="4" className="text-center">
-            <a href="http://www.mae.ro/" target="_blank" rel="noreferrer">
+          <Col className="text-center" md="4">
+            <a href="http://www.mae.ro/" rel="noreferrer" target="_blank">
               <img alt="ROMÂNIA  Ministerul Afacerilor Externe" src={maeLogo} />
             </a>
           </Col>
