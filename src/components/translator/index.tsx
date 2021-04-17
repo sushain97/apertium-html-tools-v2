@@ -201,10 +201,10 @@ const Translator = (): React.ReactElement => {
       />
       <Row className="mt-2 mb-3">
         <Col xs="12" md="6" className="d-flex d-sm-block flex-wrap">
-          <Button variant="secondary" className="mt-3" style={{ marginRight: '5px' }}>
+          <Button type="button" variant="secondary" className="mt-3" style={{ marginRight: '5px' }}>
             <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
           </Button>
-          <Button variant="secondary" className="mt-3">
+          <Button type="button" variant="secondary" className="mt-3">
             <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
           </Button>
         </Col>

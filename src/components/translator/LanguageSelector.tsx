@@ -29,6 +29,46 @@ const LanguageSelector = ({
 }): React.ReactElement => {
   return (
     <form>
+      <Form.Group className="d-flex d-md-none flex-column">
+        <div className="d-flex flex-wrap">
+          <Form.Control
+            as="select"
+            size="sm"
+            value={srcLang}
+            className="d-inline-block mb-2 mr-2"
+            style={{ maxWidth: '60%' }}
+          >
+            {Object.keys(Pairs)
+              .map((code) => [code, tLang(code)])
+              .sort(([, a], [, b]) => {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+              })
+              .map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+          </Form.Control>
+          <Button type="button" variant="secondary" size="sm" className="mb-2">
+            <FontAwesomeIcon icon={faExchangeAlt} />
+          </Button>
+          <Form.Control as="select" size="sm" value={dstLang} className="d-inline-block" style={{ maxWidth: '60%' }}>
+            {[...new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))))]
+              .map((code) => [code, tLang(code)])
+              .sort(([, a], [, b]) => {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+              })
+              .map(([code, name]) => (
+                <option key={code} value={code} disabled={Pairs[srcLang].has(code)}>
+                  {name}
+                </option>
+              ))}
+          </Form.Control>
+          <Button type="button" variant="primary" size="sm" className="btn-sm translateBtn ml-auto">
+            {t('Translate')}
+          </Button>
+        </div>
+      </Form.Group>
       <Form.Group className="row d-none d-md-block">
         <Col xs="6" className="d-inline-flex align-items-start justify-content-between">
           <ButtonGroup className="d-flex flex-wrap pl-0">
