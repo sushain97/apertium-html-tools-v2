@@ -82,11 +82,11 @@ const Translator = (): React.ReactElement => {
     }
   }
 
-  const [srcLang, setSrcLang] = useLocalStorage<string>('srcLang', defaultSrcLang, {
+  const [srcLang, realSetSrcLang] = useLocalStorage<string>('srcLang', defaultSrcLang, {
     overrideValue: urlSrcLang,
     validateValue: (l) => l in Pairs,
   });
-  const [dstLang, setDstLang] = useLocalStorage<string>('dstLang', () => Pairs[srcLang].values().next().value, {
+  const [dstLang, realSetDstLang] = useLocalStorage<string>('dstLang', () => Pairs[srcLang].values().next().value, {
     overrideValue: urlDstLang,
     validateValue: (l) => Pairs[srcLang].has(l),
   });
@@ -99,7 +99,9 @@ const Translator = (): React.ReactElement => {
         if (langs.length == recentLangsCount) {
           break;
         }
-        langs.push(lang);
+        if (!langs.includes(lang)) {
+          langs.push(lang);
+        }
       }
       return langs;
     },
@@ -110,12 +112,14 @@ const Translator = (): React.ReactElement => {
   const [recentDstLangs, setRecentDstLangs] = useLocalStorage<Array<string>>(
     'recentDstLangs',
     () => {
-      const langs = [];
+      const langs = [dstLang];
       for (const lang of Pairs[srcLang].values()) {
         if (langs.length == recentLangsCount) {
           break;
         }
-        langs.push(lang);
+        if (!langs.includes(lang)) {
+          langs.push(lang);
+        }
       }
       for (const [, dstLangs] of Object.entries(Pairs)) {
         for (const lang of dstLangs) {
@@ -134,6 +138,20 @@ const Translator = (): React.ReactElement => {
         ls.length == recentLangsCount && ls.some((l) => Pairs[srcLang].has(l)) && ls.includes(dstLang),
     },
   );
+
+  const setSrcLang = (lang: string) => {
+    realSetSrcLang(lang);
+    if (!recentSrcLangs.includes(lang)) {
+      setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
+    }
+  };
+
+  const setDstLang = (lang: string) => {
+    realSetDstLang(lang);
+    if (!recentDstLangs.includes(lang)) {
+      setRecentDstLangs([lang, ...recentDstLangs].slice(0, recentLangsCount));
+    }
+  };
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
   const [dstText, setDstText] = React.useState('');

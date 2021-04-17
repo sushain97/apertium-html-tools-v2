@@ -20,9 +20,9 @@ const LanguageSelector = ({
   onTranslate,
 }: {
   srcLang: string;
-  setSrcLang: React.Dispatch<React.SetStateAction<string>>;
+  setSrcLang: (code: string) => void;
   dstLang: string;
-  setDstLang: React.Dispatch<React.SetStateAction<string>>;
+  setDstLang: (code: string) => void;
   recentSrcLangs: Array<string>;
   recentDstLangs: Array<string>;
   onTranslate: () => void;
