@@ -19,6 +19,8 @@ const TextTranslationForm = ({
   srcText: string;
   setSrcText: React.Dispatch<React.SetStateAction<string>>;
 }): React.ReactElement => {
+  const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
+
   return (
     <Form.Group>
       <Row>
@@ -30,8 +32,16 @@ const TextTranslationForm = ({
             dir={langDirection(srcLang)}
             value={srcText}
             onChange={({ target: { value } }) => setSrcText(value)}
+            ref={srcTextareaRef}
           />
-          <Button className="position-absolute clear-text-button" onClick={() => setSrcText('')}>
+          <Button
+            className="position-absolute clear-text-button"
+            variant="muted"
+            onClick={() => {
+              setSrcText('');
+              srcTextareaRef.current?.focus();
+            }}
+          >
             <FontAwesomeIcon icon={faTimes} fixedWidth />
           </Button>
         </Col>
@@ -44,7 +54,7 @@ const TextTranslationForm = ({
             dir={langDirection(dstLang)}
             readOnly
           />
-          <Button className="position-absolute copy-text-button">
+          <Button className="position-absolute copy-text-button" variant="muted">
             <FontAwesomeIcon icon={faCopy} fixedWidth />
           </Button>
         </Col>
