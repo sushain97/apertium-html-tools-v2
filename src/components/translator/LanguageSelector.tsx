@@ -10,9 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { t, tLang } from '../../util/localization';
-import { langDirection, isVariant } from '../../util/languages';
+import { langDirection, isVariant, toAlpha2Code, variantSeperator } from '../../util/languages';
 import { LocaleContext } from '../../context';
-import { Pairs, SrcLangs, DstLangs } from '.';
+import { Pairs, SrcLangs, DstLangs, isPair } from '.';
 
 type Props = {
   srcLang: string;
@@ -25,8 +25,8 @@ type Props = {
 };
 
 const langListIdealRows = 12,
-  langListMaxWidths = 800,
-  langListMaxColumns = 5,
+  langListMaxWidths = 850,
+  langListMaxColumns = 6,
   langListsBuffer = 50;
 const langListMinColumnWidth = langListMaxWidths / langListMaxColumns;
 
@@ -316,19 +316,40 @@ const DesktopLanguageSelector = ({
 const LanguageSelector = (props: Props): React.ReactElement => {
   const { srcLang, setSrcLang, dstLang, setDstLang } = props;
 
-  const swapLangs =
-    Pairs[dstLang] && Pairs[dstLang].has(srcLang)
-      ? () => {
-          setSrcLang(dstLang);
-          setDstLang(srcLang);
-        }
-      : undefined;
+  const swapLangs = isPair(dstLang, srcLang)
+    ? () => {
+        setSrcLang(dstLang);
+        setDstLang(srcLang);
+      }
+    : undefined;
+
+  const locale = React.useContext(LocaleContext);
+  let sortLocale: string | undefined = toAlpha2Code(locale);
+  try {
+    'a'.localeCompare('b', sortLocale);
+  } catch (e) {
+    sortLocale = undefined;
+  }
+
+  const compareLangCodes = (a: string, b: string): number => {
+    const aVariant = a.split(variantSeperator, 2),
+      bVariant = b.split(variantSeperator, 2);
+    const directCompare = tLang(aVariant[0]).localeCompare(tLang(bVariant[0]), sortLocale);
+
+    if (aVariant[1] && bVariant[1] && aVariant[0] === bVariant[0]) {
+      return directCompare;
+    } else if (aVariant[1] && aVariant[0] === b) {
+      return 1;
+    } else if (bVariant[1] && bVariant[0] === a) {
+      return -1;
+    } else {
+      return directCompare;
+    }
+  };
 
   const srcLangs: Array<[string, string]> = [...SrcLangs]
-    .map((code) => [code, tLang(code)])
-    .sort(([, a], [, b]) => {
-      return a.toLowerCase().localeCompare(b.toLowerCase());
-    }) as Array<[string, string]>;
+    .sort(compareLangCodes)
+    .map((code) => [code, tLang(code)]) as Array<[string, string]>;
   const dstLangs: Array<[string, string]> = [...DstLangs]
     .map((code) => [code, tLang(code)])
     .sort(([, a], [, b]) => {

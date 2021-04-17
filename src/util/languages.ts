@@ -345,4 +345,4 @@ const parentLang = (code: string): string => code.split(variantSeperator, 2)[0];
 
 const isVariant = (code: string): boolean => code.includes(variantSeperator);
 
-export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, isVariant, languages };
+export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, isVariant, variantSeperator, languages };

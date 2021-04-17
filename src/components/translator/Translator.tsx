@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLink, faFile } from '@fortawesome/free-solid-svg-icons';
 
+import { Pairs, SrcLangs, DstLangs, isPair } from '.';
 import { apyFetch } from '../../util';
 import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
@@ -15,18 +16,6 @@ import useLocalStorage from '../../util/use-local-storage';
 import { t } from '../../util/localization';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Pairs: Readonly<Record<string, Set<string>>> = ((window as any).PAIRS as Array<{
-  sourceLanguage: string;
-  targetLanguage: string;
-}>).reduce((pairs, { sourceLanguage, targetLanguage }) => {
-  pairs[sourceLanguage] = pairs[sourceLanguage] || new Set();
-  pairs[sourceLanguage].add(targetLanguage);
-  return pairs;
-}, {} as Record<string, Set<string>>);
-export const SrcLangs = new Set(Object.keys(Pairs));
-export const DstLangs = new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))));
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';
@@ -78,7 +67,7 @@ const Translator = (): React.ReactElement => {
   const urlParamPair = getUrlParam(pairUrlParam);
   if (urlParamPair) {
     const [src, dst] = urlParamPair.split('-', 2).map(toAlpha3Code);
-    if (src && dst && Pairs[src]?.has(dst)) {
+    if (src && dst && isPair(src, dst)) {
       urlSrcLang = src;
       urlDstLang = dst;
     }
@@ -129,7 +118,7 @@ const Translator = (): React.ReactElement => {
     },
     {
       validateValue: (ls) =>
-        ls.length == recentLangsCount && ls.some((l) => Pairs[srcLang].has(l)) && ls.includes(dstLang),
+        ls.length == recentLangsCount && ls.some((l) => isPair(srcLang, l)) && ls.includes(dstLang),
     },
   );
 
@@ -140,17 +129,16 @@ const Translator = (): React.ReactElement => {
     }
 
     // Unless currently selected destination language works.
-    const possibleDstLangs = Pairs[lang];
-    if (!possibleDstLangs.has(dstLang)) {
+    if (!isPair(srcLang, dstLang)) {
       // Prefer a recently selected destination language.
       for (const recentDstLang of recentDstLangs) {
-        if (possibleDstLangs.has(recentDstLang)) {
+        if (isPair(srcLang, recentDstLang)) {
           return setDstLang(recentDstLang);
         }
       }
 
       // Otherwise, pick the first possible destination language.
-      setDstLang(possibleDstLangs.values().next().value);
+      setDstLang((Pairs[srcLang] || new Set()).values().next().value);
     }
   };
 
