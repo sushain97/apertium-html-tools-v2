@@ -9,6 +9,7 @@ import Table from 'react-bootstrap/Table';
 import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
+import { toAlpha3Code, langDirection } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,7 +111,7 @@ const AnalysisForm = ({
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], {
-    overrideValue: getUrlParam(langUrlParam),
+    overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
     validateValue: (l) => l in Analyzers,
   });
   const [text, setText] = useLocalStorage('analyzerText', '', { overrideValue: getUrlParam(textUrlParam) });
@@ -189,8 +190,9 @@ const AnalysisForm = ({
               }
             }}
             placeholder={t('Morphological_Analysis_Help')}
+            dir={langDirection(lang)}
             required
-          ></Form.Control>
+          />
         </Col>
       </Form.Group>
       <Form.Group className="row">

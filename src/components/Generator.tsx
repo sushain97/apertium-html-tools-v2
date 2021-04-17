@@ -9,7 +9,7 @@ import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
-import { toAlpha3Code } from '../util/languages';
+import { toAlpha3Code, langDirection } from '../util/languages';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;
@@ -106,8 +106,9 @@ const GeneratorForm = ({
               }
             }}
             placeholder={t('Morphological_Generation_Help')}
+            dir={langDirection(lang)}
             required
-          ></Form.Control>
+          />
         </Col>
       </Form.Group>
       <Form.Group className="row">
