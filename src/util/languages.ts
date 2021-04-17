@@ -1,6 +1,6 @@
-const variantSeperator = '_';
+export const variantSeperator = '_';
 
-const languages: Readonly<Record<string, string>> = {
+export const languages: Readonly<Record<string, string>> = {
   af: 'Afrikaans',
   id: 'Bahasa Indonesia',
   cy: 'Cymraeg',
@@ -293,9 +293,9 @@ const rtlLanguages = new Set(['heb', 'ara', 'pes', 'urd', 'uig']);
 const iso639CodesInverse: Record<string, string> = {};
 Object.entries(iso639Codes).forEach(([alpha3, alpha2]) => (iso639CodesInverse[alpha2] = alpha3));
 
-function toAlpha2Code(code: string): string;
-function toAlpha2Code(code: string | null): string | null;
-function toAlpha2Code(code: string | null): string | null {
+export function toAlpha2Code(code: string): string;
+export function toAlpha2Code(code: string | null): string | null;
+export function toAlpha2Code(code: string | null): string | null {
   if (!code) {
     return code;
   }
@@ -315,9 +315,9 @@ function toAlpha2Code(code: string | null): string | null {
   return null;
 }
 
-function toAlpha3Code(code: string): string;
-function toAlpha3Code(code: string | null): string | null;
-function toAlpha3Code(code: string | null): string | null {
+export function toAlpha3Code(code: string): string;
+export function toAlpha3Code(code: string | null): string | null;
+export function toAlpha3Code(code: string | null): string | null {
   if (!code) {
     return code;
   }
@@ -337,12 +337,10 @@ function toAlpha3Code(code: string | null): string | null {
   return null;
 }
 
-const langDirection = (code: string): string => {
+export const langDirection = (code: string): string => {
   return rtlLanguages.has(code) ? 'rtl' : 'ltr';
 };
 
-const parentLang = (code: string): string => code.split(variantSeperator, 2)[0];
+export const parentLang = (code: string): string => code.split(variantSeperator, 2)[0];
 
-const isVariant = (code: string): boolean => code.includes(variantSeperator);
-
-export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, isVariant, variantSeperator, languages };
+export const isVariant = (code: string): boolean => code.includes(variantSeperator);

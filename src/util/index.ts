@@ -1,5 +1,5 @@
-import axios, { AxiosPromise, CancelTokenSource } from 'axios';
 import * as queryString from 'query-string';
+import axios, { AxiosPromise, CancelTokenSource } from 'axios';
 
 import Config from '../../config';
 

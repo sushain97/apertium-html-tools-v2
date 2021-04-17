@@ -1,18 +1,18 @@
 import * as React from 'react';
-import Col from 'react-bootstrap/Col';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
+import Col from 'react-bootstrap/Col';
 
 import { useLocalization } from '../../util/localization';
 
-import githubLogo from './img/github.png';
-import prompsitLogo from './img/prompsit150x52.png';
 import alicanteLogo from './img/logouapp.gif';
 import bytemarkLogo from './img/logo_bytemark.gif';
 import catalunyaLogo from './img/stsi.gif';
-import mineturLogo from './img/logomitc120.jpg';
-import maeLogo from './img/logo_mae_ro_75pc.jpg';
 import ccLogo from './img/cc-by-sa-3.0-88x31.png';
+import githubLogo from './img/github.png';
 import gplLogo from './img/gplv3-88x31.png';
+import maeLogo from './img/logo_mae_ro_75pc.jpg';
+import mineturLogo from './img/logomitc120.jpg';
+import prompsitLogo from './img/prompsit150x52.png';
 
 const AboutModal = (props: ModalProps): React.ReactElement => {
   const { t } = useLocalization();

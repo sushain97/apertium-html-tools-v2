@@ -1,16 +1,16 @@
 import './navbar.css';
 
 import * as React from 'react';
-import Nav from 'react-bootstrap/Nav';
+import { generatePath, useLocation } from 'react-router-dom';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
-import { generatePath, useLocation } from 'react-router-dom';
+import Nav from 'react-bootstrap/Nav';
 
 import Config from '../../../config';
-import { Mode } from '../../types';
-import { useLocalization } from '../../util/localization';
 import LocaleSelector from '../LocaleSelector';
+import { Mode } from '../../types';
 import logo from './Apertium_box_white_small.embed.png';
+import { useLocalization } from '../../util/localization';
 
 const Logo = (): React.ReactElement => (
   <img

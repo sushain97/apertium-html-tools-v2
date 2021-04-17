@@ -1,16 +1,16 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import axios, { CancelTokenSource } from 'axios';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import classNames from 'classnames';
 
-import { apyFetch } from '../util';
-import { getUrlParam, buildNewUrl, MaxURLLength } from '../util/url';
-import { useLocalization } from '../util/localization';
-import useLocalStorage from '../util/use-local-storage';
+import { MaxURLLength, buildNewUrl, getUrlParam } from '../util/url';
+import { langDirection, toAlpha3Code } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
-import { toAlpha3Code, langDirection } from '../util/languages';
+import { apyFetch } from '../util';
+import useLocalStorage from '../util/use-local-storage';
+import { useLocalization } from '../util/localization';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;

@@ -1,16 +1,16 @@
 import './footer.css';
 
 import * as React from 'react';
-import Nav from 'react-bootstrap/Nav';
+import { faBook, faDownload, faEnvelope, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle, faDownload, faBook, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-
-import { useLocalization } from '../../util/localization';
-import AboutModal from './AboutModal';
-import DownloadModal from './DownloadModal';
-import DocumentationModal from './DocumentationModal';
-import ContactModal from './ContactModal';
 import { ModalProps } from 'react-bootstrap/Modal';
+import Nav from 'react-bootstrap/Nav';
+
+import AboutModal from './AboutModal';
+import ContactModal from './ContactModal';
+import DocumentationModal from './DocumentationModal';
+import DownloadModal from './DownloadModal';
+import { useLocalization } from '../../util/localization';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const version: string = (window as any).VERSION;

@@ -2,20 +2,20 @@ import './translator.css';
 
 import * as React from 'react';
 import axios, { CancelTokenSource } from 'axios';
+import { faFile, faLink } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink, faFile } from '@fortawesome/free-solid-svg-icons';
+import Row from 'react-bootstrap/Row';
 
-import { Pairs, SrcLangs, DstLangs, isPair } from '.';
-import { apyFetch } from '../../util';
-import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
+import { DstLangs, Pairs, SrcLangs, isPair } from '.';
+import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
-import useLocalStorage from '../../util/use-local-storage';
-import { useLocalization } from '../../util/localization';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
+import { apyFetch } from '../../util';
+import useLocalStorage from '../../util/use-local-storage';
+import { useLocalization } from '../../util/localization';
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';

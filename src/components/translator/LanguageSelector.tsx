@@ -1,18 +1,18 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import classNames from 'classnames';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { useLocalization } from '../../util/localization';
-import { langDirection, isVariant, toAlpha2Code, variantSeperator, parentLang } from '../../util/languages';
+import { DstLangs, Pairs, SrcLangs, isPair } from '.';
+import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } from '../../util/languages';
 import { LocaleContext } from '../../context';
-import { Pairs, SrcLangs, DstLangs, isPair } from '.';
+import { useLocalization } from '../../util/localization';
 
 type Props = {
   srcLang: string;

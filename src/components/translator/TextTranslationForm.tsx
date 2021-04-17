@@ -1,11 +1,11 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { faCopy, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCopy } from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 
 import { langDirection } from '../../util/languages';
 import { useLocalization } from '../../util/localization';

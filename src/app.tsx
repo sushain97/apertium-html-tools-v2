@@ -3,27 +3,26 @@ import './app.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import axios from 'axios';
-import Container from 'react-bootstrap/Container';
 import { HashRouter, Route } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import axios from 'axios';
 
+import { DEFAULT_STRINGS, Strings, tt, validLocale } from './util/localization';
+import { LocaleContext, StringsContext } from './context';
+import { langDirection, toAlpha3Code } from './util/languages';
 import Config from '../config';
 import { Mode } from './types';
-import { LocaleContext, StringsContext } from './context';
-
 import { apyFetch } from './util';
 import { getUrlParam } from './util/url';
-import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
-import { DEFAULT_STRINGS, tt, Strings, validLocale } from './util/localization';
 
-import Navbar from './components/navbar';
-import Footer from './components/footer';
-import LocaleSelector from './components/LocaleSelector';
-import Translator from './components/translator';
 import Analyzer from './components/Analyzer';
+import Footer from './components/footer';
 import Generator from './components/Generator';
+import LocaleSelector from './components/LocaleSelector';
+import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
+import Translator from './components/translator';
 
 const Interfaces: Record<Mode, () => React.ReactElement> = {
   [Mode.Translation]: Translator,

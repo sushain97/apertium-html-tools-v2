@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import Config from '../../config';
 import { LocaleContext, StringsContext } from '../context';
 import { languages, toAlpha2Code, toAlpha3Code } from './languages';
+import Config from '../../config';
 import locales from '../strings/locales.json';
 
 export type Strings = {
