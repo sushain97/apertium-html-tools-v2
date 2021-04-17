@@ -343,4 +343,6 @@ const langDirection = (code: string): string => {
 
 const parentLang = (code: string): string => code.split(variantSeperator, 2)[0];
 
-export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, languages };
+const isVariant = (code: string): boolean => code.includes(variantSeperator);
+
+export { toAlpha3Code, toAlpha2Code, parentLang, langDirection, isVariant, languages };

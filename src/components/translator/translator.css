@@ -34,3 +34,46 @@ html[dir='rtl'] .clear-text-button,
 html[dir='rtl'] .copy-text-button {
   left: 18px;
 }
+
+.language-name-col {
+  float: left;
+  padding: 0 15px;
+  position: relative;
+}
+
+html[dir='ltr'] .language-name {
+  padding-left: 0.5em;
+}
+
+html[dir='rtl'] .language-name {
+  padding-right: 0.5em;
+  text-align: right;
+}
+
+.language-name {
+  overflow-x: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+}
+
+.language-name:not(.text-muted) {
+  text-decoration: none;
+}
+
+.language-name:hover:not(.text-muted) {
+  background-color: #446e9b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.variant-language-name {
+  font-size: 0.8em;
+}
+
+html[dir='ltr'] .variant-language-name {
+  padding-left: 2.5em;
+}
+
+html[dir='rtl'] .variant-language-name {
+  padding-right: 2.5em;
+}
