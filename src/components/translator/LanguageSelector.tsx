@@ -42,7 +42,7 @@ const MobileLanguageSelector = ({
 }: Props & {
   srcLangs: Array<[string, string]>;
   dstLangs: Array<[string, string]>;
-  swapLangs: () => void;
+  swapLangs?: () => void;
 }): React.ReactElement => {
   return (
     <Form.Group className="d-flex d-md-none flex-column">
@@ -61,7 +61,7 @@ const MobileLanguageSelector = ({
             </option>
           ))}
         </Form.Control>
-        <Button type="button" variant="secondary" size="sm" className="mb-2" onClick={swapLangs}>
+        <Button type="button" variant="secondary" size="sm" className="mb-2" onClick={swapLangs} disabled={!swapLangs}>
           <FontAwesomeIcon icon={faExchangeAlt} />
         </Button>
         <Form.Control
@@ -100,7 +100,7 @@ const DesktopLanguageSelector = ({
 }: Props & {
   srcLangs: Array<[string, string]>;
   dstLangs: Array<[string, string]>;
-  swapLangs: () => void;
+  swapLangs?: () => void;
 }): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
 
@@ -269,7 +269,7 @@ const DesktopLanguageSelector = ({
             </Row>
           </DropdownButton>
         </ButtonGroup>
-        <Button type="button" variant="secondary" size="sm" onClick={swapLangs}>
+        <Button type="button" variant="secondary" size="sm" onClick={swapLangs} disabled={!swapLangs}>
           <FontAwesomeIcon icon={faExchangeAlt} />
         </Button>
       </Col>
@@ -316,10 +316,13 @@ const DesktopLanguageSelector = ({
 const LanguageSelector = (props: Props): React.ReactElement => {
   const { srcLang, setSrcLang, dstLang, setDstLang } = props;
 
-  const swapLangs = () => {
-    setSrcLang(dstLang);
-    setDstLang(srcLang);
-  };
+  const swapLangs =
+    Pairs[dstLang] && Pairs[dstLang].has(srcLang)
+      ? () => {
+          setSrcLang(dstLang);
+          setDstLang(srcLang);
+        }
+      : undefined;
 
   const srcLangs: Array<[string, string]> = [...SrcLangs]
     .map((code) => [code, tLang(code)])
