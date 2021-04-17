@@ -11,7 +11,8 @@ import Config from '../config';
 import { Mode } from './types';
 import { LocaleContext, StringsContext } from './context';
 
-import { apyFetch, getUrlParam } from './util';
+import { apyFetch } from './util';
+import { getUrlParam } from './util/url';
 import { langDirection, toAlpha3Code } from './util/languages';
 import useLocalStorage from './util/use-local-storage';
 import { DEFAULT_STRINGS, tt, Strings, validLocale } from './util/localization';

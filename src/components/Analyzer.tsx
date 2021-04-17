@@ -6,7 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 
-import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
+import { apyFetch } from '../util';
+import { getUrlParam, buildNewUrl, MaxURLLength } from '../util/url';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import { toAlpha3Code, langDirection } from '../util/languages';

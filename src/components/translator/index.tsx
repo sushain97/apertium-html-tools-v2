@@ -2,7 +2,7 @@ import './translator.css';
 
 import * as React from 'react';
 
-import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util';
+import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import useLocalStorage from '../../util/use-local-storage';
 import LanguageSelector from './LanguageSelector';

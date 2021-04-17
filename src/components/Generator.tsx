@@ -5,7 +5,8 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
-import { apyFetch, getUrlParam, buildNewUrl, MaxURLLength } from '../util';
+import { apyFetch } from '../util';
+import { getUrlParam, buildNewUrl, MaxURLLength } from '../util/url';
 import { t, tLang } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
