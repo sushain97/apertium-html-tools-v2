@@ -8,7 +8,7 @@ import Table from 'react-bootstrap/Table';
 
 import { apyFetch } from '../util';
 import { getUrlParam, buildNewUrl, MaxURLLength } from '../util/url';
-import { t, tLang } from '../util/localization';
+import { useLocalization } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import { toAlpha3Code, langDirection } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
@@ -111,6 +111,8 @@ const AnalysisForm = ({
   setAnalysis: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
+  const { t, tLang } = useLocalization();
+
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], {
     overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
     validateValue: (l) => l in Analyzers,

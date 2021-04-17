@@ -13,7 +13,7 @@ import { apyFetch } from '../../util';
 import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import useLocalStorage from '../../util/use-local-storage';
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 
@@ -62,6 +62,8 @@ const defaultSrcLang = (): string => {
 };
 
 const Translator = (): React.ReactElement => {
+  const { t } = useLocalization();
+
   let urlSrcLang = null;
   let urlDstLang = null;
   const urlParamPair = getUrlParam(pairUrlParam);

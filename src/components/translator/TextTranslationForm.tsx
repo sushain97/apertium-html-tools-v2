@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 import { langDirection } from '../../util/languages';
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 
 const TextTranslationForm = ({
   srcLang,
@@ -25,6 +25,8 @@ const TextTranslationForm = ({
   dstTextError: boolean;
   setSrcText: React.Dispatch<React.SetStateAction<string>>;
 }): React.ReactElement => {
+  const { t } = useLocalization();
+
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
   const notAvailableText = t('Not_Available');
 

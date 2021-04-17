@@ -2,7 +2,7 @@ import * as React from 'react';
 import Col from 'react-bootstrap/Col';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 
 import githubLogo from './img/github.png';
 import prompsitLogo from './img/prompsit150x52.png';
@@ -15,6 +15,8 @@ import ccLogo from './img/cc-by-sa-3.0-88x31.png';
 import gplLogo from './img/gplv3-88x31.png';
 
 const AboutModal = (props: ModalProps): React.ReactElement => {
+  const { t } = useLocalization();
+
   return (
     <Modal {...props} size="lg">
       <Modal.Header closeButton>

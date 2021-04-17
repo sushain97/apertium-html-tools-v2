@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { apyFetch } from '../util';
-import { t } from '../util/localization';
+import { useLocalization } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
 
@@ -21,6 +21,8 @@ const SandboxForm = ({
   setResult: React.Dispatch<React.SetStateAction<[string, number] | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
+  const { t } = useLocalization();
+
   const [requestText, setRequestText] = useLocalStorage('sandboxRequest', '');
 
   const requestRef = React.useRef<CancelTokenSource | null>(null);

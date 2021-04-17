@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle, faDownload, faBook, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 import AboutModal from './AboutModal';
 import DownloadModal from './DownloadModal';
 import DocumentationModal from './DocumentationModal';
@@ -36,6 +36,8 @@ const Footer = ({
   wrapRef: React.RefObject<HTMLElement>;
   pushRef: React.RefObject<HTMLElement>;
 }): React.ReactElement => {
+  const { t } = useLocalization();
+
   const [openTab, setOpenTab] = React.useState<Tab | undefined>(undefined);
 
   const footerRef = React.createRef<HTMLDivElement>();

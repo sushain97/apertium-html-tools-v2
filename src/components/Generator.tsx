@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 
 import { apyFetch } from '../util';
 import { getUrlParam, buildNewUrl, MaxURLLength } from '../util/url';
-import { t, tLang } from '../util/localization';
+import { useLocalization } from '../util/localization';
 import useLocalStorage from '../util/use-local-storage';
 import ErrorAlert from './ErrorAlert';
 import { toAlpha3Code, langDirection } from '../util/languages';
@@ -27,6 +27,8 @@ const GeneratorForm = ({
   setGeneration: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
+  const { t, tLang } = useLocalization();
+
   const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], {
     overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
     validateValue: (l) => l in Generators,

@@ -8,11 +8,11 @@ import { generatePath, useLocation } from 'react-router-dom';
 
 import Config from '../../../config';
 import { Mode } from '../../types';
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 import LocaleSelector from '../LocaleSelector';
 import logo from './Apertium_box_white_small.embed.png';
 
-const Logo = () => (
+const Logo = (): React.ReactElement => (
   <img
     src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     alt="Apertium Box"
@@ -28,20 +28,25 @@ const Logo = () => (
   />
 );
 
-const TagLine = () => (
-  <p
-    style={{
-      color: '#fff',
-      fontSize: '18px',
-      fontWeight: 'bold',
-      margin: '0 0 10px',
-    }}
-  >
-    {t('tagline')}
-  </p>
-);
+const TagLine = (): React.ReactElement => {
+  const { t } = useLocalization();
+
+  return (
+    <p
+      style={{
+        color: '#fff',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        margin: '0 0 10px',
+      }}
+    >
+      {t('tagline')}
+    </p>
+  );
+};
 
 const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
+  const { t } = useLocalization();
   const { pathname } = useLocation();
 
   return (

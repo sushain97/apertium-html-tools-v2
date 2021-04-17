@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
-import { t } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 
 const DocumentationModal = (props: ModalProps): React.ReactElement => {
+  const { t } = useLocalization();
+
   return (
     <Modal {...props}>
       <Modal.Header closeButton>

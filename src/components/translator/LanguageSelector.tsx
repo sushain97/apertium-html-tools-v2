@@ -9,7 +9,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { t, tLang } from '../../util/localization';
+import { useLocalization } from '../../util/localization';
 import { langDirection, isVariant, toAlpha2Code, variantSeperator, parentLang } from '../../util/languages';
 import { LocaleContext } from '../../context';
 import { Pairs, SrcLangs, DstLangs, isPair } from '.';
@@ -44,6 +44,8 @@ const MobileLanguageSelector = ({
   dstLangs: Array<[string, string]>;
   swapLangs?: () => void;
 }): React.ReactElement => {
+  const { t } = useLocalization();
+
   return (
     <Form.Group className="d-flex d-md-none flex-column">
       <div className="d-flex flex-wrap">
@@ -103,6 +105,7 @@ const DesktopLanguageSelector = ({
   swapLangs?: () => void;
 }): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
+  const { t, tLang } = useLocalization();
 
   const srcLangsDropdownTriggerRef = React.createRef<HTMLDivElement>();
   const dstLangsDropdownTriggerRef = React.createRef<HTMLDivElement>();
@@ -313,6 +316,8 @@ const DesktopLanguageSelector = ({
 };
 
 const LanguageSelector = (props: Props): React.ReactElement => {
+  const { tLang } = useLocalization();
+
   const { srcLang, setSrcLang, dstLang, setDstLang } = props;
 
   const swapLangs = isPair(dstLang, srcLang)
