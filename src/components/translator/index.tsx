@@ -25,6 +25,8 @@ export const Pairs: Readonly<Record<string, Set<string>>> = ((window as any).PAI
   pairs[sourceLanguage].add(targetLanguage);
   return pairs;
 }, {} as Record<string, Set<string>>);
+export const SrcLangs = new Set(Object.keys(Pairs));
+export const DstLangs = new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))));
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';
@@ -94,16 +96,14 @@ const Translator = (): React.ReactElement => {
   const [recentSrcLangs, setRecentSrcLangs] = useLocalStorage<Array<string>>(
     'recentSrcLangs',
     () => {
-      const langs = [srcLang];
-      for (const lang of Object.keys(Pairs)) {
-        if (langs.length == recentLangsCount) {
+      const langs = new Set([srcLang]);
+      for (const lang of SrcLangs) {
+        if (langs.size == recentLangsCount) {
           break;
         }
-        if (!langs.includes(lang)) {
-          langs.push(lang);
-        }
+        langs.add(lang);
       }
-      return langs;
+      return Array.from(langs);
     },
     {
       validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in Pairs) && ls.includes(srcLang),
@@ -112,26 +112,20 @@ const Translator = (): React.ReactElement => {
   const [recentDstLangs, setRecentDstLangs] = useLocalStorage<Array<string>>(
     'recentDstLangs',
     () => {
-      const langs = [dstLang];
+      const langs = new Set([dstLang]);
       for (const lang of Pairs[srcLang].values()) {
-        if (langs.length == recentLangsCount) {
+        if (langs.size == recentLangsCount) {
           break;
         }
-        if (!langs.includes(lang)) {
-          langs.push(lang);
-        }
+        langs.add(lang);
       }
-      for (const [, dstLangs] of Object.entries(Pairs)) {
-        for (const lang of dstLangs) {
-          if (langs.length == recentLangsCount) {
-            break;
-          }
-          if (!langs.includes(lang)) {
-            langs.push(lang);
-          }
+      for (const lang of DstLangs) {
+        if (langs.size == recentLangsCount) {
+          break;
         }
+        langs.add(lang);
       }
-      return langs;
+      return Array.from(langs);
     },
     {
       validateValue: (ls) =>
@@ -143,6 +137,20 @@ const Translator = (): React.ReactElement => {
     realSetSrcLang(lang);
     if (!recentSrcLangs.includes(lang)) {
       setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
+    }
+
+    // Unless currently selected destination language works.
+    const possibleDstLangs = Pairs[lang];
+    if (!possibleDstLangs.has(dstLang)) {
+      // Prefer a recently selected destination language.
+      for (const recentDstLang of recentDstLangs) {
+        if (possibleDstLangs.has(recentDstLang)) {
+          return setDstLang(recentDstLang);
+        }
+      }
+
+      // Otherwise, pick the first possible destination language.
+      setDstLang(possibleDstLangs.values().next().value);
     }
   };
 
@@ -219,10 +227,10 @@ const Translator = (): React.ReactElement => {
       />
       <Row className="mt-2 mb-3">
         <Col xs="12" md="6" className="d-flex d-sm-block flex-wrap">
-          <Button type="button" variant="secondary" className="mt-3" style={{ marginRight: '5px' }}>
+          <Button type="button" variant="secondary" className="mt-2" style={{ marginRight: '5px' }}>
             <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
           </Button>
-          <Button type="button" variant="secondary" className="mt-3">
+          <Button type="button" variant="secondary" className="mt-2">
             <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
           </Button>
         </Col>

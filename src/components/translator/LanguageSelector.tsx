@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { t, tLang } from '../../util/localization';
-import { Pairs } from '.';
+import { Pairs, SrcLangs, DstLangs } from '.';
 
 const LanguageSelector = ({
   srcLang,
@@ -44,7 +44,7 @@ const LanguageSelector = ({
             style={{ maxWidth: '60%' }}
             onChange={({ target: { value } }) => setSrcLang(value)}
           >
-            {Object.keys(Pairs)
+            {[...SrcLangs]
               .map((code) => [code, tLang(code)])
               .sort(([, a], [, b]) => {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -66,7 +66,7 @@ const LanguageSelector = ({
             style={{ maxWidth: '60%' }}
             onChange={({ target: { value } }) => setDstLang(value)}
           >
-            {[...new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))))]
+            {[...DstLangs]
               .map((code) => [code, tLang(code)])
               .sort(([, a], [, b]) => {
                 return a.toLowerCase().localeCompare(b.toLowerCase());
