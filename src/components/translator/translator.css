@@ -18,7 +18,9 @@
 }
 
 .clear-text-button:hover,
-.clear-text-button:focus {
+.clear-text-button:focus,
+.copy-text-button:hover,
+.copy-text-button:focus {
   background-color: #eee;
   color: #000;
 }
