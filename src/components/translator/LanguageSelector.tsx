@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { t, tLang } from '../../util/localization';
-import { langDirection, isVariant, toAlpha2Code, variantSeperator } from '../../util/languages';
+import { langDirection, isVariant, toAlpha2Code, variantSeperator, parentLang } from '../../util/languages';
 import { LocaleContext } from '../../context';
 import { Pairs, SrcLangs, DstLangs, isPair } from '.';
 
@@ -122,7 +122,6 @@ const DesktopLanguageSelector = ({
       if (langDirection(locale) === 'ltr') {
         maxSrcLangsWidth = window.innerWidth - srcLangsDropdownOffset - langListsBuffer;
         maxDstLangsWidth = dstLangsDropdownOffset + dstLangsDropdownWidth - langListsBuffer;
-        console.log(dstLangsDropdownOffset, dstLangsDropdownWidth, maxDstLangsWidth);
       } else {
         maxSrcLangsWidth = srcLangsDropdownOffset + srcLangsDropdownWidth - langListsBuffer;
         maxDstLangsWidth = window.innerWidth - dstLangsDropdownOffset - langListsBuffer;
@@ -350,11 +349,53 @@ const LanguageSelector = (props: Props): React.ReactElement => {
   const srcLangs: Array<[string, string]> = [...SrcLangs]
     .sort(compareLangCodes)
     .map((code) => [code, tLang(code)]) as Array<[string, string]>;
+
   const dstLangs: Array<[string, string]> = [...DstLangs]
-    .map((code) => [code, tLang(code)])
-    .sort(([, a], [, b]) => {
-      return a.toLowerCase().localeCompare(b.toLowerCase());
-    }) as Array<[string, string]>;
+    .sort((a, b) => {
+      const possibleDstLangs = Array.from(Pairs[srcLang]) || [];
+
+      const isFamilyPossible = (lang: string) => {
+        const parent = parentLang(lang);
+        return (
+          isPair(srcLang, lang) ||
+          possibleDstLangs.includes(parent) ||
+          possibleDstLangs.some((possibleLang) => parentLang(possibleLang) === parent)
+        );
+      };
+
+      const aParent = parentLang(a),
+        bParent = parentLang(b);
+      const aFamilyPossible = isFamilyPossible(a),
+        bFamilyPossible = isFamilyPossible(b);
+      if (aFamilyPossible === bFamilyPossible) {
+        if (aParent === bParent) {
+          const aVariant = isVariant(a),
+            bVariant = isVariant(b);
+          if (aVariant && bVariant) {
+            const aPossible = isPair(srcLang, a),
+              bPossible = isPair(srcLang, b);
+            if (aPossible === bPossible) {
+              return compareLangCodes(a, b);
+            } else if (aPossible) {
+              return -1;
+            } else {
+              return 1;
+            }
+          } else if (aVariant) {
+            return 1;
+          } else {
+            return -1;
+          }
+        } else {
+          return compareLangCodes(a, b);
+        }
+      } else if (aFamilyPossible) {
+        return -1;
+      } else {
+        return 1;
+      }
+    })
+    .map((code) => [code, tLang(code)]) as Array<[string, string]>;
 
   const sharedProps = {
     ...props,
