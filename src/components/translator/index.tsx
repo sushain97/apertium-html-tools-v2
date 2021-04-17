@@ -1,21 +1,15 @@
 import './translator.css';
 
 import * as React from 'react';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Col from 'react-bootstrap/Col';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Form from 'react-bootstrap/Form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { buildNewUrl, getUrlParam } from '../../util';
+import { buildNewUrl, getUrlParam, MaxURLLength } from '../../util';
 import { parentLang, toAlpha3Code } from '../../util/languages';
-import { t, tLang } from '../../util/localization';
 import useLocalStorage from '../../util/use-local-storage';
+import LanguageSelector from './LanguageSelector';
+import TextTranslationForm from './TextTranslationForm';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Pairs: Readonly<Record<string, Set<string>>> = ((window as any).PAIRS as Array<{
+export const Pairs: Readonly<Record<string, Set<string>>> = ((window as any).PAIRS as Array<{
   sourceLanguage: string;
   targetLanguage: string;
 }>).reduce((pairs, { sourceLanguage, targetLanguage }) => {
@@ -26,6 +20,7 @@ const Pairs: Readonly<Record<string, Set<string>>> = ((window as any).PAIRS as A
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';
+const textUrlParam = 'q';
 
 const defaultSrcLang = (): string => {
   const validSrcLang = (code: string) => Pairs[toAlpha3Code(code) || code];
@@ -65,91 +60,6 @@ const defaultSrcLang = (): string => {
   }
 
   throw new Error('No pairs available');
-};
-
-const TranslationForm = ({
-  srcLang,
-  setSrcLang,
-  dstLang,
-  setDstLang,
-  recentSrcLangs,
-  recentDstLangs,
-}: {
-  srcLang: string;
-  setSrcLang: React.Dispatch<React.SetStateAction<string>>;
-  dstLang: string;
-  setDstLang: React.Dispatch<React.SetStateAction<string>>;
-  recentSrcLangs: Array<string>;
-  recentDstLangs: Array<string>;
-}): React.ReactElement => {
-  return (
-    <form>
-      <Form.Group className="row d-none d-md-block">
-        <Col xs="6" className="d-inline-flex align-items-start justify-content-between">
-          <ButtonGroup className="d-flex flex-wrap pl-0">
-            {recentSrcLangs.map((lang) => (
-              <Button
-                key={lang}
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="language-button"
-                active={lang === srcLang}
-                onClick={({ currentTarget }) => {
-                  setSrcLang(lang);
-                  currentTarget.blur();
-                }}
-              >
-                {tLang(lang)}
-              </Button>
-            ))}
-            <Button type="button" variant="secondary" size="sm">
-              {t('Detect_Language')}
-            </Button>
-            <DropdownButton
-              size="sm"
-              variant="secondary"
-              title=""
-              className="language-dropdown-button"
-            ></DropdownButton>
-          </ButtonGroup>
-          <Button type="button" variant="secondary" size="sm">
-            <FontAwesomeIcon icon={faExchangeAlt} />
-          </Button>
-        </Col>
-        <Col xs="6" className="d-inline-flex align-items-start justify-content-between">
-          <ButtonGroup className="d-flex flex-wrap pl-0">
-            {recentDstLangs.map((lang) => (
-              <Button
-                key={lang}
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="language-button"
-                active={lang === dstLang}
-                onClick={({ currentTarget }) => {
-                  setDstLang(lang);
-                  currentTarget.blur();
-                }}
-                disabled={!Pairs[srcLang].has(lang)}
-              >
-                {tLang(lang)}
-              </Button>
-            ))}
-            <DropdownButton
-              size="sm"
-              variant="secondary"
-              title=""
-              className="language-dropdown-button"
-            ></DropdownButton>
-          </ButtonGroup>
-          <Button type="button" size="sm">
-            {t('Translate')}
-          </Button>
-        </Col>
-      </Form.Group>
-    </form>
-  );
 };
 
 const Translator = (): React.ReactElement => {
@@ -199,7 +109,7 @@ const Translator = (): React.ReactElement => {
         }
         langs.push(lang);
       }
-      for (const [_, dstLangs] of Object.entries(Pairs)) {
+      for (const [, dstLangs] of Object.entries(Pairs)) {
         for (const lang of dstLangs) {
           if (langs.length == recentLangsCount) {
             break;
@@ -217,14 +127,20 @@ const Translator = (): React.ReactElement => {
     },
   );
 
+  const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
+
   React.useEffect(() => {
-    const newUrl = buildNewUrl({ [pairUrlParam]: `${srcLang}-${dstLang}` });
+    const pair = `${srcLang}-${dstLang}`;
+    let newUrl = buildNewUrl({ [pairUrlParam]: pair, [textUrlParam]: srcText });
+    if (newUrl.length > MaxURLLength) {
+      newUrl = buildNewUrl({ [pairUrlParam]: pair });
+    }
     window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, dstLang]);
+  }, [srcLang, dstLang, srcText]);
 
   return (
     <>
-      <TranslationForm
+      <LanguageSelector
         srcLang={srcLang}
         setSrcLang={setSrcLang}
         recentSrcLangs={recentSrcLangs}
@@ -232,6 +148,7 @@ const Translator = (): React.ReactElement => {
         setDstLang={setDstLang}
         recentDstLangs={recentDstLangs}
       />
+      <TextTranslationForm srcLang={srcLang} dstLang={dstLang} srcText={srcText} setSrcText={setSrcText} />
     </>
   );
 };

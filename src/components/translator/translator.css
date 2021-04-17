@@ -9,3 +9,26 @@
   border-color: #474949;
   opacity: 1;
 }
+
+.clear-text-button,
+.copy-text-button {
+  background-color: rgba(0, 0, 0, 0);
+  padding: 0 3px;
+  top: 3px;
+}
+
+.clear-text-button:hover,
+.clear-text-button:focus {
+  background-color: #eee;
+  color: #000;
+}
+
+html[dir='ltr'] .clear-text-button,
+html[dir='ltr'] .copy-text-button {
+  right: 18px;
+}
+
+html[dir='rtl'] .clear-text-button,
+html[dir='rtl'] .copy-text-button {
+  left: 18px;
+}
