@@ -2,6 +2,7 @@
 
 [![Build
 Status](https://github.com/sushain97/apertium-html-tools-v2/workflows/Check/badge.svg?branch=master)](https://github.com/sushain97/apertium-html-tools-v2/actions/workflows/check.yml?query=branch%3Amaster)
+[![Coverage Status](https://coveralls.io/repos/github/sushain97/apertium-html-tools-v2/badge.svg?branch=master)](https://coveralls.io/github/sushain97/apertium-html-tools-v2?branch=master)
 
 [Apertium Html-tools][1] is a web application providing a fully localised
 interface for text/document/website translation, analysis, and generation
