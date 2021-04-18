@@ -5,7 +5,9 @@ import { promises as fs } from 'fs';
 import * as esbuild from 'esbuild';
 import axios, { AxiosResponse } from 'axios';
 
+import { languages, parentLang, toAlpha2Code, toAlpha3Code } from './src/util/languages';
 import Config from './config';
+import locales from './src/strings/locales.json';
 
 const DIST = 'dist/';
 const STATIC_FILES = ['index.html', 'favicon.ico'];
@@ -30,11 +32,27 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
   const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data;
   const generators = (await apyGet(`list`, { q: 'generators' })).data;
 
+  let allLangs: Array<string | null> = [
+    ...pairs.flatMap(({ sourceLanguage, targetLanguage }: { sourceLanguage: string; targetLanguage: string }) => [
+      sourceLanguage,
+      targetLanguage,
+    ]),
+    ...Object.keys(analyzers),
+    ...Object.keys(generators),
+    ...Object.keys(languages),
+    ...Object.keys(locales),
+  ].filter(Boolean);
+  allLangs = [...allLangs, ...allLangs.map((l) => (l ? parentLang(l) : l))];
+  allLangs = [...allLangs, ...allLangs.map(toAlpha2Code)];
+  allLangs = [...allLangs, ...allLangs.map(toAlpha3Code)];
+  const allLangsSet = new Set(allLangs.filter(Boolean));
+
   await Promise.all(
     (await fs.readdir('src/strings'))
       .filter((f) => f.endsWith('.json') && f != 'locales.json')
       .map(async (f) => {
         const response = await apyGet('listLanguageNames', { locale: path.parse(f).name });
+        const allLangNames = response.data as Record<string, string>;
 
         const inPath = path.join('src/strings', f);
         const outPath = path.join(DIST, 'strings', f);
@@ -43,7 +61,14 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
 
         const outData = JSON.parse(await fs.readFile(inPath, 'utf-8'));
         delete outData['@metadata'];
-        outData['@langNames'] = response.data;
+
+        const langNames: Record<string, string> = {};
+        for (const lang of Object.keys(allLangNames)) {
+          if (allLangsSet.has(lang)) {
+            langNames[lang] = allLangNames[lang];
+          }
+        }
+        outData['@langNames'] = langNames;
 
         if (f === `${Config.defaultLocale}.json`) {
           defaultStrings = outData;
@@ -55,6 +80,8 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
 
   await Promise.all(STATIC_FILES.map((f) => fs.copyFile(path.join('src', f), path.join(DIST, f))));
 
+  // TODO: Switch `yarn serve` to use `esbuild.serve` which prevents stale
+  // responses and minimizes FS writes.
   await esbuild.build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
