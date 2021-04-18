@@ -2,7 +2,7 @@ import { RenderResult, act, renderHook } from '@testing-library/react-hooks';
 
 import useLocalStorage from './useLocalStorage';
 
-const localStorageKey = 'foo';
+const localStorageKey = () => Math.random().toString(36);
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -30,54 +30,68 @@ expect.extend({
 });
 
 it('uses initial value', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+  const { result } = renderHook(() => useLocalStorage(localStorageKey(), 'bar'));
   expect(result).noRenderError();
   expect(result).renderValueToBe('bar');
 });
 
-it('sets new values', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+it('uses initial function value', () => {
+  const { result } = renderHook(() => useLocalStorage(localStorageKey(), () => 'bar'));
+  expect(result).noRenderError();
+  expect(result).renderValueToBe('bar');
+});
+
+it('sets new value', () => {
+  const { result } = renderHook(() => useLocalStorage(localStorageKey(), 'bar'));
   expect(result).noRenderError();
   act(() => result.current[1]('qux'));
   expect(result).renderValueToBe('qux');
 });
 
-it('restores saved values', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+it('sets new function value', () => {
+  const { result } = renderHook(() => useLocalStorage(localStorageKey(), 'bar'));
+  expect(result).noRenderError();
+  act(() => result.current[1]((s) => s + s));
+  expect(result).renderValueToBe('barbar');
+});
+
+it('restores saved value', () => {
+  const key = localStorageKey();
+  const { result } = renderHook(() => useLocalStorage(key, 'bar'));
   expect(result).noRenderError();
 
   {
-    const { result } = renderHook(() => useLocalStorage(localStorageKey, 'qux'));
+    const { result } = renderHook(() => useLocalStorage(key, 'qux'));
     expect(result).noRenderError();
-    expect(result).renderValueToBe('qux');
+    expect(result).renderValueToBe('bar');
   }
 });
 
 it('uses override value over initial value', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar', { overrideValue: 'qux' }));
+  const { result } = renderHook(() => useLocalStorage(localStorageKey(), 'bar', { overrideValue: 'qux' }));
   expect(result).noRenderError();
   expect(result).renderValueToBe('qux');
 });
 
 it('uses override value over saved value', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+  const key = localStorageKey();
+  const { result } = renderHook(() => useLocalStorage(key, 'bar'));
   expect(result).noRenderError();
 
   {
-    const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar', { overrideValue: 'qux' }));
+    const { result } = renderHook(() => useLocalStorage(key, 'bar', { overrideValue: 'qux' }));
     expect(result).noRenderError();
     expect(result).renderValueToBe('qux');
   }
 });
 
 it('discards saved value that fails validation', () => {
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+  const key = localStorageKey();
+  const { result } = renderHook(() => useLocalStorage(key, 'bar'));
   expect(result).noRenderError();
 
   {
-    const { result } = renderHook(() =>
-      useLocalStorage(localStorageKey, 'barr', { validateValue: (s) => s.length === 4 }),
-    );
+    const { result } = renderHook(() => useLocalStorage(key, 'barr', { validateValue: (s) => s.length === 4 }));
     expect(result).noRenderError();
     expect(result).renderValueToBe('barr');
   }
@@ -85,15 +99,16 @@ it('discards saved value that fails validation', () => {
 
 it('discards override value that fails validation', () => {
   const { result } = renderHook(() =>
-    useLocalStorage(localStorageKey, 'bar', { overrideValue: 'barr', validateValue: (s) => s.length === 3 }),
+    useLocalStorage(localStorageKey(), 'bar', { overrideValue: 'barr', validateValue: (s) => s.length === 3 }),
   );
   expect(result).noRenderError();
   expect(result).renderValueToBe('bar');
 });
 
-it('discards invalid saved values', () => {
-  window.localStorage.setItem(localStorageKey, 'I AM NOT VALID JSON');
-  const { result } = renderHook(() => useLocalStorage(localStorageKey, 'bar'));
+it('discards invalid saved value', () => {
+  const key = localStorageKey();
+  window.localStorage.setItem(key, 'I AM NOT VALID JSON');
+  const { result } = renderHook(() => useLocalStorage(key, 'bar'));
   expect(result).noRenderError();
   expect(result).renderValueToBe('bar');
 });
