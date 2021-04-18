@@ -18,7 +18,7 @@ import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 import { apyFetch } from '../../util';
-import useLocalStorage from '../../util/use-local-storage';
+import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
 const recentLangsCount = 3;

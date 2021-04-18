@@ -9,7 +9,7 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 import ErrorAlert from './ErrorAlert';
 import { apyFetch } from '../util';
-import useLocalStorage from '../util/use-local-storage';
+import useLocalStorage from '../util/useLocalStorage';
 import { useLocalization } from '../util/localization';
 
 const SandboxForm = ({

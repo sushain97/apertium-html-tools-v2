@@ -9,7 +9,7 @@ import { MaxURLLength, buildNewUrl, getUrlParam } from '../util/url';
 import { langDirection, toAlpha3Code } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
 import { apyFetch } from '../util';
-import useLocalStorage from '../util/use-local-storage';
+import useLocalStorage from '../util/useLocalStorage';
 import { useLocalization } from '../util/localization';
 
 // eslint-disable-next-line

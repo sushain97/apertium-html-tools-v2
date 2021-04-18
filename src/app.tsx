@@ -14,7 +14,7 @@ import Config from '../config';
 import { Mode } from './types';
 import { apyFetch } from './util';
 import { getUrlParam } from './util/url';
-import useLocalStorage from './util/use-local-storage';
+import useLocalStorage from './util/useLocalStorage';
 
 import Analyzer from './components/Analyzer';
 import Footer from './components/footer';
