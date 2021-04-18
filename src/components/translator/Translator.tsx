@@ -155,6 +155,7 @@ const Translator = (): React.ReactElement => {
   const [dstText, setDstText] = React.useState('');
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
+  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', false);
 
   React.useEffect(() => {
     const pair = `${srcLang}-${dstLang}`;
@@ -178,6 +179,7 @@ const Translator = (): React.ReactElement => {
     dstLang: string;
   }) => {
     if (srcText.trim().length == 0) {
+      setDstText('');
       return;
     }
 
@@ -246,10 +248,18 @@ const Translator = (): React.ReactElement => {
             <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
           </Button>
         </Col>
-        <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto mt-2" md="6" xs="12">
-          <label>
+        <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto" md="6" xs="12">
+          <label className="mb-1">
             <input checked={markUnknown} onClick={() => setMarkUnknown(!markUnknown)} type="checkbox" />{' '}
             <span>{t('Mark_Unknown_Words')}</span>
+          </label>
+          <label className="mb-1">
+            <input
+              checked={instantTranslation}
+              onClick={() => setInstantTranslation(!instantTranslation)}
+              type="checkbox"
+            />{' '}
+            <span>{t('Instant_Translation')}</span>
           </label>
         </Col>
       </Row>
