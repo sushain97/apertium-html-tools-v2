@@ -12,6 +12,7 @@ export type Config = {
 
   defaultMode: Mode;
   enabledModes: Set<Mode>;
+  translationChaining: boolean;
 
   subtitle?: string;
   subtitleColor?: string;

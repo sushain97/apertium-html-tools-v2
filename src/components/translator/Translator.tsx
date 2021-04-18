@@ -11,6 +11,7 @@ import Row from 'react-bootstrap/Row';
 import { DstLangs, Pairs, SrcLangs, isPair } from '.';
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
+import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 import { apyFetch } from '../../util';
@@ -156,6 +157,9 @@ const Translator = (): React.ReactElement => {
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
+  const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
+    validateValue: () => Config.translationChaining,
+  });
 
   React.useEffect(() => {
     const pair = `${srcLang}-${dstLang}`;
@@ -254,6 +258,16 @@ const Translator = (): React.ReactElement => {
             />{' '}
             <span>{t('Instant_Translation')}</span>
           </label>
+          {Config.translationChaining && (
+            <label className="mb-1">
+              <input
+                checked={translationChaining}
+                onClick={() => setTranslationChaining(!translationChaining)}
+                type="checkbox"
+              />{' '}
+              <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
+            </label>
+          )}
         </Col>
       </Row>
     </>

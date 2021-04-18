@@ -6,6 +6,7 @@ export default {
 
   defaultMode: Mode.Translation,
   enabledModes: new Set([Mode.Translation, Mode.Analysis, Mode.Generation, Mode.Sandbox]),
+  translationChaining: true,
 
   subtitle: 'Beta',
   subtitleColor: 'rgb(220, 41, 38)',
