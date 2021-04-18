@@ -46,6 +46,7 @@ directly to `dist/`.
   `localhost:8000`.
 - Use `yarn tsc` to run the typechecker.
 - Use `yarn lint` to run the linter.
+- Use `yarn test` to run tests.
 
 To analyze the bundle size, run a prod build and upload the resulting
 `meta.json` file to [Bundle Buddy][8].
