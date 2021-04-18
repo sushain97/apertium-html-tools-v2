@@ -8,8 +8,8 @@ import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Row from 'react-bootstrap/Row';
 
-import { DstLangs, Pairs, SrcLangs, isPair } from '.';
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
+import { Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
@@ -66,13 +66,13 @@ const Translator = (): React.ReactElement => {
   const { t } = useLocalization();
 
   let urlSrcLang = null;
-  let urlDstLang = null;
+  let urlTgtLang = null;
   const urlParamPair = getUrlParam(pairUrlParam);
   if (urlParamPair) {
-    const [src, dst] = urlParamPair.split('-', 2).map(toAlpha3Code);
-    if (src && dst && isPair(src, dst)) {
+    const [src, tgt] = urlParamPair.split('-', 2).map(toAlpha3Code);
+    if (src && tgt && isPair(src, tgt)) {
       urlSrcLang = src;
-      urlDstLang = dst;
+      urlTgtLang = tgt;
     }
   }
 
@@ -80,8 +80,8 @@ const Translator = (): React.ReactElement => {
     overrideValue: urlSrcLang,
     validateValue: (l) => l in Pairs,
   });
-  const [dstLang, realSetDstLang] = useLocalStorage<string>('dstLang', () => Pairs[srcLang].values().next().value, {
-    overrideValue: urlDstLang,
+  const [tgtLang, realSetTgtLang] = useLocalStorage<string>('tgtLang', () => Pairs[srcLang].values().next().value, {
+    overrideValue: urlTgtLang,
     validateValue: (l) => Pairs[srcLang].has(l),
   });
 
@@ -101,17 +101,17 @@ const Translator = (): React.ReactElement => {
       validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in Pairs) && ls.includes(srcLang),
     },
   );
-  const [recentDstLangs, setRecentDstLangs] = useLocalStorage<Array<string>>(
-    'recentDstLangs',
+  const [recentTgtLangs, setRecentTgtLangs] = useLocalStorage<Array<string>>(
+    'recentTgtLangs',
     () => {
-      const langs = new Set([dstLang]);
+      const langs = new Set([tgtLang]);
       for (const lang of Pairs[srcLang].values()) {
         if (langs.size == recentLangsCount) {
           break;
         }
         langs.add(lang);
       }
-      for (const lang of DstLangs) {
+      for (const lang of TgtLangs) {
         if (langs.size == recentLangsCount) {
           break;
         }
@@ -121,7 +121,7 @@ const Translator = (): React.ReactElement => {
     },
     {
       validateValue: (ls) =>
-        ls.length == recentLangsCount && ls.some((l) => isPair(srcLang, l)) && ls.includes(dstLang),
+        ls.length == recentLangsCount && ls.some((l) => isPair(srcLang, l)) && ls.includes(tgtLang),
     },
   );
 
@@ -132,28 +132,28 @@ const Translator = (): React.ReactElement => {
     }
 
     // Unless currently selected destination language works.
-    if (!isPair(lang, dstLang)) {
+    if (!isPair(lang, tgtLang)) {
       // Prefer a recently selected destination language.
-      for (const recentDstLang of recentDstLangs) {
-        if (isPair(lang, recentDstLang)) {
-          return setDstLang(recentDstLang);
+      for (const recentTgtLang of recentTgtLangs) {
+        if (isPair(lang, recentTgtLang)) {
+          return setTgtLang(recentTgtLang);
         }
       }
 
       // Otherwise, pick the first possible destination language.
-      setDstLang((Pairs[lang] || new Set()).values().next().value);
+      setTgtLang((Pairs[lang] || new Set()).values().next().value);
     }
   };
 
-  const setDstLang = (lang: string) => {
-    realSetDstLang(lang);
-    if (!recentDstLangs.includes(lang)) {
-      setRecentDstLangs([lang, ...recentDstLangs].slice(0, recentLangsCount));
+  const setTgtLang = (lang: string) => {
+    realSetTgtLang(lang);
+    if (!recentTgtLangs.includes(lang)) {
+      setRecentTgtLangs([lang, ...recentTgtLangs].slice(0, recentLangsCount));
     }
   };
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
-  const [dstText, setDstText] = React.useState('');
+  const [tgtText, setTgtText] = React.useState('');
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
@@ -162,21 +162,21 @@ const Translator = (): React.ReactElement => {
   });
 
   React.useEffect(() => {
-    const pair = `${srcLang}-${dstLang}`;
+    const pair = `${srcLang}-${tgtLang}`;
     let newUrl = buildNewUrl({ [pairUrlParam]: pair, [textUrlParam]: srcText });
     if (newUrl.length > MaxURLLength) {
       newUrl = buildNewUrl({ [pairUrlParam]: pair });
     }
     window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, dstLang, srcText]);
+  }, [srcLang, tgtLang, srcText]);
 
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
   const translateText = React.useCallback(
-    async ({ srcText, srcLang, dstLang }: { srcText: string; srcLang: string; dstLang: string }) => {
+    async ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => {
       if (srcText.trim().length == 0) {
-        setDstText('');
+        setTgtText('');
         return;
       }
 
@@ -185,7 +185,7 @@ const Translator = (): React.ReactElement => {
 
       const [ref, request] = apyFetch('translate', {
         q: srcText,
-        langpair: `${srcLang}|${dstLang}`,
+        langpair: `${srcLang}|${tgtLang}`,
         markUnknown: markUnknown ? 'yes' : 'no',
       });
       translationRef.current = ref;
@@ -196,7 +196,7 @@ const Translator = (): React.ReactElement => {
           responseDetails: unknown;
           responseStatus: number;
         };
-        setDstText(response.responseData.translatedText);
+        setTgtText(response.responseData.translatedText);
         setError(false);
       } catch (error) {
         if (!axios.isCancel(error)) {
@@ -209,31 +209,31 @@ const Translator = (): React.ReactElement => {
   );
 
   React.useEffect(() => {
-    translateText({ srcLang, srcText, dstLang });
+    translateText({ srcLang, srcText, tgtLang });
     // `srcText` is explicitly excluded here to avoid making a translate request
     // on each keypress.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markUnknown, srcLang, dstLang]);
+  }, [markUnknown, srcLang, tgtLang]);
 
   return (
     <>
       <LanguageSelector
-        dstLang={dstLang}
-        onTranslate={() => translateText({ srcLang, srcText, dstLang })}
-        recentDstLangs={recentDstLangs}
+        onTranslate={() => translateText({ srcLang, srcText, tgtLang })}
         recentSrcLangs={recentSrcLangs}
-        setDstLang={setDstLang}
+        recentTgtLangs={recentTgtLangs}
         setSrcLang={setSrcLang}
+        setTgtLang={setTgtLang}
         srcLang={srcLang}
+        tgtLang={tgtLang}
       />
       <TextTranslationForm
-        dstLang={dstLang}
-        dstText={dstText}
-        dstTextError={error}
         instantTranslation={instantTranslation}
         setSrcText={setSrcText}
         srcLang={srcLang}
         srcText={srcText}
+        tgtLang={tgtLang}
+        tgtText={tgtText}
+        tgtTextError={error}
         translate={translateText}
       />
       <Row className="mt-2 mb-3">

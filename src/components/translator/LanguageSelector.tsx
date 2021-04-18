@@ -9,7 +9,7 @@ import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { DstLangs, Pairs, SrcLangs, isPair } from '.';
+import { Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } from '../../util/languages';
 import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
@@ -17,10 +17,10 @@ import { useLocalization } from '../../util/localization';
 type Props = {
   srcLang: string;
   setSrcLang: (code: string) => void;
-  dstLang: string;
-  setDstLang: (code: string) => void;
+  tgtLang: string;
+  setTgtLang: (code: string) => void;
   recentSrcLangs: Array<string>;
-  recentDstLangs: Array<string>;
+  recentTgtLangs: Array<string>;
   onTranslate: () => void;
 };
 
@@ -33,15 +33,15 @@ const langListMinColumnWidth = langListMaxWidths / langListMaxColumns;
 const MobileLanguageSelector = ({
   srcLang,
   setSrcLang,
-  dstLang,
-  setDstLang,
+  tgtLang,
+  setTgtLang,
   onTranslate,
   srcLangs,
-  dstLangs,
+  tgtLangs,
   swapLangs,
 }: Props & {
   srcLangs: Array<[string, string]>;
-  dstLangs: Array<[string, string]>;
+  tgtLangs: Array<[string, string]>;
   swapLangs?: () => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
@@ -69,12 +69,12 @@ const MobileLanguageSelector = ({
         <Form.Control
           as="select"
           className="d-inline-block"
-          onChange={({ target: { value } }) => setDstLang(value)}
+          onChange={({ target: { value } }) => setTgtLang(value)}
           size="sm"
           style={{ maxWidth: '60%' }}
-          value={dstLang}
+          value={tgtLang}
         >
-          {dstLangs.map(([code, name]) => (
+          {tgtLangs.map(([code, name]) => (
             <option disabled={!Pairs[srcLang].has(code)} key={code} value={code}>
               {name}
             </option>
@@ -91,48 +91,48 @@ const MobileLanguageSelector = ({
 const DesktopLanguageSelector = ({
   srcLang,
   setSrcLang,
-  dstLang,
-  setDstLang,
+  tgtLang,
+  setTgtLang,
   onTranslate,
-  recentDstLangs,
+  recentTgtLangs,
   recentSrcLangs,
   srcLangs,
-  dstLangs,
+  tgtLangs,
   swapLangs,
 }: Props & {
   srcLangs: Array<[string, string]>;
-  dstLangs: Array<[string, string]>;
+  tgtLangs: Array<[string, string]>;
   swapLangs?: () => void;
 }): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
   const { t, tLang } = useLocalization();
 
   const srcLangsDropdownTriggerRef = React.createRef<HTMLDivElement>();
-  const dstLangsDropdownTriggerRef = React.createRef<HTMLDivElement>();
+  const tgtLangsDropdownTriggerRef = React.createRef<HTMLDivElement>();
 
   const [numSrcCols, setNumSrcCols] = React.useState(1);
-  const [numDstCols, setNumDstCols] = React.useState(1);
+  const [numTgtCols, setNumTgtCols] = React.useState(1);
 
   React.useLayoutEffect(() => {
     const refreshSizes = () => {
-      let maxSrcLangsWidth, maxDstLangsWidth;
+      let maxSrcLangsWidth, maxTgtLangsWidth;
 
       // Figure out how much space is actually available for the columns.
       const srcLangsDropdownOffset = srcLangsDropdownTriggerRef.current?.getBoundingClientRect().x || 0;
-      const dstLangsDropdownOffset = dstLangsDropdownTriggerRef.current?.getBoundingClientRect().x || 0;
+      const tgtLangsDropdownOffset = tgtLangsDropdownTriggerRef.current?.getBoundingClientRect().x || 0;
       const srcLangsDropdownWidth = srcLangsDropdownTriggerRef.current?.offsetWidth || 0;
-      const dstLangsDropdownWidth = dstLangsDropdownTriggerRef.current?.offsetWidth || 0;
+      const tgtLangsDropdownWidth = tgtLangsDropdownTriggerRef.current?.offsetWidth || 0;
       if (langDirection(locale) === 'ltr') {
         maxSrcLangsWidth = window.innerWidth - srcLangsDropdownOffset - langListsBuffer;
-        maxDstLangsWidth = dstLangsDropdownOffset + dstLangsDropdownWidth - langListsBuffer;
+        maxTgtLangsWidth = tgtLangsDropdownOffset + tgtLangsDropdownWidth - langListsBuffer;
       } else {
         maxSrcLangsWidth = srcLangsDropdownOffset + srcLangsDropdownWidth - langListsBuffer;
-        maxDstLangsWidth = window.innerWidth - dstLangsDropdownOffset - langListsBuffer;
+        maxTgtLangsWidth = window.innerWidth - tgtLangsDropdownOffset - langListsBuffer;
       }
 
       // Then, prevent all the columns from getting too wide.
       maxSrcLangsWidth = Math.min(langListMaxWidths, maxSrcLangsWidth);
-      maxDstLangsWidth = Math.min(langListMaxWidths, maxDstLangsWidth);
+      maxTgtLangsWidth = Math.min(langListMaxWidths, maxTgtLangsWidth);
 
       // Finally, pick the ideal number of columns (up to limitations from the
       // maximum overall width and the imposed maximum).
@@ -143,10 +143,10 @@ const DesktopLanguageSelector = ({
           langListMaxColumns,
         ),
       );
-      setNumDstCols(
+      setNumTgtCols(
         Math.min(
-          Math.ceil(dstLangs.length / langListIdealRows),
-          Math.floor(maxDstLangsWidth / langListMinColumnWidth),
+          Math.ceil(tgtLangs.length / langListIdealRows),
+          Math.floor(maxTgtLangsWidth / langListMinColumnWidth),
           langListMaxColumns,
         ),
       );
@@ -156,10 +156,10 @@ const DesktopLanguageSelector = ({
     refreshSizes();
 
     return () => window.removeEventListener('resize', refreshSizes);
-  }, [locale, dstLangs.length, srcLangs.length, dstLangsDropdownTriggerRef, srcLangsDropdownTriggerRef]);
+  }, [locale, tgtLangs.length, srcLangs.length, tgtLangsDropdownTriggerRef, srcLangsDropdownTriggerRef]);
 
   let srcLangsPerCol = Math.ceil(srcLangs.length / numSrcCols),
-    dstLangsPerCol = Math.ceil(dstLangs.length / numDstCols);
+    tgtLangsPerCol = Math.ceil(tgtLangs.length / numTgtCols);
 
   for (let i = 0; i < numSrcCols; i++) {
     while (i * srcLangsPerCol < srcLangs.length && isVariant(srcLangs[i * srcLangsPerCol][0])) {
@@ -167,14 +167,14 @@ const DesktopLanguageSelector = ({
     }
   }
 
-  for (let i = 0; i < numDstCols; i++) {
-    while (i * dstLangsPerCol < dstLangs.length && isVariant(dstLangs[i * dstLangsPerCol][0])) {
-      dstLangsPerCol++;
+  for (let i = 0; i < numTgtCols; i++) {
+    while (i * tgtLangsPerCol < tgtLangs.length && isVariant(tgtLangs[i * tgtLangsPerCol][0])) {
+      tgtLangsPerCol++;
     }
   }
 
   const srcLangCols = [];
-  const dstLangCols = [];
+  const tgtLangCols = [];
 
   for (let i = 0; i < numSrcCols; i++) {
     const numSrcLang = srcLangsPerCol * i;
@@ -202,14 +202,14 @@ const DesktopLanguageSelector = ({
     );
   }
 
-  for (let i = 0; i < numDstCols; i++) {
-    const numDstLang = dstLangsPerCol * i;
-    const dstLangElems: Array<React.ReactElement> = [];
+  for (let i = 0; i < numTgtCols; i++) {
+    const numTgtLang = tgtLangsPerCol * i;
+    const tgtLangElems: Array<React.ReactElement> = [];
 
-    for (let j = numDstLang; j < dstLangs.length && j < numDstLang + dstLangsPerCol; j++) {
-      const [code, name] = dstLangs[j];
+    for (let j = numTgtLang; j < tgtLangs.length && j < numTgtLang + tgtLangsPerCol; j++) {
+      const [code, name] = tgtLangs[j];
       const valid = Pairs[srcLang].has(code);
-      dstLangElems.push(
+      tgtLangElems.push(
         <div
           className={classNames('language-name', {
             'variant-language-name': isVariant(code),
@@ -219,7 +219,7 @@ const DesktopLanguageSelector = ({
           onClick={
             valid
               ? () => {
-                  setDstLang(code);
+                  setTgtLang(code);
                   document.body.click();
                 }
               : undefined
@@ -229,9 +229,9 @@ const DesktopLanguageSelector = ({
         </div>,
       );
     }
-    dstLangCols.push(
-      <div className="language-name-col" key={i} style={{ width: `${100.0 / numDstCols}%` }}>
-        {dstLangElems}
+    tgtLangCols.push(
+      <div className="language-name-col" key={i} style={{ width: `${100.0 / numTgtCols}%` }}>
+        {tgtLangElems}
       </div>,
     );
   }
@@ -277,14 +277,14 @@ const DesktopLanguageSelector = ({
       </Col>
       <Col className="d-inline-flex align-items-start justify-content-between" xs="6">
         <ButtonGroup className="d-flex flex-wrap pl-0">
-          {recentDstLangs.map((lang) => (
+          {recentTgtLangs.map((lang) => (
             <Button
-              active={lang === dstLang}
+              active={lang === tgtLang}
               className="language-button"
               disabled={!Pairs[srcLang].has(lang)}
               key={lang}
               onClick={({ currentTarget }) => {
-                setDstLang(lang);
+                setTgtLang(lang);
                 currentTarget.blur();
               }}
               size="sm"
@@ -297,13 +297,13 @@ const DesktopLanguageSelector = ({
           <DropdownButton
             alignRight
             className="language-dropdown-button"
-            ref={dstLangsDropdownTriggerRef}
+            ref={tgtLangsDropdownTriggerRef}
             size="sm"
             title=""
             variant="secondary"
           >
-            <Row className="d-flex" style={{ minWidth: numDstCols * langListMinColumnWidth }}>
-              {dstLangCols}
+            <Row className="d-flex" style={{ minWidth: numTgtCols * langListMinColumnWidth }}>
+              {tgtLangCols}
             </Row>
           </DropdownButton>
         </ButtonGroup>
@@ -318,12 +318,12 @@ const DesktopLanguageSelector = ({
 const LanguageSelector = (props: Props): React.ReactElement => {
   const { tLang } = useLocalization();
 
-  const { srcLang, setSrcLang, dstLang, setDstLang } = props;
+  const { srcLang, setSrcLang, tgtLang, setTgtLang } = props;
 
-  const swapLangs = isPair(dstLang, srcLang)
+  const swapLangs = isPair(tgtLang, srcLang)
     ? () => {
-        setSrcLang(dstLang);
-        setDstLang(srcLang);
+        setSrcLang(tgtLang);
+        setTgtLang(srcLang);
       }
     : undefined;
 
@@ -355,16 +355,16 @@ const LanguageSelector = (props: Props): React.ReactElement => {
     .sort(compareLangCodes)
     .map((code) => [code, tLang(code)]) as Array<[string, string]>;
 
-  const dstLangs: Array<[string, string]> = [...DstLangs]
+  const tgtLangs: Array<[string, string]> = [...TgtLangs]
     .sort((a, b) => {
-      const possibleDstLangs = Array.from(Pairs[srcLang]) || [];
+      const possibleTgtLangs = Array.from(Pairs[srcLang]) || [];
 
       const isFamilyPossible = (lang: string) => {
         const parent = parentLang(lang);
         return (
           isPair(srcLang, lang) ||
-          possibleDstLangs.includes(parent) ||
-          possibleDstLangs.some((possibleLang) => parentLang(possibleLang) === parent)
+          possibleTgtLangs.includes(parent) ||
+          possibleTgtLangs.some((possibleLang) => parentLang(possibleLang) === parent)
         );
       };
 
@@ -405,7 +405,7 @@ const LanguageSelector = (props: Props): React.ReactElement => {
   const sharedProps = {
     ...props,
     srcLangs,
-    dstLangs,
+    tgtLangs,
     swapLangs,
   };
 

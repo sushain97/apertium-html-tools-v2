@@ -19,14 +19,14 @@ SrcLangs.forEach((lang) => {
   }
 });
 
-export const DstLangs = new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))));
-DstLangs.forEach((lang) => {
+export const TgtLangs = new Set(([] as Array<string>).concat(...Object.values(Pairs).map((ls) => Array.from(ls))));
+TgtLangs.forEach((lang) => {
   const parent = parentLang(lang);
-  if (!DstLangs.has(parent)) {
-    DstLangs.add(parent);
+  if (!TgtLangs.has(parent)) {
+    TgtLangs.add(parent);
   }
 });
 
-export const isPair = (src: string, dst: string): boolean => Pairs[src] && Pairs[src].has(dst);
+export const isPair = (src: string, tgt: string): boolean => Pairs[src] && Pairs[src].has(tgt);
 
 export default Translator;

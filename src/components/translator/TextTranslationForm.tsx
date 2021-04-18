@@ -19,22 +19,22 @@ const isKeyUpEvent = (event: React.SyntheticEvent): event is React.KeyboardEvent
 
 const TextTranslationForm = ({
   srcLang,
-  dstLang,
+  tgtLang,
   srcText,
-  dstText,
-  dstTextError,
+  tgtText,
+  tgtTextError,
   setSrcText,
   instantTranslation,
   translate,
 }: {
   srcLang: string;
-  dstLang: string;
+  tgtLang: string;
   srcText: string;
-  dstText: string;
-  dstTextError: boolean;
+  tgtText: string;
+  tgtTextError: boolean;
   instantTranslation: boolean;
   setSrcText: React.Dispatch<React.SetStateAction<string>>;
-  translate: ({ srcText, srcLang, dstLang }: { srcText: string; srcLang: string; dstLang: string }) => void;
+  translate: ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
@@ -67,11 +67,11 @@ const TextTranslationForm = ({
       const { currentTarget } = event; // https://github.com/facebook/react/issues/8690
       translationTimer.current = window.setTimeout(() => {
         if (instantTranslation) {
-          translate({ srcLang, dstLang, srcText: currentTarget.value });
+          translate({ srcLang, tgtLang, srcText: currentTarget.value });
         }
       }, timeout);
     },
-    [srcLang, dstLang, instantTranslation, translate],
+    [srcLang, tgtLang, instantTranslation, translate],
   );
 
   return (
@@ -103,12 +103,12 @@ const TextTranslationForm = ({
       <Col md="6" xs="12">
         <Form.Control
           as="textarea"
-          className={classNames('bg-light mb-2', { 'text-danger': dstTextError })}
-          dir={langDirection(dstLang)}
+          className={classNames('bg-light mb-2', { 'text-danger': tgtTextError })}
+          dir={langDirection(tgtLang)}
           readOnly
           rows={15}
           spellCheck={false}
-          value={dstTextError ? notAvailableText : dstText}
+          value={tgtTextError ? notAvailableText : tgtText}
         />
         <Button className="position-absolute copy-text-button" variant="muted">
           <FontAwesomeIcon fixedWidth icon={faCopy} />
