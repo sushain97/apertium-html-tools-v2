@@ -154,6 +154,8 @@ const Translator = (): React.ReactElement => {
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
   const [dstText, setDstText] = React.useState('');
 
+  const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
+
   React.useEffect(() => {
     const pair = `${srcLang}-${dstLang}`;
     let newUrl = buildNewUrl({ [pairUrlParam]: pair, [textUrlParam]: srcText });
@@ -166,7 +168,15 @@ const Translator = (): React.ReactElement => {
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
-  const onTranslate = async () => {
+  const translateText = async ({
+    srcText,
+    srcLang,
+    dstLang,
+  }: {
+    srcText: string;
+    srcLang: string;
+    dstLang: string;
+  }) => {
     if (srcText.trim().length == 0) {
       return;
     }
@@ -177,6 +187,7 @@ const Translator = (): React.ReactElement => {
     const [ref, request] = apyFetch('translate', {
       q: srcText,
       langpair: `${srcLang}|${dstLang}`,
+      markUnknown: markUnknown ? 'yes' : 'no',
     });
     translationRef.current = ref;
 
@@ -195,6 +206,17 @@ const Translator = (): React.ReactElement => {
       }
     }
   };
+
+  const onTranslate = () => {
+    translateText({ srcLang, srcText, dstLang });
+  };
+
+  React.useEffect(() => {
+    translateText({ srcLang, srcText, dstLang });
+    // `srcLang` is explicitly excluded here to avoid making a translate request
+    // on each keypress.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markUnknown, srcLang, dstLang]);
 
   return (
     <>
@@ -223,6 +245,12 @@ const Translator = (): React.ReactElement => {
           <Button className="mt-2" type="button" variant="secondary">
             <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
           </Button>
+        </Col>
+        <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto mt-2" md="6" xs="12">
+          <label>
+            <input checked={markUnknown} onClick={() => setMarkUnknown(!markUnknown)} type="checkbox" />{' '}
+            <span>{t('Mark_Unknown_Words')}</span>
+          </label>
         </Col>
       </Row>
     </>
