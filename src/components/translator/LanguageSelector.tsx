@@ -15,6 +15,7 @@ import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
 
 type Props = {
+  pairs: Pairs;
   srcLang: string;
   setSrcLang: (code: string) => void;
   tgtLang: string;
@@ -31,6 +32,7 @@ const langListIdealRows = 12,
 const langListMinColumnWidth = langListMaxWidths / langListMaxColumns;
 
 const MobileLanguageSelector = ({
+  pairs,
   srcLang,
   setSrcLang,
   tgtLang,
@@ -75,7 +77,7 @@ const MobileLanguageSelector = ({
           value={tgtLang}
         >
           {tgtLangs.map(([code, name]) => (
-            <option disabled={!Pairs[srcLang].has(code)} key={code} value={code}>
+            <option disabled={!pairs[srcLang].has(code)} key={code} value={code}>
               {name}
             </option>
           ))}
@@ -89,6 +91,7 @@ const MobileLanguageSelector = ({
 };
 
 const DesktopLanguageSelector = ({
+  pairs,
   srcLang,
   setSrcLang,
   tgtLang,
@@ -208,7 +211,7 @@ const DesktopLanguageSelector = ({
 
     for (let j = numTgtLang; j < tgtLangs.length && j < numTgtLang + tgtLangsPerCol; j++) {
       const [code, name] = tgtLangs[j];
-      const valid = Pairs[srcLang].has(code);
+      const valid = pairs[srcLang].has(code);
       tgtLangElems.push(
         <div
           className={classNames('language-name', {
@@ -281,7 +284,7 @@ const DesktopLanguageSelector = ({
             <Button
               active={lang === tgtLang}
               className="language-button"
-              disabled={!Pairs[srcLang].has(lang)}
+              disabled={!isPair(pairs, srcLang, lang)}
               key={lang}
               onClick={({ currentTarget }) => {
                 setTgtLang(lang);
@@ -318,9 +321,9 @@ const DesktopLanguageSelector = ({
 const LanguageSelector = (props: Props): React.ReactElement => {
   const { tLang } = useLocalization();
 
-  const { srcLang, setSrcLang, tgtLang, setTgtLang } = props;
+  const { pairs, srcLang, setSrcLang, tgtLang, setTgtLang } = props;
 
-  const swapLangs = isPair(tgtLang, srcLang)
+  const swapLangs = isPair(pairs, tgtLang, srcLang)
     ? () => {
         setSrcLang(tgtLang);
         setTgtLang(srcLang);
@@ -357,12 +360,12 @@ const LanguageSelector = (props: Props): React.ReactElement => {
 
   const tgtLangs: Array<[string, string]> = [...TgtLangs]
     .sort((a, b) => {
-      const possibleTgtLangs = Array.from(Pairs[srcLang]) || [];
+      const possibleTgtLangs = Array.from(pairs[srcLang]) || [];
 
       const isFamilyPossible = (lang: string) => {
         const parent = parentLang(lang);
         return (
-          isPair(srcLang, lang) ||
+          isPair(pairs, srcLang, lang) ||
           possibleTgtLangs.includes(parent) ||
           possibleTgtLangs.some((possibleLang) => parentLang(possibleLang) === parent)
         );
@@ -377,8 +380,8 @@ const LanguageSelector = (props: Props): React.ReactElement => {
           const aVariant = isVariant(a),
             bVariant = isVariant(b);
           if (aVariant && bVariant) {
-            const aPossible = isPair(srcLang, a),
-              bPossible = isPair(srcLang, b);
+            const aPossible = isPair(pairs, srcLang, a),
+              bPossible = isPair(pairs, srcLang, b);
             if (aPossible === bPossible) {
               return compareLangCodes(a, b);
             } else if (aPossible) {

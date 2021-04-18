@@ -8,8 +8,8 @@ import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Row from 'react-bootstrap/Row';
 
+import { ChainedPairs, DirectPairs, Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
-import { Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
@@ -22,8 +22,8 @@ const recentLangsCount = 3;
 const pairUrlParam = 'dir';
 const textUrlParam = 'q';
 
-const defaultSrcLang = (): string => {
-  const validSrcLang = (code: string) => Pairs[toAlpha3Code(code) || code];
+const defaultSrcLang = (pairs: Pairs): string => {
+  const validSrcLang = (code: string) => pairs[toAlpha3Code(code) || code];
 
   const convertBCP47LangCode = (code: string): string => {
     // First, convert variant format.
@@ -55,7 +55,7 @@ const defaultSrcLang = (): string => {
   }
 
   // Fallback to first available overall pair.
-  for (const srcLang in Pairs) {
+  for (const srcLang in pairs) {
     return srcLang;
   }
 
@@ -65,24 +65,32 @@ const defaultSrcLang = (): string => {
 const Translator = (): React.ReactElement => {
   const { t } = useLocalization();
 
+  const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
+  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
+  const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
+    validateValue: () => Config.translationChaining,
+  });
+
+  const pairs = translationChaining ? ChainedPairs : DirectPairs;
+
   let urlSrcLang = null;
   let urlTgtLang = null;
   const urlParamPair = getUrlParam(pairUrlParam);
   if (urlParamPair) {
     const [src, tgt] = urlParamPair.split('-', 2).map(toAlpha3Code);
-    if (src && tgt && isPair(src, tgt)) {
+    if (src && tgt && isPair(pairs, src, tgt)) {
       urlSrcLang = src;
       urlTgtLang = tgt;
     }
   }
 
-  const [srcLang, realSetSrcLang] = useLocalStorage<string>('srcLang', defaultSrcLang, {
+  const [srcLang, realSetSrcLang] = useLocalStorage<string>('srcLang', () => defaultSrcLang(pairs), {
     overrideValue: urlSrcLang,
-    validateValue: (l) => l in Pairs,
+    validateValue: (l) => l in pairs,
   });
-  const [tgtLang, realSetTgtLang] = useLocalStorage<string>('tgtLang', () => Pairs[srcLang].values().next().value, {
+  const [tgtLang, realSetTgtLang] = useLocalStorage<string>('tgtLang', () => pairs[srcLang].values().next().value, {
     overrideValue: urlTgtLang,
-    validateValue: (l) => Pairs[srcLang].has(l),
+    validateValue: (l) => pairs[srcLang].has(l),
   });
 
   const [recentSrcLangs, setRecentSrcLangs] = useLocalStorage<Array<string>>(
@@ -98,14 +106,14 @@ const Translator = (): React.ReactElement => {
       return Array.from(langs);
     },
     {
-      validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in Pairs) && ls.includes(srcLang),
+      validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in pairs) && ls.includes(srcLang),
     },
   );
   const [recentTgtLangs, setRecentTgtLangs] = useLocalStorage<Array<string>>(
     'recentTgtLangs',
     () => {
       const langs = new Set([tgtLang]);
-      for (const lang of Pairs[srcLang].values()) {
+      for (const lang of pairs[srcLang].values()) {
         if (langs.size == recentLangsCount) {
           break;
         }
@@ -121,7 +129,7 @@ const Translator = (): React.ReactElement => {
     },
     {
       validateValue: (ls) =>
-        ls.length == recentLangsCount && ls.some((l) => isPair(srcLang, l)) && ls.includes(tgtLang),
+        ls.length == recentLangsCount && ls.some((l) => isPair(pairs, srcLang, l)) && ls.includes(tgtLang),
     },
   );
 
@@ -132,16 +140,16 @@ const Translator = (): React.ReactElement => {
     }
 
     // Unless currently selected destination language works.
-    if (!isPair(lang, tgtLang)) {
+    if (!isPair(pairs, lang, tgtLang)) {
       // Prefer a recently selected destination language.
       for (const recentTgtLang of recentTgtLangs) {
-        if (isPair(lang, recentTgtLang)) {
+        if (isPair(pairs, lang, recentTgtLang)) {
           return setTgtLang(recentTgtLang);
         }
       }
 
       // Otherwise, pick the first possible destination language.
-      setTgtLang((Pairs[lang] || new Set()).values().next().value);
+      setTgtLang((pairs[lang] || new Set()).values().next().value);
     }
   };
 
@@ -154,12 +162,6 @@ const Translator = (): React.ReactElement => {
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
   const [tgtText, setTgtText] = React.useState('');
-
-  const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
-  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
-  const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
-    validateValue: () => Config.translationChaining,
-  });
 
   React.useEffect(() => {
     const pair = `${srcLang}-${tgtLang}`;
@@ -219,6 +221,7 @@ const Translator = (): React.ReactElement => {
     <>
       <LanguageSelector
         onTranslate={() => translateText({ srcLang, srcText, tgtLang })}
+        pairs={pairs}
         recentSrcLangs={recentSrcLangs}
         recentTgtLangs={recentTgtLangs}
         setSrcLang={setSrcLang}
