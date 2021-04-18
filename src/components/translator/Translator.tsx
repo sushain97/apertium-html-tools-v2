@@ -155,7 +155,7 @@ const Translator = (): React.ReactElement => {
   const [dstText, setDstText] = React.useState('');
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
-  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', false);
+  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
 
   React.useEffect(() => {
     const pair = `${srcLang}-${dstLang}`;
@@ -169,53 +169,44 @@ const Translator = (): React.ReactElement => {
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
-  const translateText = async ({
-    srcText,
-    srcLang,
-    dstLang,
-  }: {
-    srcText: string;
-    srcLang: string;
-    dstLang: string;
-  }) => {
-    if (srcText.trim().length == 0) {
-      setDstText('');
-      return;
-    }
-
-    translationRef.current?.cancel();
-    translationRef.current = null;
-
-    const [ref, request] = apyFetch('translate', {
-      q: srcText,
-      langpair: `${srcLang}|${dstLang}`,
-      markUnknown: markUnknown ? 'yes' : 'no',
-    });
-    translationRef.current = ref;
-
-    try {
-      const response = (await request).data as {
-        responseData: { translatedText: string };
-        responseDetails: unknown;
-        responseStatus: number;
-      };
-      setDstText(response.responseData.translatedText);
-      setError(false);
-    } catch (error) {
-      if (!axios.isCancel(error)) {
-        console.warn('Translation failed', error);
-        setError(true);
+  const translateText = React.useCallback(
+    async ({ srcText, srcLang, dstLang }: { srcText: string; srcLang: string; dstLang: string }) => {
+      if (srcText.trim().length == 0) {
+        setDstText('');
+        return;
       }
-    }
-  };
 
-  const onTranslate = () => {
-    translateText({ srcLang, srcText, dstLang });
-  };
+      translationRef.current?.cancel();
+      translationRef.current = null;
+
+      const [ref, request] = apyFetch('translate', {
+        q: srcText,
+        langpair: `${srcLang}|${dstLang}`,
+        markUnknown: markUnknown ? 'yes' : 'no',
+      });
+      translationRef.current = ref;
+
+      try {
+        const response = (await request).data as {
+          responseData: { translatedText: string };
+          responseDetails: unknown;
+          responseStatus: number;
+        };
+        setDstText(response.responseData.translatedText);
+        setError(false);
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.warn('Translation failed', error);
+          setError(true);
+        }
+      }
+    },
+    [markUnknown],
+  );
 
   React.useEffect(() => {
     translateText({ srcLang, srcText, dstLang });
-    // `srcLang` is explicitly excluded here to avoid making a translate request
+    // `srcText` is explicitly excluded here to avoid making a translate request
     // on each keypress.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markUnknown, srcLang, dstLang]);
@@ -224,7 +215,7 @@ const Translator = (): React.ReactElement => {
     <>
       <LanguageSelector
         dstLang={dstLang}
-        onTranslate={onTranslate}
+        onTranslate={() => translateText({ srcLang, srcText, dstLang })}
         recentDstLangs={recentDstLangs}
         recentSrcLangs={recentSrcLangs}
         setDstLang={setDstLang}
@@ -235,9 +226,11 @@ const Translator = (): React.ReactElement => {
         dstLang={dstLang}
         dstText={dstText}
         dstTextError={error}
+        instantTranslation={instantTranslation}
         setSrcText={setSrcText}
         srcLang={srcLang}
         srcText={srcText}
+        translate={translateText}
       />
       <Row className="mt-2 mb-3">
         <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">

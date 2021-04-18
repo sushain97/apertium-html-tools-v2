@@ -10,6 +10,13 @@ import classNames from 'classnames';
 import { langDirection } from '../../util/languages';
 import { useLocalization } from '../../util/localization';
 
+const instantTranslationPunctuationDelay = 1000,
+  instantTranslationDelay = 3000;
+
+const punctuation = new Set(['Period', 'Semicolon', 'Comma', 'Digit1', 'Slash']);
+
+const isKeyUpEvent = (event: React.SyntheticEvent): event is React.KeyboardEvent => event.type === 'keyup';
+
 const TextTranslationForm = ({
   srcLang,
   dstLang,
@@ -17,18 +24,55 @@ const TextTranslationForm = ({
   dstText,
   dstTextError,
   setSrcText,
+  instantTranslation,
+  translate,
 }: {
   srcLang: string;
   dstLang: string;
   srcText: string;
   dstText: string;
   dstTextError: boolean;
+  instantTranslation: boolean;
   setSrcText: React.Dispatch<React.SetStateAction<string>>;
+  translate: ({ srcText, srcLang, dstLang }: { srcText: string; srcLang: string; dstLang: string }) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
   const notAvailableText = t('Not_Available');
+
+  const translationTimer = React.useRef<number | null>(null);
+  const lastPunct = React.useRef(false);
+
+  const handleSrcTextChange = React.useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLTextAreaElement>) => {
+      if (lastPunct.current && isKeyUpEvent(event) && (event.code === 'Space' || event.code === 'Enter')) {
+        // Don't override the short timeout for simple space-after-punctuation.
+        return;
+      }
+
+      if (translationTimer.current && instantTranslation) {
+        clearTimeout(translationTimer.current);
+      }
+
+      let timeout;
+      if (isKeyUpEvent(event) && punctuation.has(event.code)) {
+        timeout = instantTranslationPunctuationDelay;
+        lastPunct.current = true;
+      } else {
+        timeout = instantTranslationDelay;
+        lastPunct.current = false;
+      }
+
+      const { currentTarget } = event; // https://github.com/facebook/react/issues/8690
+      translationTimer.current = window.setTimeout(() => {
+        if (instantTranslation) {
+          translate({ srcLang, dstLang, srcText: currentTarget.value });
+        }
+      }, timeout);
+    },
+    [srcLang, dstLang, instantTranslation, translate],
+  );
 
   return (
     <Row>
@@ -38,6 +82,8 @@ const TextTranslationForm = ({
           className="mb-2"
           dir={langDirection(srcLang)}
           onChange={({ target: { value } }) => setSrcText(value)}
+          onKeyUp={handleSrcTextChange}
+          onPaste={handleSrcTextChange}
           ref={srcTextareaRef}
           rows={15}
           spellCheck={false}
