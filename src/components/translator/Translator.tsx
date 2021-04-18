@@ -247,13 +247,17 @@ const Translator = (): React.ReactElement => {
         </Col>
         <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto" md="6" xs="12">
           <label className="mb-1">
-            <input checked={markUnknown} onClick={() => setMarkUnknown(!markUnknown)} type="checkbox" />{' '}
+            <input
+              checked={markUnknown}
+              onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
+              type="checkbox"
+            />{' '}
             <span>{t('Mark_Unknown_Words')}</span>
           </label>
           <label className="mb-1">
             <input
               checked={instantTranslation}
-              onClick={() => setInstantTranslation(!instantTranslation)}
+              onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
               type="checkbox"
             />{' '}
             <span>{t('Instant_Translation')}</span>
@@ -262,7 +266,7 @@ const Translator = (): React.ReactElement => {
             <label className="mb-1">
               <input
                 checked={translationChaining}
-                onClick={() => setTranslationChaining(!translationChaining)}
+                onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
                 type="checkbox"
               />{' '}
               <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
