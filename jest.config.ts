@@ -9,6 +9,6 @@ export default {
       },
     ],
   },
-
+  setupFiles: ['./src/testSetup.ts'],
   collectCoverageFrom: ['src/**/*.ts', 'src/**/*.tsx'],
 } as Config.InitialOptions;

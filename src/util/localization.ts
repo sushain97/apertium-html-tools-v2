@@ -1,19 +1,13 @@
 import * as React from 'react';
 
+import { DEFAULT_STRINGS, Strings } from './strings';
 import { LocaleContext, StringsContext } from '../context';
 import { languages, toAlpha2Code, toAlpha3Code } from './languages';
 import Config from '../../config';
 import locales from '../strings/locales.json';
 
-export type Strings = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  readonly '@langNames': Record<string, string>;
-  readonly [id: string]: string;
-};
-
-// eslint-disable-next-line
-export const DEFAULT_STRINGS: Strings = (window as any).DEFAULT_STRINGS;
+export { DEFAULT_STRINGS };
+export type { Strings };
 
 const t = (locale: string, strings: Record<string, Strings>): ((id: string) => string) => {
   return (id: string) => tt(id, locale, strings);
