@@ -19,7 +19,8 @@ TODO
 
 Our sources are written in [TypeScript][6].
 
-TODO
+Development requires installing [Node.js][7] and [Yarn][8]. After installing
+both, use `yarn install --dev` to install JavaScript packages.
 
 ### Runtime
 
@@ -30,14 +31,14 @@ We use a variety of JS libraries at runtime:
 - [Font Awesome](https://fontawesome.com/)
 - [React Router](https://reactrouter.com/)
 
-To avoid distributing hundreds of JS files, we use [esbuild][7] to bundle
+To avoid distributing hundreds of JS files, we use [esbuild][9] to bundle
 sources into browser-ready JS.
 
 ## Building
 
-Running `yarn build` will output built bundles to `dist/`. Use `--prod` to
-minify bundles. Any web server capable of serving static assets can be pointed
-directly to `dist/`.
+First, follow the development instructions. Then, running `yarn build` will
+output built bundles to `dist/`. Use `--prod` to minify bundles. Any web server
+capable of serving static assets can be pointed directly to `dist/`.
 
 ## Contributing
 
@@ -49,7 +50,7 @@ directly to `dist/`.
 - Use `yarn test` to run tests.
 
 To analyze the bundle size, run a prod build and upload the resulting
-`meta.json` file to [Bundle Buddy][8].
+`meta.json` file to [Bundle Buddy][10].
 
 [1]: http://wiki.apertium.org/wiki/Apertium-html-tools
 [2]: http://apertium.org
@@ -57,5 +58,7 @@ To analyze the bundle size, run a prod build and upload the resulting
 [4]: http://wiki.apertium.org/wiki/ScaleMT
 [5]: http://wiki.apertium.org/wiki/Apertium-html-tools
 [6]: https://www.typescriptlang.org/
-[7]: https://esbuild.github.io/
-[8]: https://bundle-buddy.com/
+[7]: https://nodejs.org/en/download/
+[8]: https://classic.yarnpkg.com/en/docs/install
+[9]: https://esbuild.github.io/
+[10]: https://bundle-buddy.com/
