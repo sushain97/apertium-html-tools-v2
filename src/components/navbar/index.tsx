@@ -17,7 +17,7 @@ const Logo = (): React.ReactElement => (
     alt="Apertium Box"
     src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     style={{
-      backgroundImage: `url(${logo as string})`,
+      backgroundImage: `url(${logo})`,
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'auto 3.75em',
       height: '3.65em',

@@ -8,8 +8,13 @@ const isAxiosError = (error: Error): error is AxiosError => (error as AxiosError
 
 const ErrorAlert = ({ error }: { error: Error }): React.ReactElement => {
   let errorText = error.toString();
-  if (isAxiosError(error) && error.response?.data.explanation) {
-    errorText = error.response?.data.explanation;
+  if (
+    isAxiosError(error) &&
+    error.response &&
+    error.response['data'] &&
+    (error.response['data'] as { explanation?: string }).explanation
+  ) {
+    errorText = (error.response['data'] as { explanation: string }).explanation;
   }
   return (
     <Alert variant="danger">

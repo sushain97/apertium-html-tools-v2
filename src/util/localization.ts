@@ -12,7 +12,7 @@ export type Strings = {
   readonly [id: string]: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line
 export const DEFAULT_STRINGS: Strings = (window as any).DEFAULT_STRINGS;
 
 const t = (locale: string, strings: Record<string, Strings>): ((id: string) => string) => {

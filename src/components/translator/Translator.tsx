@@ -45,8 +45,8 @@ const defaultSrcLang = (pairs: Pairs): string => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { navigator } = window as any;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { navigator }: { navigator: { userlanguage?: string; browserlanguage?: string; language?: string } } = window;
   const ieLang = navigator.userlanguage || navigator.browserlanguage || navigator.language;
   if (ieLang) {
     const ieIsoLang = convertBCP47LangCode(ieLang);

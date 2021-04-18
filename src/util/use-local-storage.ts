@@ -31,9 +31,9 @@ export default <T>(
     try {
       const item = window.localStorage.getItem(key);
       if (item) {
-        const parsedItem = JSON.parse(item);
+        const parsedItem = JSON.parse(item) as T;
         if (validateValueFinal(parsedItem)) {
-          return parsedItem as T;
+          return parsedItem;
         }
       }
     } catch (error) {

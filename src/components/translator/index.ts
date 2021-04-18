@@ -3,11 +3,12 @@ import { parentLang } from '../../util/languages';
 
 export type Pairs = Readonly<Record<string, Set<string>>>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const DirectPairs: Pairs = ((window as any).PAIRS as Array<{
+// eslint-disable-next-line
+const rawPairs = (window as any).PAIRS as Array<{
   sourceLanguage: string;
   targetLanguage: string;
-}>).reduce((pairs, { sourceLanguage, targetLanguage }) => {
+}>;
+export const DirectPairs: Pairs = rawPairs.reduce((pairs, { sourceLanguage, targetLanguage }) => {
   pairs[sourceLanguage] = pairs[sourceLanguage] || new Set();
   pairs[sourceLanguage].add(targetLanguage);
   return pairs;

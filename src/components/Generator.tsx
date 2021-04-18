@@ -12,7 +12,7 @@ import { apyFetch } from '../util';
 import useLocalStorage from '../util/use-local-storage';
 import { useLocalization } from '../util/localization';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line
 const Generators: Readonly<Record<string, string>> = (window as any).GENERATORS;
 
 const langUrlParam = 'gLang';

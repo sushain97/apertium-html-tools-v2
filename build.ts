@@ -28,12 +28,14 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
 void (async () => {
   let defaultStrings;
 
-  const pairs = (await apyGet(`list`, { q: 'pairs' })).data['responseData'] as Array<{
-    sourceLanguage: string;
-    targetLanguage: string;
-  }>;
-  const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data;
-  const generators = (await apyGet(`list`, { q: 'generators' })).data;
+  const pairs = ((await apyGet(`list`, { q: 'pairs' })).data as {
+    responseData: Array<{
+      sourceLanguage: string;
+      targetLanguage: string;
+    }>;
+  }).responseData;
+  const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data as Record<string, string>;
+  const generators = (await apyGet(`list`, { q: 'generators' })).data as Record<string, string>;
 
   let allLangs: Array<string | null> = [
     ...([] as Array<string>).concat(
@@ -61,7 +63,7 @@ void (async () => {
 
         await fs.mkdir(path.dirname(outPath), { recursive: true });
 
-        const outData = JSON.parse(await fs.readFile(inPath, 'utf-8'));
+        const outData = JSON.parse(await fs.readFile(inPath, 'utf-8')) as Record<string, unknown>;
         delete outData['@metadata'];
 
         const langNames: Record<string, string> = {};

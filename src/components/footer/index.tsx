@@ -13,7 +13,7 @@ import DocumentationModal from './DocumentationModal';
 import DownloadModal from './DownloadModal';
 import { useLocalization } from '../../util/localization';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line
 const version: string = (window as any).VERSION;
 
 const enum Tab {

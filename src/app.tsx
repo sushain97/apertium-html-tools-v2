@@ -87,7 +87,7 @@ const App = () => {
       let localeStrings: Strings;
       try {
         localeStrings = (await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 }))
-          .data;
+          .data as Strings;
       } catch (error) {
         console.warn(`Failed to fetch strings, falling back to default ${Config.defaultLocale}`, error);
         return;
