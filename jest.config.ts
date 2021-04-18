@@ -9,4 +9,6 @@ export default {
       },
     ],
   },
+
+  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.tsx'],
 } as Config.InitialOptions;
