@@ -15,7 +15,23 @@ TODO
 
 ## Dependencies
 
+### Development
+
+Our sources are written in [TypeScript][6].
+
 TODO
+
+### Runtime
+
+We use a variety of JS libraries at runtime:
+
+- [React](https://reactjs.org/)
+- [React-Bootstrap](https://react-bootstrap.netlify.app/)
+- [Font Awesome](https://fontawesome.com/)
+- [React Router](https://reactrouter.com/)
+
+To avoid distributing hundreds of JS files, we use [esbuild][7] to bundle
+sources into browser-ready JS.
 
 ## Building
 
@@ -32,11 +48,13 @@ directly to `dist/`.
 - Use `yarn lint` to run the linter.
 
 To analyze the bundle size, run a prod build and upload the resulting
-`meta.json` file to [Bundle Buddy][6].
+`meta.json` file to [Bundle Buddy][8].
 
 [1]: http://wiki.apertium.org/wiki/Apertium-html-tools
 [2]: http://apertium.org
 [3]: http://wiki.apertium.org/wiki/Apertium-apy
 [4]: http://wiki.apertium.org/wiki/ScaleMT
 [5]: http://wiki.apertium.org/wiki/Apertium-html-tools
-[6]: https://bundle-buddy.com/
+[6]: https://www.typescriptlang.org/
+[7]: https://esbuild.github.io/
+[8]: https://bundle-buddy.com/
