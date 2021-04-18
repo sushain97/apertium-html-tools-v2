@@ -19,6 +19,7 @@
         "allowSeparatedGroups": true
       }
     ],
-    "react/jsx-sort-props": "error"
+    "react/jsx-sort-props": "error",
+    "react/self-closing-comp": "error"
   }
 }

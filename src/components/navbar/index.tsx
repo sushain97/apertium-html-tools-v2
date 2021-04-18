@@ -72,7 +72,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
         >
           <LocaleSelector setLocale={setLocale} />
         </div>
-        <BootstrapNavbar.Toggle></BootstrapNavbar.Toggle>
+        <BootstrapNavbar.Toggle />
         <BootstrapNavbar.Collapse>
           <Nav as="ul" className="mt-1 ml-auto">
             {Config.enabledModes.size > 1 && (

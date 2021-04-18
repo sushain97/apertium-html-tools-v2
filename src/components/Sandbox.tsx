@@ -84,7 +84,7 @@ const SandboxForm = ({
             rows={3}
             spellCheck={false}
             value={requestText}
-          ></Form.Control>
+           />
           <div className="form-text text-muted">
             {'e.g. /perWord?lang=en-es&amp;modes=morph+translate+biltrans&amp;q=let+there+be+light'}
           </div>

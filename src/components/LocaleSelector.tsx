@@ -20,7 +20,7 @@ const LocaleSelector = ({
         inverse
         size="2x"
         style={{ padding: '0 5px 0 0', marginLeft: '0.3em', marginTop: '1px' }}
-      ></FontAwesomeIcon>
+       />
       <select
         className="float-right mt-2"
         onChange={({ target: { value } }) => setLocale(value)}
