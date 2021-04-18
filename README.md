@@ -1,6 +1,7 @@
 # Apertium Html-tools
 
-[![Build Status](https://github.com/sushain97/apertium-html-tools-v2/workflows/Check/badge.svg?branch=master)](https://github.com/sushain97/apertium-html-tools-v2/actions/workflows/check.yml?query=branch%3Amaster)
+[![Build
+Status](https://github.com/sushain97/apertium-html-tools-v2/workflows/Check/badge.svg?branch=master)](https://github.com/sushain97/apertium-html-tools-v2/actions/workflows/check.yml?query=branch%3Amaster)
 
 [Apertium Html-tools][1] is a web application providing a fully localised
 interface for text/document/website translation, analysis, and generation
@@ -8,17 +9,27 @@ powered by [Apertium][2]. Html-tools relies on an Apertium HTTP API such as
 [Apertium-apy][3] or [ScaleMT][4] (to a lesser extent). More information along
 with instructions for localization is available on the [Apertium Wiki][5].
 
+## Configuration
+
+TODO
+
 ## Dependencies
 
 TODO
 
 ## Building
 
-TODO
+Running `yarn build` will output built bundles to `dist/`. Use `--prod` to
+minify bundles. Any web server capable of serving static assets can be pointed
+directly to `dist/`.
 
 ## Contributing
 
-TODO
+- Use `yarn build --watch` to keep `dist/` up-to-date with new bundles.
+- Use `yarn serve` to run a simple Python server which serves `dist/` on
+  `localhost:8000`.
+- Use `yarn tsc` to run the typechecker.
+- Use `yarn lint` to run the linter.
 
 To analyze the bundle size, run a prod build and upload the resulting
 `meta.json` file to [Bundle Buddy][6].
