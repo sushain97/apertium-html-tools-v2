@@ -91,10 +91,14 @@ const Translator = (): React.ReactElement => {
     overrideValue: urlSrcLang,
     validateValue: (l) => l in pairs,
   });
-  const [tgtLang, realSetTgtLang] = useLocalStorage<string>('tgtLang', () => pairs[srcLang].values().next().value, {
-    overrideValue: urlTgtLang,
-    validateValue: (l) => pairs[srcLang].has(l),
-  });
+  const [tgtLang, realSetTgtLang] = useLocalStorage<string>(
+    'tgtLang',
+    () => pairs[srcLang].values().next().value as string,
+    {
+      overrideValue: urlTgtLang,
+      validateValue: (l) => pairs[srcLang].has(l),
+    },
+  );
 
   const [recentSrcLangs, setRecentSrcLangs] = useLocalStorage<Array<string>>(
     'recentSrcLangs',
@@ -214,7 +218,7 @@ const Translator = (): React.ReactElement => {
   );
 
   React.useEffect(() => {
-    translateText({ srcLang, srcText, tgtLang });
+    void translateText({ srcLang, srcText, tgtLang });
     // `srcText` is explicitly excluded here to avoid making a translate request
     // on each keypress.
     // eslint-disable-next-line react-hooks/exhaustive-deps

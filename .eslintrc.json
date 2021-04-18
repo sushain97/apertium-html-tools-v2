@@ -1,11 +1,15 @@
 {
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "plugins": ["@typescript-eslint", "react-hooks", "jsx-a11y", "jest"],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jest/recommended",
     "plugin:jsx-a11y/strict"
   ],
@@ -22,6 +26,8 @@
       }
     ],
     "react/jsx-sort-props": "error",
-    "react/self-closing-comp": "error"
+    "react/self-closing-comp": "error",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off"
   }
 }

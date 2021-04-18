@@ -137,7 +137,7 @@ const AnalysisForm = ({
     analysisRef.current?.cancel();
     analysisRef.current = null;
 
-    (async () => {
+    void (async () => {
       try {
         setLoading(true);
         const [ref, request] = apyFetch('analyze', { lang, q: text });

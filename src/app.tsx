@@ -32,12 +32,12 @@ const Interfaces: Record<Mode, () => React.ReactElement> = {
 };
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
-  (async () => {
+  void (async () => {
     let locales: Array<string>;
     try {
       locales = (await apyFetch('getLocale')[1]).data as Array<string>;
     } catch (error) {
-      console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}: ${error}`);
+      console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}`, error);
       return;
     }
 
@@ -83,13 +83,13 @@ const App = () => {
       return;
     }
 
-    (async () => {
+    void (async () => {
       let localeStrings: Strings;
       try {
         localeStrings = (await axios({ url: `/strings/${locale}.json`, validateStatus: (status) => status == 200 }))
           .data;
       } catch (error) {
-        console.warn(`Failed to fetch strings, falling back to default ${Config.defaultLocale}: ${error}`);
+        console.warn(`Failed to fetch strings, falling back to default ${Config.defaultLocale}`, error);
         return;
       }
 
@@ -99,15 +99,13 @@ const App = () => {
 
   // Update global strings on locale change.
   React.useEffect(() => {
-    (async () => {
-      const htmlElement = document.getElementsByTagName('html')[0];
-      htmlElement.dir = langDirection(locale);
-      htmlElement.lang = toAlpha2Code(locale) || locale;
+    const htmlElement = document.getElementsByTagName('html')[0];
+    htmlElement.dir = langDirection(locale);
+    htmlElement.lang = toAlpha2Code(locale) || locale;
 
-      (document.getElementById('meta-description') as HTMLMetaElement).content = tt('description', locale, strings);
+    (document.getElementById('meta-description') as HTMLMetaElement).content = tt('description', locale, strings);
 
-      document.title = tt('title', locale, strings);
-    })();
+    document.title = tt('title', locale, strings);
   }, [locale, strings]);
 
   const wrapRef = React.createRef<HTMLDivElement>();

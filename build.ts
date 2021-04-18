@@ -25,18 +25,20 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
     validateStatus: (status) => status == 200,
   });
 
-(async () => {
+void (async () => {
   let defaultStrings;
 
-  const pairs = (await apyGet(`list`, { q: 'pairs' })).data['responseData'];
+  const pairs = (await apyGet(`list`, { q: 'pairs' })).data['responseData'] as Array<{
+    sourceLanguage: string;
+    targetLanguage: string;
+  }>;
   const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data;
   const generators = (await apyGet(`list`, { q: 'generators' })).data;
 
   let allLangs: Array<string | null> = [
-    ...pairs.flatMap(({ sourceLanguage, targetLanguage }: { sourceLanguage: string; targetLanguage: string }) => [
-      sourceLanguage,
-      targetLanguage,
-    ]),
+    ...([] as Array<string>).concat(
+      ...pairs.map(({ sourceLanguage, targetLanguage }) => [sourceLanguage, targetLanguage]),
+    ),
     ...Object.keys(analyzers),
     ...Object.keys(generators),
     ...Object.keys(languages),
@@ -109,7 +111,7 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
             else {
               console.log('✅ watch build succeeded');
               if (result) {
-                (async () => {
+                void (async () => {
                   await fs.writeFile('meta.json', JSON.stringify(result.metafile));
                 })();
               }

@@ -53,7 +53,7 @@ const GeneratorForm = ({
     generationRef.current?.cancel();
     generationRef.current = null;
 
-    (async () => {
+    void (async () => {
       try {
         setLoading(true);
         const [ref, request] = apyFetch('generate', { lang, q: text });

@@ -362,7 +362,7 @@ const LanguageSelector = (props: Props): React.ReactElement => {
 
   const srcLangs: Array<[string, string]> = [...SrcLangs]
     .sort(compareLangCodes)
-    .map((code) => [code, tLang(code)]) as Array<[string, string]>;
+    .map((code) => [code, tLang(code)]) ;
 
   const tgtLangs: Array<[string, string]> = [...TgtLangs]
     .sort((a, b) => {
@@ -409,7 +409,7 @@ const LanguageSelector = (props: Props): React.ReactElement => {
         return 1;
       }
     })
-    .map((code) => [code, tLang(code)]) as Array<[string, string]>;
+    .map((code) => [code, tLang(code)]) ;
 
   const sharedProps = {
     ...props,

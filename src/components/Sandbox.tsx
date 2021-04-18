@@ -35,7 +35,7 @@ const SandboxForm = ({
     requestRef.current?.cancel();
     requestRef.current = null;
 
-    (async () => {
+    void (async () => {
       try {
         setLoading(true);
         const [ref, request] = apyFetch(requestText);

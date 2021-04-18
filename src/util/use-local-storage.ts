@@ -7,7 +7,7 @@ const storeValue = <T>(key: string, value: T) => {
   try {
     window.localStorage.setItem(key, serializedValue);
   } catch (error) {
-    console.warn(`Failed to set LocalStorage[${key}] = ${serializedValue}: ${error}`);
+    console.warn(`Failed to set LocalStorage[${key}] = ${serializedValue}`, error);
   }
 };
 
@@ -33,11 +33,11 @@ export default <T>(
       if (item) {
         const parsedItem = JSON.parse(item);
         if (validateValueFinal(parsedItem)) {
-          return parsedItem;
+          return parsedItem as T;
         }
       }
     } catch (error) {
-      console.warn(`Failed to parse LocalStorage[${key}]: ${error}`);
+      console.warn(`Failed to parse LocalStorage[${key}]`, error);
     }
 
     const value = initialValue instanceof Function ? initialValue() : initialValue;
