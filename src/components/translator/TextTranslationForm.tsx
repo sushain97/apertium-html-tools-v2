@@ -78,6 +78,7 @@ const TextTranslationForm = ({
     <Row>
       <Col md="6" xs="12">
         <Form.Control
+          aria-label={t('Input_Text')}
           as="textarea"
           className="mb-2"
           dir={langDirection(srcLang)}

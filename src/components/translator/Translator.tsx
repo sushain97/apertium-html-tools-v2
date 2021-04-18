@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-for */
+
 import './translator.css';
 
 import * as React from 'react';
@@ -6,6 +8,7 @@ import { faFile, faLink } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 import { ChainedPairs, DirectPairs, Pairs, SrcLangs, TgtLangs, isPair } from '.';
@@ -218,7 +221,7 @@ const Translator = (): React.ReactElement => {
   }, [markUnknown, srcLang, tgtLang]);
 
   return (
-    <>
+    <Form aria-label={t('Morphological_Analysis')}>
       <LanguageSelector
         onTranslate={() => translateText({ srcLang, srcText, tgtLang })}
         pairs={pairs}
@@ -277,7 +280,7 @@ const Translator = (): React.ReactElement => {
           )}
         </Col>
       </Row>
-    </>
+    </Form>
   );
 };
 

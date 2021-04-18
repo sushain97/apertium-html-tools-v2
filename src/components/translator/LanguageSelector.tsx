@@ -186,6 +186,7 @@ const DesktopLanguageSelector = ({
     for (let j = numSrcLang; j < srcLangs.length && j < numSrcLang + srcLangsPerCol; j++) {
       const [code, name] = srcLangs[j];
       srcLangElems.push(
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
           className={classNames('language-name', { 'variant-language-name': isVariant(code) })}
           key={code}
@@ -193,6 +194,8 @@ const DesktopLanguageSelector = ({
             setSrcLang(code);
             document.body.click();
           }}
+          role="button"
+          tabIndex={0}
         >
           {name}
         </div>,
@@ -213,6 +216,7 @@ const DesktopLanguageSelector = ({
       const [code, name] = tgtLangs[j];
       const valid = pairs[srcLang].has(code);
       tgtLangElems.push(
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <div
           className={classNames('language-name', {
             'variant-language-name': isVariant(code),
@@ -227,6 +231,8 @@ const DesktopLanguageSelector = ({
                 }
               : undefined
           }
+          role="button"
+          tabIndex={0}
         >
           {name}
         </div>,

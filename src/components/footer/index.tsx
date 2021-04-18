@@ -2,6 +2,7 @@ import './footer.css';
 
 import * as React from 'react';
 import { faBook, faDownload, faEnvelope, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ModalProps } from 'react-bootstrap/Modal';
 import Nav from 'react-bootstrap/Nav';
@@ -86,9 +87,9 @@ const Footer = ({
 
             <div className="card d-inline-block bg-light mr-3 mb-4 ml-3 p-2">
               <span>{t('Notice_Mistake')}</span>{' '}
-              <a onClick={() => setOpenTab(Tab.About)} style={{ cursor: 'pointer' }} tabIndex={0}>
+              <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
                 {t('Help_Improve')}
-              </a>
+              </Button>
             </div>
 
             <a
@@ -102,9 +103,9 @@ const Footer = ({
           </div>
           <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
             <span>{t('Notice_Mistake')}</span>{' '}
-            <a href="#" onClick={() => setOpenTab(Tab.About)} role="button" tabIndex={0}>
+            <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
               {t('Help_Improve')}
-            </a>
+            </Button>
           </div>
         </div>
       </div>

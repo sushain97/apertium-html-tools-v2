@@ -21,6 +21,7 @@ const LocaleSelector = ({
         size="2x"
         style={{ padding: '0 5px 0 0', marginLeft: '0.3em', marginTop: '1px' }}
       />
+      {/* eslint-disable-next-line jsx-a11y/no-onchange */}
       <select
         className="float-right mt-2"
         onChange={({ target: { value } }) => setLocale(value)}

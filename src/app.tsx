@@ -9,7 +9,7 @@ import axios from 'axios';
 
 import { DEFAULT_STRINGS, Strings, tt, validLocale } from './util/localization';
 import { LocaleContext, StringsContext } from './context';
-import { langDirection, toAlpha3Code } from './util/languages';
+import { langDirection, toAlpha2Code, toAlpha3Code } from './util/languages';
 import Config from '../config';
 import { Mode } from './types';
 import { apyFetch } from './util';
@@ -100,7 +100,12 @@ const App = () => {
   // Update global strings on locale change.
   React.useEffect(() => {
     (async () => {
-      document.getElementsByTagName('html')[0].dir = langDirection(locale);
+      const htmlElement = document.getElementsByTagName('html')[0];
+      htmlElement.dir = langDirection(locale);
+      htmlElement.lang = toAlpha2Code(locale) || locale;
+
+      (document.getElementById('meta-description') as HTMLMetaElement).content = tt('description', locale, strings);
+
       document.title = tt('title', locale, strings);
     })();
   }, [locale, strings]);
