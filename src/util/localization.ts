@@ -38,7 +38,7 @@ const ttLang = (code: string, locale: string, strings: Record<string, Strings>):
   }
 
   const defaultNames = DEFAULT_STRINGS['@langNames'];
-  if (defaultNames[code]) {
+  if (defaultNames) {
     const defaultName = defaultNames[code] || (alpha2Code && defaultNames[alpha2Code]);
     if (defaultName) {
       return defaultName;
