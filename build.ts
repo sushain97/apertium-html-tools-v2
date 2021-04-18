@@ -1,9 +1,9 @@
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as child_process from 'child_process';
+import * as path from 'path';
+import { promises as fs } from 'fs';
 
-import axios, { AxiosPromise, AxiosResponse } from 'axios';
 import * as esbuild from 'esbuild';
+import axios, { AxiosResponse } from 'axios';
 
 import Config from './config';
 
@@ -58,6 +58,7 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
   await esbuild.build({
     entryPoints: ['src/app.tsx'],
     bundle: true,
+    metafile: true,
     loader: { '.embed.png': 'dataurl', '.png': 'file', '.gif': 'file', '.jpg': 'file' },
     outfile: path.join(DIST, 'bundle.js'),
 
@@ -76,9 +77,16 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
     incremental: watch,
     watch: watch
       ? {
-          onRebuild(error: esbuild.BuildFailure | null) {
+          onRebuild(error: esbuild.BuildFailure | null, result: esbuild.BuildResult | null) {
             if (error) console.error('❌ watch build failed');
-            else console.log('✅ watch build succeeded');
+            else {
+              console.log('✅ watch build succeeded');
+              if (result) {
+                (async () => {
+                  await fs.writeFile('meta.json', JSON.stringify(result.metafile));
+                })();
+              }
+            }
           },
         }
       : undefined,

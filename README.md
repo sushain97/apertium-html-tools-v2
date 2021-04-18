@@ -20,8 +20,12 @@ TODO
 
 TODO
 
+To analyze the bundle size, run a prod build and upload the resulting
+`meta.json` file to [Bundle Buddy][6].
+
 [1]: http://wiki.apertium.org/wiki/Apertium-html-tools
 [2]: http://apertium.org
 [3]: http://wiki.apertium.org/wiki/Apertium-apy
 [4]: http://wiki.apertium.org/wiki/ScaleMT
 [5]: http://wiki.apertium.org/wiki/Apertium-html-tools
+[6]: https://bundle-buddy.com/
