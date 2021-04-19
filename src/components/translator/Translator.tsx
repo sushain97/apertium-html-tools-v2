@@ -15,11 +15,18 @@ import { ChainedPairs, DirectPairs, Pairs, SrcLangs, TgtLangs, isPair } from '.'
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
+import DocTranslationForm from './DocTranslationForm';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 import { apyFetch } from '../../util';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
+
+enum Mode {
+  Text,
+  Document,
+  Webpage,
+}
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';
@@ -67,6 +74,8 @@ const defaultSrcLang = (pairs: Pairs): string => {
 
 const Translator = (): React.ReactElement => {
   const { t } = useLocalization();
+
+  const [mode, setMode] = React.useState(Mode.Text);
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
@@ -184,6 +193,10 @@ const Translator = (): React.ReactElement => {
 
   const translateText = React.useCallback(
     async ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => {
+      if (mode != Mode.Text) {
+        return;
+      }
+
       if (srcText.trim().length == 0) {
         setTgtText('');
         return;
@@ -214,7 +227,7 @@ const Translator = (): React.ReactElement => {
         }
       }
     },
-    [markUnknown],
+    [markUnknown, mode],
   );
 
   React.useEffect(() => {
@@ -225,7 +238,7 @@ const Translator = (): React.ReactElement => {
   }, [markUnknown, srcLang, tgtLang]);
 
   return (
-    <Form aria-label={t('Morphological_Analysis')}>
+    <Form aria-label={t('Translate')}>
       <LanguageSelector
         onTranslate={() => translateText({ srcLang, srcText, tgtLang })}
         pairs={pairs}
@@ -236,54 +249,67 @@ const Translator = (): React.ReactElement => {
         srcLang={srcLang}
         tgtLang={tgtLang}
       />
-      <TextTranslationForm
-        instantTranslation={instantTranslation}
-        setSrcText={setSrcText}
-        srcLang={srcLang}
-        srcText={srcText}
-        tgtLang={tgtLang}
-        tgtText={tgtText}
-        tgtTextError={error}
-        translate={translateText}
-      />
-      <Row className="mt-2 mb-3">
-        <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">
-          <Button className="mt-2" style={{ marginRight: '5px' }} type="button" variant="secondary">
-            <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
-          </Button>
-          <Button className="mt-2" type="button" variant="secondary">
-            <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
-          </Button>
-        </Col>
-        <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto" md="6" xs="12">
-          <label className="mb-1">
-            <input
-              checked={markUnknown}
-              onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
-              type="checkbox"
-            />{' '}
-            <span>{t('Mark_Unknown_Words')}</span>
-          </label>
-          <label className="mb-1">
-            <input
-              checked={instantTranslation}
-              onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
-              type="checkbox"
-            />{' '}
-            <span>{t('Instant_Translation')}</span>
-          </label>
-          {Config.translationChaining && (
-            <label className="mb-1">
-              <input
-                checked={translationChaining}
-                onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
-                type="checkbox"
-              />{' '}
-              <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
-            </label>
-          )}
-        </Col>
-      </Row>
+      {mode === Mode.Text && (
+        <>
+          <TextTranslationForm
+            instantTranslation={instantTranslation}
+            setSrcText={setSrcText}
+            srcLang={srcLang}
+            srcText={srcText}
+            tgtLang={tgtLang}
+            tgtText={tgtText}
+            tgtTextError={error}
+            translate={translateText}
+          />
+          <Row className="mt-2 mb-3">
+            <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">
+              <Button
+                className="mt-2"
+                onClick={() => setMode(Mode.Document)}
+                style={{ marginRight: '5px' }}
+                type="button"
+                variant="secondary"
+              >
+                <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
+              </Button>
+              <Button className="mt-2" type="button" variant="secondary">
+                <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
+              </Button>
+            </Col>
+            <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto" md="6" xs="12">
+              <label className="mb-1">
+                <input
+                  checked={markUnknown}
+                  onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
+                  type="checkbox"
+                />{' '}
+                <span>{t('Mark_Unknown_Words')}</span>
+              </label>
+              <label className="mb-1">
+                <input
+                  checked={instantTranslation}
+                  onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
+                  type="checkbox"
+                />{' '}
+                <span>{t('Instant_Translation')}</span>
+              </label>
+              {Config.translationChaining && (
+                <label className="mb-1">
+                  <input
+                    checked={translationChaining}
+                    onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
+                    type="checkbox"
+                  />{' '}
+                  <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
+                </label>
+              )}
+            </Col>
+          </Row>
+        </>
+      )}
+      {mode === Mode.Document && (
+        <DocTranslationForm onCancel={() => setMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+      )}
     </Form>
   );
 };
