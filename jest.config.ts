@@ -9,6 +9,9 @@ export default {
       },
     ],
   },
+  moduleNameMapper: {
+    '\\.(css|gif|png|jpg)$': 'identity-obj-proxy',
+  },
   setupFiles: ['./src/testSetup.ts'],
   collectCoverageFrom: ['src/**/*.ts', 'src/**/*.tsx'],
 } as Config.InitialOptions;

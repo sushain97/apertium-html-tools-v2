@@ -62,7 +62,7 @@ const Footer = ({
       <div className="d-flex flex-column container" ref={footerRef}>
         <div className="d-flex flex-column container">
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
-            <Nav as="ul" style={{ cursor: 'pointer' }} variant="pills">
+            <Nav as="ul" role="navigation" style={{ cursor: 'pointer' }} variant="pills">
               <Nav.Item as="li">
                 <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.About)}>
                   <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
