@@ -18,6 +18,7 @@ import Config from '../../../config';
 import DocTranslationForm from './DocTranslationForm';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
+import WebpageTranslationForm from './WebpageTranslationForm';
 import { apyFetch } from '../../util';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
@@ -272,7 +273,7 @@ const Translator = (): React.ReactElement => {
               >
                 <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
               </Button>
-              <Button className="mt-2" type="button" variant="secondary">
+              <Button className="mt-2" onClick={() => setMode(Mode.Webpage)} type="button" variant="secondary">
                 <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
               </Button>
             </Col>
@@ -309,6 +310,9 @@ const Translator = (): React.ReactElement => {
       )}
       {mode === Mode.Document && (
         <DocTranslationForm onCancel={() => setMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+      )}
+      {mode === Mode.Webpage && (
+        <WebpageTranslationForm onCancel={() => setMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
       )}
     </Form>
   );
