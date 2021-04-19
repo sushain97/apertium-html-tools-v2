@@ -48,6 +48,7 @@ const TagLine = (): React.ReactElement => {
 const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
   const { t } = useLocalization();
   const { pathname } = useLocation();
+  const { defaultMode } = Config;
 
   return (
     <BootstrapNavbar bg="dark" className="navbar navbar-default mb-4 pt-0" expand="md" variant="dark">
@@ -80,7 +81,10 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Translation) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname == '/translation' || (pathname == '/' && Config.defaultMode == Mode.Translation)}
+                      active={
+                        ['/translation', '/webpageTranslation', '/docTranslation'].includes(pathname) ||
+                        (pathname === '/' && defaultMode == Mode.Translation)
+                      }
                       href={`#${generatePath('/translation')}`}
                     >
                       {t('Translation')}
@@ -90,7 +94,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Analysis) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname == '/analysis' || (pathname == '/' && Config.defaultMode == Mode.Analysis)}
+                      active={pathname === '/analysis' || (pathname === '/' && defaultMode == Mode.Analysis)}
                       href={`#${generatePath('/analysis')}`}
                     >
                       {t('Morphological_Analysis')}
@@ -100,7 +104,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Generation) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname == '/generation' || (pathname == '/' && Config.defaultMode == Mode.Generation)}
+                      active={pathname === '/generation' || (pathname === '/' && defaultMode == Mode.Generation)}
                       href={`#${generatePath('/generation')}`}
                     >
                       {t('Morphological_Generation')}
@@ -110,7 +114,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Sandbox) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname == '/sandbox' || (pathname == '/' && Config.defaultMode == Mode.Sandbox)}
+                      active={pathname === '/sandbox' || (pathname === '/' && defaultMode == Mode.Sandbox)}
                       href={`#${generatePath('/sandbox')}`}
                     >
                       {t('APy_Sandbox')}
