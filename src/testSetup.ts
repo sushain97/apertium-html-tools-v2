@@ -7,4 +7,4 @@ Object.keys(engStrings).forEach((key) => (defaultStrings[key] = `${key}-Default`
 defaultStrings['Maintainer'] = '{{maintainer}}-Default';
 
 // eslint-disable-next-line
-(window as any).DEFAULT_STRINGS = defaultStrings;
+(window as any).PRELOADED_STRINGS = defaultStrings;

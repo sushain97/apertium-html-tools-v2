@@ -1,13 +1,15 @@
 import * as React from 'react';
 
-import { DEFAULT_STRINGS, Strings } from './strings';
 import { LocaleContext, StringsContext } from '../context';
+import { PRELOADED_STRINGS, Strings } from './strings';
 import { languages, toAlpha2Code, toAlpha3Code } from './languages';
 import Config from '../../config';
 import locales from '../strings/locales.json';
 
-export { DEFAULT_STRINGS };
+export { PRELOADED_STRINGS };
 export type { Strings };
+
+const defaultStrings = PRELOADED_STRINGS[Config.defaultLocale];
 
 const t = (locale: string, strings: Record<string, Strings>): ((id: string) => string) => {
   return (id: string) => tt(id, locale, strings);
@@ -15,7 +17,7 @@ const t = (locale: string, strings: Record<string, Strings>): ((id: string) => s
 
 export const tt = (id: string, locale: string, strings: Record<string, Strings>): string => {
   const localeStrings = strings[locale];
-  let translated = (localeStrings ? localeStrings[id] : undefined) || DEFAULT_STRINGS[id] || id;
+  let translated = (localeStrings ? localeStrings[id] : undefined) || defaultStrings[id] || id;
   Object.entries(Config.stringReplacements).forEach(([placeholder, replacement]) => {
     translated = translated.replace(placeholder, replacement);
   });
@@ -37,7 +39,7 @@ const ttLang = (code: string, locale: string, strings: Record<string, Strings>):
     }
   }
 
-  const defaultNames = DEFAULT_STRINGS['@langNames'];
+  const defaultNames = defaultStrings['@langNames'];
   if (defaultNames) {
     const defaultName = defaultNames[code] || (alpha2Code && defaultNames[alpha2Code]);
     if (defaultName) {

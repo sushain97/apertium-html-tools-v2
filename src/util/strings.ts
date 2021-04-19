@@ -6,4 +6,4 @@ export type Strings = {
 };
 
 // eslint-disable-next-line
-export const DEFAULT_STRINGS: Strings = (window as any).DEFAULT_STRINGS;
+export const PRELOADED_STRINGS: Readonly<Record<string, Strings>> = (window as any).PRELOADED_STRINGS;

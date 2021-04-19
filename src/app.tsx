@@ -7,8 +7,8 @@ import { HashRouter, Route } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import axios from 'axios';
 
-import { DEFAULT_STRINGS, Strings, tt, validLocale } from './util/localization';
 import { LocaleContext, StringsContext } from './context';
+import { PRELOADED_STRINGS, Strings, tt, validLocale } from './util/localization';
 import { langDirection, toAlpha2Code, toAlpha3Code } from './util/languages';
 import Config from '../config';
 import { Mode } from './types';
@@ -57,10 +57,13 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
 const App = () => {
   // Locale selection priority:
   // 1. `lang` parameter from URL
-  // 2. `locale` key from LocalStorage
-  // 3. browser's preferred locale from APy
+  // 2. locale section from URL path
+  // 3. `locale` key from LocalStorage
+  // 4. browser's preferred locale from APy
+  const urlPathMatch = /index\.(\w{3})\.html/.exec(window.location.pathname);
+  const urlPathLocale = urlPathMatch && urlPathMatch[1];
   const langParam = getUrlParam('lang');
-  const urlLocale = toAlpha3Code(langParam)?.replace('/', '');
+  const urlQueryLocale = toAlpha3Code(langParam)?.replace('/', '');
   let shouldLoadBrowserLocale = false;
   const [locale, setLocale] = useLocalStorage(
     'locale',
@@ -68,7 +71,7 @@ const App = () => {
       shouldLoadBrowserLocale = true;
       return Config.defaultLocale;
     },
-    { overrideValue: urlLocale, validateValue: validLocale },
+    { overrideValue: urlQueryLocale || urlPathLocale, validateValue: validLocale },
   );
   React.useEffect(() => {
     if (shouldLoadBrowserLocale) {
@@ -77,7 +80,7 @@ const App = () => {
   }, [shouldLoadBrowserLocale, setLocale]);
 
   // Fetch strings on locale change.
-  const [strings, setStrings] = React.useState({ [Config.defaultLocale]: DEFAULT_STRINGS });
+  const [strings, setStrings] = React.useState(PRELOADED_STRINGS);
   React.useEffect(() => {
     if (locale in strings) {
       return;

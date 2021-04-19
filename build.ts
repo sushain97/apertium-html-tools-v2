@@ -10,7 +10,7 @@ import Config from './config';
 import locales from './src/strings/locales.json';
 
 const DIST = 'dist/';
-const STATIC_FILES = ['index.html', 'favicon.ico'];
+const STATIC_FILES = ['favicon.ico'];
 
 const prod = process.argv.includes('--prod');
 const watch = process.argv.includes('--watch');
@@ -26,7 +26,9 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
   });
 
 void (async () => {
-  let defaultStrings;
+  let defaultStrings: unknown;
+
+  const indexHtml = await fs.readFile('src/index.html', 'utf-8');
 
   const pairs = ((await apyGet(`list`, { q: 'pairs' })).data as {
     responseData: Array<{
@@ -51,20 +53,21 @@ void (async () => {
   allLangs = [...allLangs, ...allLangs.map(toAlpha3Code)];
   const allLangsSet = new Set(allLangs.filter(Boolean));
 
-  await Promise.all(
+  const localeStrings = (await Promise.all(
     (await fs.readdir('src/strings'))
       .filter((f) => f.endsWith('.json') && f != 'locales.json')
       .map(async (f) => {
-        const response = await apyGet('listLanguageNames', { locale: path.parse(f).name });
+        const locale = path.parse(f).name;
+        const response = await apyGet('listLanguageNames', { locale });
         const allLangNames = response.data as Record<string, string>;
 
-        const inPath = path.join('src/strings', f);
-        const outPath = path.join(DIST, 'strings', f);
+        const srcPath = path.join('src/strings', f);
+        const distPath = path.join(DIST, 'strings', f);
 
-        await fs.mkdir(path.dirname(outPath), { recursive: true });
+        await fs.mkdir(path.dirname(distPath), { recursive: true });
 
-        const outData = JSON.parse(await fs.readFile(inPath, 'utf-8')) as Record<string, unknown>;
-        delete outData['@metadata'];
+        const strings = JSON.parse(await fs.readFile(srcPath, 'utf-8')) as Record<string, unknown>;
+        delete strings['@metadata'];
 
         const langNames: Record<string, string> = {};
         for (const lang of Object.keys(allLangNames)) {
@@ -72,17 +75,36 @@ void (async () => {
             langNames[lang] = allLangNames[lang];
           }
         }
-        outData['@langNames'] = langNames;
+        strings['@langNames'] = langNames;
 
         if (f === `${Config.defaultLocale}.json`) {
-          defaultStrings = outData;
+          defaultStrings = strings;
         }
 
-        await fs.writeFile(outPath, JSON.stringify(outData));
+        await fs.writeFile(distPath, JSON.stringify(strings));
+
+        return [locale, strings];
       }),
+  )) as Array<[string, unknown]>;
+
+  await Promise.all(
+    localeStrings.map(([locale, strings]) =>
+      fs.writeFile(
+        path.join(DIST, `index.${locale}.html`),
+        indexHtml.replace(
+          '{{PRELOADED_STRINGS}}',
+          JSON.stringify({ [Config.defaultLocale]: defaultStrings, [locale]: strings }),
+        ),
+      ),
+    ),
   );
 
   await Promise.all(STATIC_FILES.map((f) => fs.copyFile(path.join('src', f), path.join(DIST, f))));
+
+  await fs.writeFile(
+    path.join(DIST, 'index.html'),
+    indexHtml.replace('{{PRELOADED_STRINGS}}', JSON.stringify({ [Config.defaultLocale]: defaultStrings })),
+  );
 
   // TODO: Switch `yarn serve` to use `esbuild.serve` which prevents stale
   // responses and minimizes FS writes.
@@ -94,9 +116,7 @@ void (async () => {
     outfile: path.join(DIST, 'bundle.js'),
 
     define: {
-      'window.DEFAULT_STRINGS': JSON.stringify(defaultStrings),
       'window.VERSION': JSON.stringify(version),
-
       'window.PAIRS': JSON.stringify(pairs),
       'window.ANALYZERS': JSON.stringify(analyzers),
       'window.GENERATORS': JSON.stringify(generators),
