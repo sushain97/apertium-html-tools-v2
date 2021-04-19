@@ -25,6 +25,28 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
     validateStatus: (status) => status == 200,
   });
 
+const writeSitemap = async () => {
+  await fs.writeFile(
+    path.join(DIST, 'sitemap.xml'),
+    `
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>${Config.htmlUrl}index.html</loc>
+    ${Object.keys(locales)
+      .map(
+        (locale) =>
+          `<xhtml:link rel="alternate" hreflang="${toAlpha2Code(locale) || locale}" href="${
+            Config.htmlUrl
+          }index.${locale}.html"/>`,
+      )
+      .join('\n')}
+  </url>
+</urlset>
+    `.trim(),
+  );
+};
+
 void (async () => {
   let defaultStrings: unknown;
 
@@ -105,6 +127,8 @@ void (async () => {
     path.join(DIST, 'index.html'),
     indexHtml.replace('{{PRELOADED_STRINGS}}', JSON.stringify({ [Config.defaultLocale]: defaultStrings })),
   );
+
+  await writeSitemap();
 
   // TODO: Switch `yarn serve` to use `esbuild.serve` which prevents stale
   // responses and minimizes FS writes.
