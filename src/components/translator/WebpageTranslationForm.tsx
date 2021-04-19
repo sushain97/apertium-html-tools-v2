@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const WebpageTranslationForm = (props: {
-  onCancel: () => void;
+  cancelLink: string;
   srcLang: string;
   tgtLang: string;
 }): React.ReactElement => {

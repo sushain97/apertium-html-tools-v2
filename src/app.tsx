@@ -16,20 +16,20 @@ import { apyFetch } from './util';
 import { getUrlParam } from './util/url';
 import useLocalStorage from './util/useLocalStorage';
 
+import Translator, { Mode as TranslatorMode } from './components/translator';
 import Analyzer from './components/Analyzer';
 import Footer from './components/footer';
 import Generator from './components/Generator';
 import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
-import Translator from './components/translator';
 
-const Interfaces: Record<Mode, () => React.ReactElement> = {
+const Interfaces = {
   [Mode.Translation]: Translator,
   [Mode.Analysis]: Analyzer,
   [Mode.Generation]: Generator,
   [Mode.Sandbox]: Sandbox,
-};
+} as Record<Mode, React.ComponentType<unknown>>;
 
 const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string>>) => {
   void (async () => {
@@ -135,6 +135,16 @@ const App = () => {
                       path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
                     />
                   ),
+              )}
+              {Config.enabledModes.has(Mode.Translation) && (
+                <>
+                  <Route exact path="/docTranslation">
+                    <Translator mode={TranslatorMode.Document} />
+                  </Route>
+                  <Route exact path="/webpageTranslation">
+                    <Translator mode={TranslatorMode.Webpage} />
+                  </Route>
+                </>
               )}
               <div className="d-block d-sm-none float-left my-2">
                 <LocaleSelector setLocale={setLocale} />

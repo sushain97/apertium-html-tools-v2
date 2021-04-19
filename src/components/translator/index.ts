@@ -59,3 +59,9 @@ TgtLangs.forEach((lang) => {
 export const isPair = (pairs: Pairs, src: string, tgt: string): boolean => pairs[src] && pairs[src].has(tgt);
 
 export default Translator;
+
+export enum Mode {
+  Text,
+  Document,
+  Webpage,
+}

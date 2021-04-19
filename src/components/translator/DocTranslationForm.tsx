@@ -9,9 +9,9 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useLocalization } from '../../util/localization';
 
 const DocTranslationForm = ({
-  onCancel,
+  cancelLink,
 }: {
-  onCancel: () => void;
+  cancelLink: string;
   srcLang: string;
   tgtLang: string;
 }): React.ReactElement => {
@@ -41,7 +41,7 @@ const DocTranslationForm = ({
             <p dangerouslySetInnerHTML={{ __html: t('Supported_Formats') }} />
             <Button
               className="position-absolute"
-              onClick={onCancel}
+              href={cancelLink}
               size="sm"
               style={{ bottom: '-6px', right: '20px' }}
               variant="secondary"

@@ -10,8 +10,9 @@ import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import { generatePath } from 'react-router-dom';
 
-import { ChainedPairs, DirectPairs, Pairs, SrcLangs, TgtLangs, isPair } from '.';
+import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
@@ -22,12 +23,6 @@ import WebpageTranslationForm from './WebpageTranslationForm';
 import { apyFetch } from '../../util';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
-
-enum Mode {
-  Text,
-  Document,
-  Webpage,
-}
 
 const recentLangsCount = 3;
 const pairUrlParam = 'dir';
@@ -73,10 +68,19 @@ const defaultSrcLang = (pairs: Pairs): string => {
   throw new Error('No pairs available');
 };
 
-const Translator = (): React.ReactElement => {
-  const { t } = useLocalization();
+const urlFromMode = (mode: Mode): string => {
+  switch (mode) {
+    case Mode.Text:
+      return `#${generatePath('/translation')}`;
+    case Mode.Document:
+      return `#${generatePath('/docTranslation')}`;
+    case Mode.Webpage:
+      return `#${generatePath('/webpageTranslation')}`;
+  }
+};
 
-  const [mode, setMode] = React.useState(Mode.Text);
+const Translator = ({ mode }: { mode?: Mode }): React.ReactElement => {
+  const { t } = useLocalization();
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
@@ -250,7 +254,7 @@ const Translator = (): React.ReactElement => {
         srcLang={srcLang}
         tgtLang={tgtLang}
       />
-      {mode === Mode.Text && (
+      {(mode === Mode.Text || !mode) && (
         <>
           <TextTranslationForm
             instantTranslation={instantTranslation}
@@ -266,14 +270,13 @@ const Translator = (): React.ReactElement => {
             <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">
               <Button
                 className="mt-2"
-                onClick={() => setMode(Mode.Document)}
+                href={urlFromMode(Mode.Document)}
                 style={{ marginRight: '5px' }}
-                type="button"
                 variant="secondary"
               >
                 <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
               </Button>
-              <Button className="mt-2" onClick={() => setMode(Mode.Webpage)} type="button" variant="secondary">
+              <Button className="mt-2" href={urlFromMode(Mode.Webpage)} variant="secondary">
                 <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
               </Button>
             </Col>
@@ -309,10 +312,10 @@ const Translator = (): React.ReactElement => {
         </>
       )}
       {mode === Mode.Document && (
-        <DocTranslationForm onCancel={() => setMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+        <DocTranslationForm cancelLink={urlFromMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
       )}
       {mode === Mode.Webpage && (
-        <WebpageTranslationForm onCancel={() => setMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+        <WebpageTranslationForm cancelLink={urlFromMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
       )}
     </Form>
   );
