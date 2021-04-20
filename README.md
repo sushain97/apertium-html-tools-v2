@@ -43,6 +43,12 @@ First, follow the development instructions. Then, running `yarn build` will
 output built bundles to `dist/`. Use `--prod` to minify bundles. Any web server
 capable of serving static assets can be pointed directly to `dist/`.
 
+Alternatively, if you'd like to avoid polluting your host system with build
+dependencies, use Docker:
+
+    docker build -t apertium-html-tools .
+    docker run --rm -v $(pwd)/./dist:/root/dist apertium-html-tools
+
 ## Contributing
 
 - Use `yarn build --watch` to keep `dist/` up-to-date with new bundles.
