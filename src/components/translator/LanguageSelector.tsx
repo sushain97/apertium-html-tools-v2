@@ -417,10 +417,10 @@ const LanguageSelector = (props: Props): React.ReactElement => {
   };
 
   return (
-    <form>
+    <>
       <MobileLanguageSelector {...sharedProps} />
       <DesktopLanguageSelector {...sharedProps} />
-    </form>
+    </>
   );
 };
 
