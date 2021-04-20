@@ -79,7 +79,8 @@ const urlFromMode = (mode: Mode): string => {
   }
 };
 
-const Translator = ({ mode }: { mode?: Mode }): React.ReactElement => {
+const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement => {
+  const mode: Mode = initialMode || Mode.Text;
   const { t } = useLocalization();
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
@@ -198,7 +199,7 @@ const Translator = ({ mode }: { mode?: Mode }): React.ReactElement => {
 
   const translateText = React.useCallback(
     async ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => {
-      if (mode != Mode.Text) {
+      if (mode !== Mode.Text) {
         return;
       }
 
