@@ -267,16 +267,11 @@ const Translator = ({ mode }: { mode?: Mode }): React.ReactElement => {
             translate={translateText}
           />
           <Row className="mt-2 mb-3">
-            <Col className="d-flex d-sm-block flex-wrap" md="6" xs="12">
-              <Button
-                className="mt-2"
-                href={urlFromMode(Mode.Document)}
-                style={{ marginRight: '5px' }}
-                variant="secondary"
-              >
+            <Col className="d-flex d-sm-block mb-2 flex-wrap translation-modes" md="6" xs="12">
+              <Button href={urlFromMode(Mode.Document)} variant="secondary">
                 <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
               </Button>
-              <Button className="mt-2" href={urlFromMode(Mode.Webpage)} variant="secondary">
+              <Button href={urlFromMode(Mode.Webpage)} variant="secondary">
                 <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
               </Button>
             </Col>

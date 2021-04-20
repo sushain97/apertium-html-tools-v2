@@ -50,6 +50,14 @@ html[dir='rtl'] .language-name {
   text-align: right;
 }
 
+html[dir='rtl'] .language-button:first-child {
+  border-radius: 0 0.2rem 0.2rem 0 !important;
+}
+
+html[dir='rtl'] .language-dropdown-button > button {
+  border-radius: 0.2rem 0 0 0.2rem;
+}
+
 .language-name {
   overflow-x: hidden;
   position: relative;
@@ -76,4 +84,9 @@ html[dir='ltr'] .variant-language-name {
 
 html[dir='rtl'] .variant-language-name {
   padding-right: 2.5em;
+}
+
+html[dir='ltr'] .translation-modes > *:not(*:last-child),
+html[dir='rtl'] .translation-modes > *:not(*:first-child) {
+  margin-right: 0.5rem;
 }
