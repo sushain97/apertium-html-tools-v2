@@ -24,6 +24,8 @@ import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
 
+// TODO: Add analytics support. If anyone actually wants it?
+
 const Interfaces = {
   [Mode.Translation]: Translator,
   [Mode.Analysis]: Analyzer,
