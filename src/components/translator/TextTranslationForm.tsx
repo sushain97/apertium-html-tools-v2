@@ -41,7 +41,6 @@ const TextTranslationForm = ({
   const { t } = useLocalization();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
-  const notAvailableText = t('Not_Available');
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
 
@@ -170,7 +169,7 @@ const TextTranslationForm = ({
           readOnly
           rows={15}
           spellCheck={false}
-          value={error ? notAvailableText : tgtText}
+          value={error ? t('Not_Available') : tgtText}
         />
         <Button className="position-absolute copy-text-button" variant="muted">
           <FontAwesomeIcon fixedWidth icon={faCopy} />
