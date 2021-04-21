@@ -46,14 +46,20 @@ const TextTranslationForm = ({
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
 
-  React.useEffect(() => {
+  const newStateUrl = ({ srcLang, tgtLang, srcText }: { srcLang: string; tgtLang: string; srcText: string }) => {
     const baseParams = baseUrlParams({ srcLang, tgtLang });
     let newUrl = buildNewUrl({ ...baseParams, [textUrlParam]: srcText });
     if (newUrl.length > MaxURLLength) {
       newUrl = buildNewUrl(baseParams);
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang, srcText]);
+    return newUrl;
+  };
+
+  React.useEffect(() => window.history.replaceState({}, '', newStateUrl({ srcLang, tgtLang, srcText })), [
+    srcLang,
+    tgtLang,
+    srcText,
+  ]);
 
   const [tgtText, setTgtText] = React.useState('');
 
@@ -66,6 +72,8 @@ const TextTranslationForm = ({
         setTgtText('');
         return;
       }
+
+      window.history.pushState({}, '', newStateUrl({ srcLang, tgtLang, srcText }));
 
       translationRef.current?.cancel();
       translationRef.current = null;

@@ -33,14 +33,21 @@ const WebpageTranslationForm = ({
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
   const [url, setUrl] = useLocalStorage('srcUrl', '', { overrideValue: getUrlParam(urlUrlParam) });
-  React.useEffect(() => {
+
+  const newStateUrl = ({ srcLang, tgtLang, url }: { srcLang: string; tgtLang: string; url: string }) => {
     const baseParams = baseUrlParams({ srcLang, tgtLang });
     let newUrl = buildNewUrl({ ...baseParams, [urlUrlParam]: url });
     if (newUrl.length > MaxURLLength) {
       newUrl = buildNewUrl(baseParams);
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang, url]);
+    return url;
+  };
+
+  React.useEffect(() => window.history.replaceState({}, '', newStateUrl({ srcLang, tgtLang, url })), [
+    srcLang,
+    tgtLang,
+    url,
+  ]);
 
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
@@ -54,6 +61,8 @@ const WebpageTranslationForm = ({
         setTranslation(null);
         return;
       }
+
+      window.history.pushState({}, '', newStateUrl({ srcLang, tgtLang, url }));
 
       try {
         const { protocol } = new URL(url);

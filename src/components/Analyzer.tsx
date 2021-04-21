@@ -119,13 +119,15 @@ const AnalysisForm = ({
   });
   const [text, setText] = useLocalStorage('analyzerText', '', { overrideValue: getUrlParam(textUrlParam) });
 
-  React.useEffect(() => {
+  const newStateUrl = ({ lang, text }: { lang: string; text: string }) => {
     let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
     if (newUrl.length > MaxURLLength) {
       newUrl = buildNewUrl({ [langUrlParam]: lang });
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [lang, text]);
+    return newUrl;
+  };
+
+  React.useEffect(() => window.history.replaceState({}, '', newStateUrl({ lang, text })), [lang, text]);
 
   const analysisRef = React.useRef<CancelTokenSource | null>(null);
 
@@ -133,6 +135,8 @@ const AnalysisForm = ({
     if (text.trim().length == 0) {
       return;
     }
+
+    window.history.pushState({}, '', newStateUrl({ lang, text }));
 
     analysisRef.current?.cancel();
     analysisRef.current = null;
