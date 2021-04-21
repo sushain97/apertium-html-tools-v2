@@ -1,5 +1,6 @@
 import * as React from 'react';
-import Button from 'react-bootstrap/Button';
+import Button, { ButtonProps } from 'react-bootstrap/Button';
+import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Col from 'react-bootstrap/Col';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -7,7 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
-import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 
 import { Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } from '../../util/languages';
@@ -25,6 +25,7 @@ type Props = {
   recentSrcLangs: Array<string>;
   recentTgtLangs: Array<string>;
   onTranslate: () => void;
+  loading: boolean;
 };
 
 const langListIdealRows = 12,
@@ -32,6 +33,31 @@ const langListIdealRows = 12,
   langListMaxColumns = 6,
   langListsBuffer = 50;
 const langListMinColumnWidth = langListMaxWidths / langListMaxColumns;
+
+const TranslateButton = (props: { loading: boolean; onTranslate: () => void } & ButtonProps): React.ReactElement => {
+  const { t } = useLocalization();
+  const { loading, onTranslate, ...buttonProps } = props;
+
+  return (
+    <Button
+      className="btn-sm ml-auto"
+      onClick={({ currentTarget }) => {
+        onTranslate();
+        currentTarget.blur();
+      }}
+      size="sm"
+      type="button"
+      {...buttonProps}
+    >
+      {loading ? (
+        <>
+          <FontAwesomeIcon className="mr-1" icon={faSpinner} spin />{' '}
+        </>
+      ) : null}
+      {t('Translate')}
+    </Button>
+  );
+};
 
 const MobileLanguageSelector = ({
   pairs,
@@ -43,13 +69,12 @@ const MobileLanguageSelector = ({
   srcLangs,
   tgtLangs,
   swapLangs,
+  loading,
 }: Props & {
   srcLangs: Array<[string, string]>;
   tgtLangs: Array<[string, string]>;
   swapLangs?: () => void;
 }): React.ReactElement => {
-  const { t } = useLocalization();
-
   return (
     <Form.Group className="d-flex d-md-none flex-column">
       <div className="d-flex flex-wrap">
@@ -84,9 +109,7 @@ const MobileLanguageSelector = ({
             </option>
           ))}
         </Form.Control>
-        <Button className="btn-sm translateBtn ml-auto" onClick={onTranslate} size="sm" type="button" variant="primary">
-          {t('Translate')}
-        </Button>
+        <TranslateButton loading={loading} onTranslate={onTranslate} variant="primary" />
       </div>
     </Form.Group>
   );
@@ -104,6 +127,7 @@ const DesktopLanguageSelector = ({
   srcLangs,
   tgtLangs,
   swapLangs,
+  loading,
 }: Props & {
   srcLangs: Array<[string, string]>;
   tgtLangs: Array<[string, string]>;
@@ -318,9 +342,7 @@ const DesktopLanguageSelector = ({
             </Row>
           </DropdownButton>
         </ButtonGroup>
-        <Button onClick={onTranslate} size="sm" type="button">
-          {t('Translate')}
-        </Button>
+        <TranslateButton loading={loading} onTranslate={onTranslate} variant="primary" />
       </Col>
     </Form.Group>
   );

@@ -77,7 +77,10 @@ const urlFromMode = (mode: Mode): string => {
 
 const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement => {
   const mode: Mode = initialMode || Mode.Text;
+
   const { t } = useLocalization();
+
+  const [loading, setLoading] = React.useState(false);
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
@@ -197,7 +200,8 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       }}
     >
       <LanguageSelector
-        onTranslate={() => window.dispatchEvent(new Event('translate'))}
+        loading={loading}
+        onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
         pairs={pairs}
         recentSrcLangs={recentSrcLangs}
         recentTgtLangs={recentTgtLangs}
@@ -211,6 +215,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
           <TextTranslationForm
             instantTranslation={instantTranslation}
             markUnknown={markUnknown}
+            setLoading={setLoading}
             srcLang={srcLang}
             tgtLang={tgtLang}
           />
@@ -255,10 +260,20 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
         </>
       )}
       {mode === Mode.Document && (
-        <DocTranslationForm cancelLink={urlFromMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+        <DocTranslationForm
+          cancelLink={urlFromMode(Mode.Text)}
+          setLoading={setLoading}
+          srcLang={srcLang}
+          tgtLang={tgtLang}
+        />
       )}
       {mode === Mode.Webpage && (
-        <WebpageTranslationForm cancelLink={urlFromMode(Mode.Text)} srcLang={srcLang} tgtLang={tgtLang} />
+        <WebpageTranslationForm
+          cancelLink={urlFromMode(Mode.Text)}
+          setLoading={setLoading}
+          srcLang={srcLang}
+          tgtLang={tgtLang}
+        />
       )}
     </Form>
   );

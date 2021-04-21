@@ -32,11 +32,13 @@ const TextTranslationForm = ({
   tgtLang,
   markUnknown,
   instantTranslation,
+  setLoading,
 }: {
   srcLang: string;
   tgtLang: string;
   instantTranslation: boolean;
   markUnknown: boolean;
+  setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
@@ -74,6 +76,7 @@ const TextTranslationForm = ({
         markUnknown: markUnknown ? 'yes' : 'no',
       });
       translationRef.current = ref;
+      setLoading(true);
 
       try {
         const response = (await request).data as {
@@ -88,9 +91,11 @@ const TextTranslationForm = ({
           console.warn('Translation failed', error);
           setError(true);
         }
+      } finally {
+        setLoading(false);
       }
     })();
-  }, [markUnknown, srcLang, srcText, tgtLang]);
+  }, [markUnknown, setLoading, srcLang, srcText, tgtLang]);
 
   const translationTimer = React.useRef<number | null>(null);
   const lastPunct = React.useRef(false);

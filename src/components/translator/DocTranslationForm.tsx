@@ -17,6 +17,7 @@ const DocTranslationForm = ({
   cancelLink: string;
   srcLang: string;
   tgtLang: string;
+  setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 

@@ -21,10 +21,12 @@ const WebpageTranslationForm = ({
   cancelLink,
   srcLang,
   tgtLang,
+  setLoading,
 }: {
   cancelLink: string;
   srcLang: string;
   tgtLang: string;
+  setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
@@ -76,6 +78,7 @@ const WebpageTranslationForm = ({
           markUnknown: 'no',
         });
         translationRef.current = ref;
+        setLoading(true);
 
         try {
           const response = (await request).data as {
@@ -90,10 +93,12 @@ const WebpageTranslationForm = ({
             console.warn('Translation failed', error);
             setError(true);
           }
+        } finally {
+          setLoading(false);
         }
       })();
     },
-    [srcLang, tgtLang],
+    [setLoading, srcLang, tgtLang],
   );
 
   React.useEffect(() => {
