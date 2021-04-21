@@ -85,7 +85,8 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     validateValue: () => Config.translationChaining,
   });
 
-  const pairs = translationChaining ? ChainedPairs : DirectPairs;
+  // TODO: Handle what happens when switching and new pair is invalid.
+  const pairs = translationChaining && mode === Mode.Text ? ChainedPairs : DirectPairs;
 
   let urlSrcLang = null;
   let urlTgtLang = null;
