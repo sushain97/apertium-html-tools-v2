@@ -85,7 +85,6 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     validateValue: () => Config.translationChaining,
   });
 
-  // TODO: Handle what happens when switching and new pair is invalid.
   const pairs = translationChaining && mode === Mode.Text ? ChainedPairs : DirectPairs;
 
   let urlSrcLang = null;
@@ -152,32 +151,42 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     },
   );
 
-  const setSrcLang = (lang: string) => {
-    realSetSrcLang(lang);
-    if (!recentSrcLangs.includes(lang)) {
-      setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
-    }
+  const setSrcLang = React.useCallback(
+    (lang: string) => {
+      realSetSrcLang(lang);
+      if (!recentSrcLangs.includes(lang)) {
+        setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
+      }
+    },
+    [realSetSrcLang, recentSrcLangs, setRecentSrcLangs],
+  );
 
-    // Unless currently selected destination language works.
-    if (!isPair(pairs, lang, tgtLang)) {
-      // Prefer a recently selected destination language.
+  const setTgtLang = React.useCallback(
+    (lang: string) => {
+      realSetTgtLang(lang);
+      if (!recentTgtLangs.includes(lang)) {
+        setRecentTgtLangs([lang, ...recentTgtLangs].slice(0, recentLangsCount));
+      }
+    },
+    [realSetTgtLang, recentTgtLangs, setRecentTgtLangs],
+  );
+
+  React.useEffect(() => {
+    // This will happen in a couple situations:
+    // 1. User changes source language and current target no longer works.
+    // 2. User disables chained translation.
+    if (!isPair(pairs, srcLang, tgtLang)) {
+      // Prefer a recently selected target language.
       for (const recentTgtLang of recentTgtLangs) {
-        if (isPair(pairs, lang, recentTgtLang)) {
+        if (isPair(pairs, srcLang, recentTgtLang)) {
           return setTgtLang(recentTgtLang);
         }
       }
 
-      // Otherwise, pick the first possible destination language.
-      setTgtLang((pairs[lang] || new Set()).values().next().value);
+      // Otherwise, pick the first possible target language.
+      setTgtLang((pairs[srcLang] || new Set()).values().next().value);
     }
-  };
-
-  const setTgtLang = (lang: string) => {
-    realSetTgtLang(lang);
-    if (!recentTgtLangs.includes(lang)) {
-      setRecentTgtLangs([lang, ...recentTgtLangs].slice(0, recentLangsCount));
-    }
-  };
+  }, [pairs, recentTgtLangs, setTgtLang, srcLang, tgtLang]);
 
   return (
     <Form
