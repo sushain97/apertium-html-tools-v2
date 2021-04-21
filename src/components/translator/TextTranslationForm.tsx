@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios, { CancelTokenSource } from 'axios';
 import { faCopy, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -7,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 
+import { apyFetch } from '../../util';
 import { langDirection } from '../../util/languages';
 import { useLocalization } from '../../util/localization';
 
@@ -21,25 +23,60 @@ const TextTranslationForm = ({
   srcLang,
   tgtLang,
   srcText,
-  tgtText,
-  tgtTextError,
   setSrcText,
+  markUnknown,
   instantTranslation,
-  translate,
 }: {
   srcLang: string;
   tgtLang: string;
   srcText: string;
-  tgtText: string;
-  tgtTextError: boolean;
   instantTranslation: boolean;
+  markUnknown: boolean;
   setSrcText: React.Dispatch<React.SetStateAction<string>>;
-  translate: ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
   const notAvailableText = t('Not_Available');
+
+  const [tgtText, setTgtText] = React.useState('');
+
+  const [error, setError] = React.useState(false);
+  const translationRef = React.useRef<CancelTokenSource | null>(null);
+
+  const translate = React.useCallback(() => {
+    void (async () => {
+      if (srcText.trim().length == 0) {
+        setTgtText('');
+        return;
+      }
+
+      translationRef.current?.cancel();
+      translationRef.current = null;
+
+      const [ref, request] = apyFetch('translate', {
+        q: srcText,
+        langpair: `${srcLang}|${tgtLang}`,
+        markUnknown: markUnknown ? 'yes' : 'no',
+      });
+      translationRef.current = ref;
+
+      try {
+        const response = (await request).data as {
+          responseData: { translatedText: string };
+          responseDetails: unknown;
+          responseStatus: number;
+        };
+        setTgtText(response.responseData.translatedText);
+        setError(false);
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.warn('Translation failed', error);
+          setError(true);
+        }
+      }
+    })();
+  }, [markUnknown, srcLang, srcText, tgtLang]);
 
   const translationTimer = React.useRef<number | null>(null);
   const lastPunct = React.useRef(false);
@@ -64,15 +101,24 @@ const TextTranslationForm = ({
         lastPunct.current = false;
       }
 
-      const { currentTarget } = event; // https://github.com/facebook/react/issues/8690
       translationTimer.current = window.setTimeout(() => {
         if (instantTranslation) {
-          translate({ srcLang, tgtLang, srcText: currentTarget.value });
+          translate();
         }
       }, timeout);
     },
-    [srcLang, tgtLang, instantTranslation, translate],
+    [translate, instantTranslation],
   );
+
+  React.useEffect(() => {
+    window.addEventListener('translate', translate, false);
+    return () => window.removeEventListener('translate', translate);
+  }, [translate]);
+
+  // `translate` is explicitly excluded here to avoid making a translate request
+  // on each keypress.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(translate, [markUnknown, srcLang, tgtLang]);
 
   return (
     <Row>
@@ -104,12 +150,12 @@ const TextTranslationForm = ({
       <Col md="6" xs="12">
         <Form.Control
           as="textarea"
-          className={classNames('bg-light mb-2', { 'text-danger': tgtTextError })}
+          className={classNames('bg-light mb-2', { 'text-danger': error })}
           dir={langDirection(tgtLang)}
           readOnly
           rows={15}
           spellCheck={false}
-          value={tgtTextError ? notAvailableText : tgtText}
+          value={error ? notAvailableText : tgtText}
         />
         <Button className="position-absolute copy-text-button" variant="muted">
           <FontAwesomeIcon fixedWidth icon={faCopy} />

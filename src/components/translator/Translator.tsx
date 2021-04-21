@@ -3,7 +3,6 @@
 import './translator.css';
 
 import * as React from 'react';
-import axios, { CancelTokenSource } from 'axios';
 import { faFile, faLink } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -20,7 +19,6 @@ import DocTranslationForm from './DocTranslationForm';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 import WebpageTranslationForm from './WebpageTranslationForm';
-import { apyFetch } from '../../util';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
@@ -183,7 +181,6 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
   };
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
-  const [tgtText, setTgtText] = React.useState('');
 
   React.useEffect(() => {
     const pair = `${srcLang}-${tgtLang}`;
@@ -194,59 +191,10 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     window.history.replaceState({}, document.title, newUrl);
   }, [srcLang, tgtLang, srcText]);
 
-  const [error, setError] = React.useState(false);
-  const translationRef = React.useRef<CancelTokenSource | null>(null);
-
-  const translateText = React.useCallback(
-    async ({ srcText, srcLang, tgtLang }: { srcText: string; srcLang: string; tgtLang: string }) => {
-      if (mode !== Mode.Text) {
-        return;
-      }
-
-      if (srcText.trim().length == 0) {
-        setTgtText('');
-        return;
-      }
-
-      translationRef.current?.cancel();
-      translationRef.current = null;
-
-      const [ref, request] = apyFetch('translate', {
-        q: srcText,
-        langpair: `${srcLang}|${tgtLang}`,
-        markUnknown: markUnknown ? 'yes' : 'no',
-      });
-      translationRef.current = ref;
-
-      try {
-        const response = (await request).data as {
-          responseData: { translatedText: string };
-          responseDetails: unknown;
-          responseStatus: number;
-        };
-        setTgtText(response.responseData.translatedText);
-        setError(false);
-      } catch (error) {
-        if (!axios.isCancel(error)) {
-          console.warn('Translation failed', error);
-          setError(true);
-        }
-      }
-    },
-    [markUnknown, mode],
-  );
-
-  React.useEffect(() => {
-    void translateText({ srcLang, srcText, tgtLang });
-    // `srcText` is explicitly excluded here to avoid making a translate request
-    // on each keypress.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markUnknown, srcLang, tgtLang]);
-
   return (
     <Form aria-label={t('Translate')}>
       <LanguageSelector
-        onTranslate={() => translateText({ srcLang, srcText, tgtLang })}
+        onTranslate={() => window.dispatchEvent(new Event('translate'))}
         pairs={pairs}
         recentSrcLangs={recentSrcLangs}
         recentTgtLangs={recentTgtLangs}
@@ -259,13 +207,11 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
         <>
           <TextTranslationForm
             instantTranslation={instantTranslation}
+            markUnknown={markUnknown}
             setSrcText={setSrcText}
             srcLang={srcLang}
             srcText={srcText}
             tgtLang={tgtLang}
-            tgtText={tgtText}
-            tgtTextError={error}
-            translate={translateText}
           />
           <Row className="mt-2 mb-3">
             <Col className="d-flex d-sm-block mb-2 flex-wrap translation-modes" md="6" xs="12">
