@@ -90,3 +90,9 @@ html[dir='ltr'] .translation-modes > *:not(*:last-child),
 html[dir='rtl'] .translation-modes > *:not(*:first-child) {
   margin-right: 0.5rem;
 }
+
+.translated-webpage {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 700px;
+}
