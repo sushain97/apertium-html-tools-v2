@@ -82,6 +82,10 @@ const App = () => {
     }
   }, [shouldLoadBrowserLocale, setLocale]);
 
+  React.useEffect(() => {
+    window.history.pushState({}, '', `index.${locale}.html${window.location.search}${window.location.hash}`);
+  }, [locale]);
+
   // Fetch strings on locale change.
   const [strings, setStrings] = React.useState(PRELOADED_STRINGS);
   React.useEffect(() => {
