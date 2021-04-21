@@ -9,8 +9,8 @@ import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 
 import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
+import { TranslateEvent, baseUrlParams } from '.';
 import { apyFetch } from '../../util';
-import { baseUrlParams } from '.';
 import { langDirection } from '../../util/languages';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
@@ -125,8 +125,8 @@ const TextTranslationForm = ({
   );
 
   React.useEffect(() => {
-    window.addEventListener('translate', translate, false);
-    return () => window.removeEventListener('translate', translate);
+    window.addEventListener(TranslateEvent, translate, false);
+    return () => window.removeEventListener(TranslateEvent, translate);
   }, [translate]);
 
   // `translate` is explicitly excluded here to avoid making a translate request

@@ -72,3 +72,5 @@ export const baseUrlParams = ({ srcLang, tgtLang }: { srcLang: string; tgtLang: 
   const pair = `${srcLang}-${tgtLang}`;
   return { [pairUrlParam]: pair };
 };
+
+export const TranslateEvent = 'translate';

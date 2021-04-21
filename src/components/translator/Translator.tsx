@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { generatePath } from 'react-router-dom';
 
-import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, isPair, pairUrlParam } from '.';
+import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, TranslateEvent, isPair, pairUrlParam } from '.';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
 import DocTranslationForm from './DocTranslationForm';
@@ -192,7 +192,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     <Form
       aria-label={t('Translate')}
       onSubmit={(event) => {
-        window.dispatchEvent(new Event('translate'));
+        window.dispatchEvent(new Event(TranslateEvent));
         event.preventDefault();
       }}
     >

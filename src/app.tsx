@@ -24,6 +24,7 @@ import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
 
+// TODO: Add slow request -> download notifications
 // TODO: Add analytics support. If anyone actually wants it?
 
 const Interfaces = {
