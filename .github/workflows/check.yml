@@ -18,10 +18,12 @@ jobs:
 
       - name: Typecheck
         run: yarn tsc
-      - name: Lint
-        run: yarn lint
+      - name: Lint scripts
+        run: yarn eslint
+      - name: Lint styles
+        run: yarn stylelint
       - name: Prettier
-        run: yarn prettier . --check
+        run: yarn prettier
   test:
     runs-on: ubuntu-20.04
     steps:

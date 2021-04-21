@@ -41,6 +41,16 @@ html[dir='rtl'] .copy-text-button {
   position: relative;
 }
 
+.language-name {
+  overflow-x: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+}
+
+.language-name:not(.text-muted) {
+  text-decoration: none;
+}
+
 html[dir='ltr'] .language-name {
   padding-left: 0.5em;
 }
@@ -56,16 +66,6 @@ html[dir='rtl'] .language-button:first-child {
 
 html[dir='rtl'] .language-dropdown-button > button {
   border-radius: 0.2rem 0 0 0.2rem;
-}
-
-.language-name {
-  overflow-x: hidden;
-  position: relative;
-  text-overflow: ellipsis;
-}
-
-.language-name:not(.text-muted) {
-  text-decoration: none;
 }
 
 .language-name:hover:not(.text-muted) {

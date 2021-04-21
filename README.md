@@ -22,8 +22,8 @@ Our sources are written in [TypeScript][6].
 
 Development requires installing [Node.js][7] and [Yarn][8]. After installing
 both, use `yarn install --dev` to install JavaScript packages. We use
-[ESLint][9] for linting, [Prettier][10] for code formatting and [Jest][11] as a
-test runner.
+[ESLint][9] & [Stylelint][10] for linting, [Prettier][11] for code formatting
+and [Jest][12] as a test runner.
 
 ### Runtime
 
@@ -34,7 +34,7 @@ We use a variety of JS libraries at runtime:
 - [Font Awesome](https://fontawesome.com/)
 - [React Router](https://reactrouter.com/)
 
-To avoid distributing hundreds of JS files, we use [esbuild][12] to bundle
+To avoid distributing hundreds of JS files, we use [esbuild][13] to bundle
 sources into browser-ready JS.
 
 ## Building
@@ -54,14 +54,13 @@ dependencies, use Docker:
 - Use `yarn build --watch` to keep `dist/` up-to-date with new bundles.
 - Use `yarn serve` to run a simple Python server which serves `dist/` on
   `localhost:8000`.
-- Use `yarn tsc` to run the typechecker.
-- Use `yarn lint` to run the linter.
-- Use `yarn test` to run tests.
+- Use `yarn verify` to run the typechecker, linters and tests. See
+  `package.json` for more granular scripts.
 
 To analyze the bundle size, run a prod build and upload the resulting
-`meta.json` file to [Bundle Buddy][13].
+`meta.json` file to [Bundle Buddy][14].
 
-We use [GitHub Actions][14] to run tests, linting, typechecking, etc. on each
+We use [GitHub Actions][15] to run tests, linting, typechecking, etc. on each
 commit.
 
 [1]: http://wiki.apertium.org/wiki/Apertium-html-tools
@@ -73,8 +72,9 @@ commit.
 [7]: https://nodejs.org/en/download/
 [8]: https://classic.yarnpkg.com/en/docs/install
 [9]: https://eslint.org/
-[10]: https://prettier.io/
-[11]: https://jestjs.io/
-[12]: https://esbuild.github.io/
-[13]: https://bundle-buddy.com/
-[14]: https://docs.github.com/actions
+[10]: https://stylelint.io/
+[11]: https://prettier.io/
+[12]: https://jestjs.io/
+[13]: https://esbuild.github.io/
+[14]: https://bundle-buddy.com/
+[15]: https://docs.github.com/actions

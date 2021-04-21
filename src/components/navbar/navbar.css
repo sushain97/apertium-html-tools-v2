@@ -22,6 +22,7 @@
     padding-bottom: 30px;
   }
 }
+
 @media (min-width: 1200px) {
   .collapse.navbar-collapse {
     bottom: 0;
@@ -43,7 +44,7 @@
 .apertium-logo,
 .apertium-sublogo {
   display: inline-block;
-  font-family: 'DejaVu Sans', 'DejaVu Sans Fallback', 'Arial #000', Arial;
+  font-family: 'DejaVu Sans', 'DejaVu Sans Fallback', 'Arial #000', Arial, sans-serif;
   font-style: italic;
   font-weight: bold;
   position: absolute;
