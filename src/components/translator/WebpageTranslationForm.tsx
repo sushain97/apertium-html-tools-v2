@@ -17,8 +17,6 @@ import { useLocalization } from '../../util/localization';
 
 const urlUrlParam = 'qW';
 
-// TODO: translation
-
 const WebpageTranslationForm = ({
   cancelLink,
   srcLang,
@@ -49,14 +47,26 @@ const WebpageTranslationForm = ({
 
   const translate = React.useCallback(
     (url: string) => {
-      // TOOD: Check for valid URL.
-      void (async () => {
-        if (url.trim().length == 0) {
-          setError(false);
-          setTranslation(null);
+      if (url.trim().length == 0) {
+        setError(false);
+        setTranslation(null);
+        return;
+      }
+
+      try {
+        const { protocol } = new URL(url);
+        if (!['http:', 'https:'].includes(protocol)) {
+          console.warn('Invalid url', url, 'with protocol', protocol);
+          setError(true);
           return;
         }
+      } catch (error) {
+        console.warn('Failed to parse url', url, 'got', error);
+        setError(true);
+        return;
+      }
 
+      void (async () => {
         translationRef.current?.cancel();
         translationRef.current = null;
 
@@ -130,7 +140,10 @@ const WebpageTranslationForm = ({
 
     iframe.contentWindow.addEventListener('load', onLoad);
     return () => iframe.contentWindow?.removeEventListener('load', onLoad);
-  }, [translation, setUrl, translate]);
+    // `setUrl` is explicitly excluded here to avoid re-rendering the iframe on
+    // each keypress.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [translation, translate]);
 
   React.useEffect(() => {
     const translateHandler = () => translate(url);
@@ -161,14 +174,15 @@ const WebpageTranslationForm = ({
               onChange={({ currentTarget: { value } }) => setUrl(value)}
               placeholder="URL ⏎"
               required
+              type="url"
               value={url}
             />
           </InputGroup>
         </div>
-        {error ? <div className="translated-webpage text-danger w-100 pl-2 pt-2">{t('Not_Available')}</div> : null}
+        {error ? <div className="translated-webpage text-danger w-100 pl-2 pt-2 mb-2">{t('Not_Available')}</div> : null}
         {
           <iframe
-            className={classNames('translated-webpage w-100', { 'd-none': translation == null || error })}
+            className={classNames('translated-webpage w-100 mb-2', { 'd-none': translation == null || error })}
             ref={iframeRef}
             title="translated-webpage"
           />

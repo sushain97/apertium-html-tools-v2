@@ -180,7 +180,13 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
   };
 
   return (
-    <Form aria-label={t('Translate')}>
+    <Form
+      aria-label={t('Translate')}
+      onSubmit={(event) => {
+        window.dispatchEvent(new Event('translate'));
+        event.preventDefault();
+      }}
+    >
       <LanguageSelector
         onTranslate={() => window.dispatchEvent(new Event('translate'))}
         pairs={pairs}
