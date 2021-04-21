@@ -11,20 +11,18 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { generatePath } from 'react-router-dom';
 
-import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, isPair } from '.';
-import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
+import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, isPair, pairUrlParam } from '.';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
 import DocTranslationForm from './DocTranslationForm';
 import LanguageSelector from './LanguageSelector';
 import TextTranslationForm from './TextTranslationForm';
 import WebpageTranslationForm from './WebpageTranslationForm';
+import { getUrlParam } from '../../util/url';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
 const recentLangsCount = 3;
-const pairUrlParam = 'dir';
-const textUrlParam = 'q';
 
 const defaultSrcLang = (pairs: Pairs): string => {
   const validSrcLang = (code: string) => pairs[toAlpha3Code(code) || code];
@@ -180,17 +178,6 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     }
   };
 
-  const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
-
-  React.useEffect(() => {
-    const pair = `${srcLang}-${tgtLang}`;
-    let newUrl = buildNewUrl({ [pairUrlParam]: pair, [textUrlParam]: srcText });
-    if (newUrl.length > MaxURLLength) {
-      newUrl = buildNewUrl({ [pairUrlParam]: pair });
-    }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang, srcText]);
-
   return (
     <Form aria-label={t('Translate')}>
       <LanguageSelector
@@ -208,9 +195,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
           <TextTranslationForm
             instantTranslation={instantTranslation}
             markUnknown={markUnknown}
-            setSrcText={setSrcText}
             srcLang={srcLang}
-            srcText={srcText}
             tgtLang={tgtLang}
           />
           <Row className="mt-2 mb-3">

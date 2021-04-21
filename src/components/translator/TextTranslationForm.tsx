@@ -8,12 +8,17 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 
+import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
 import { apyFetch } from '../../util';
+import { baseUrlParams } from '.';
 import { langDirection } from '../../util/languages';
+import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
 // TODO: textarea height sync
 // TODO: url detection
+
+const textUrlParam = 'q';
 
 const instantTranslationPunctuationDelay = 1000,
   instantTranslationDelay = 3000;
@@ -25,22 +30,29 @@ const isKeyUpEvent = (event: React.SyntheticEvent): event is React.KeyboardEvent
 const TextTranslationForm = ({
   srcLang,
   tgtLang,
-  srcText,
-  setSrcText,
   markUnknown,
   instantTranslation,
 }: {
   srcLang: string;
   tgtLang: string;
-  srcText: string;
   instantTranslation: boolean;
   markUnknown: boolean;
-  setSrcText: React.Dispatch<React.SetStateAction<string>>;
 }): React.ReactElement => {
   const { t } = useLocalization();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
   const notAvailableText = t('Not_Available');
+
+  const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
+
+  React.useEffect(() => {
+    const baseParams = baseUrlParams({ srcLang, tgtLang });
+    let newUrl = buildNewUrl({ ...baseParams, [textUrlParam]: srcText });
+    if (newUrl.length > MaxURLLength) {
+      newUrl = buildNewUrl(baseParams);
+    }
+    window.history.replaceState({}, document.title, newUrl);
+  }, [srcLang, tgtLang, srcText]);
 
   const [tgtText, setTgtText] = React.useState('');
 

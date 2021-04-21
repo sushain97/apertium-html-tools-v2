@@ -65,3 +65,10 @@ export enum Mode {
   Document,
   Webpage,
 }
+
+export const pairUrlParam = 'dir';
+
+export const baseUrlParams = ({ srcLang, tgtLang }: { srcLang: string; tgtLang: string }): Record<string, string> => {
+  const pair = `${srcLang}-${tgtLang}`;
+  return { [pairUrlParam]: pair };
+};
