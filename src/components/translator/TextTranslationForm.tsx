@@ -12,6 +12,9 @@ import { apyFetch } from '../../util';
 import { langDirection } from '../../util/languages';
 import { useLocalization } from '../../util/localization';
 
+// TODO: textarea height sync
+// TODO: url detection
+
 const instantTranslationPunctuationDelay = 1000,
   instantTranslationDelay = 3000;
 

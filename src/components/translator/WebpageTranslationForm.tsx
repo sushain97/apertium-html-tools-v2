@@ -9,6 +9,8 @@ import Row from 'react-bootstrap/Row';
 
 import { useLocalization } from '../../util/localization';
 
+// TODO: translation
+
 const WebpageTranslationForm = ({
   cancelLink,
 }: {

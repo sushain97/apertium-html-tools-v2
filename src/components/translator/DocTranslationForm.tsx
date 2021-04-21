@@ -8,6 +8,9 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 import { useLocalization } from '../../util/localization';
 
+// TODO: translation
+// TODO: drop document
+
 const DocTranslationForm = ({
   cancelLink,
 }: {
