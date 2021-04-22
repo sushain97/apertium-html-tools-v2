@@ -68,18 +68,18 @@ const WebpageTranslationForm = ({
         return;
       }
 
+      translationRef.current?.cancel();
+      translationRef.current = null;
+
+      const [ref, request] = apyFetch('translatePage', {
+        url,
+        langpair: `${srcLang}|${tgtLang}`,
+        markUnknown: 'no',
+      });
+      translationRef.current = ref;
+      setLoading(true);
+
       void (async () => {
-        translationRef.current?.cancel();
-        translationRef.current = null;
-
-        const [ref, request] = apyFetch('translatePage', {
-          url,
-          langpair: `${srcLang}|${tgtLang}`,
-          markUnknown: 'no',
-        });
-        translationRef.current = ref;
-        setLoading(true);
-
         try {
           const response = (await request).data as {
             responseData: { translatedText: string };
@@ -97,6 +97,8 @@ const WebpageTranslationForm = ({
           setLoading(false);
         }
       })();
+
+      return () => translationRef.current?.cancel();
     },
     [setLoading, srcLang, tgtLang],
   );

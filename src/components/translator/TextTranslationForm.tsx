@@ -61,23 +61,23 @@ const TextTranslationForm = ({
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
   const translate = React.useCallback(() => {
+    if (srcText.trim().length == 0) {
+      setTgtText('');
+      return;
+    }
+
+    translationRef.current?.cancel();
+    translationRef.current = null;
+
+    const [ref, request] = apyFetch('translate', {
+      q: srcText,
+      langpair: `${srcLang}|${tgtLang}`,
+      markUnknown: markUnknown ? 'yes' : 'no',
+    });
+    translationRef.current = ref;
+    setLoading(true);
+
     void (async () => {
-      if (srcText.trim().length == 0) {
-        setTgtText('');
-        return;
-      }
-
-      translationRef.current?.cancel();
-      translationRef.current = null;
-
-      const [ref, request] = apyFetch('translate', {
-        q: srcText,
-        langpair: `${srcLang}|${tgtLang}`,
-        markUnknown: markUnknown ? 'yes' : 'no',
-      });
-      translationRef.current = ref;
-      setLoading(true);
-
       try {
         const response = (await request).data as {
           responseData: { translatedText: string };
@@ -95,6 +95,8 @@ const TextTranslationForm = ({
         setLoading(false);
       }
     })();
+
+    return () => translationRef.current?.cancel();
   }, [markUnknown, setLoading, srcLang, srcText, tgtLang]);
 
   const translationTimer = React.useRef<number | null>(null);
