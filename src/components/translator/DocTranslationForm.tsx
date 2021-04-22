@@ -1,18 +1,42 @@
 import * as React from 'react';
+import axios, { CancelTokenSource } from 'axios';
+import { faArrowLeft, faFileDownload } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
+import { TranslateEvent, baseUrlParams } from '.';
+import Config from '../../../config';
+import { buildNewUrl } from '../../util/url';
 import { useLocalization } from '../../util/localization';
 
-// TODO: translation
-// TODO: drop document
+// TODO: drag and drop support
+
+const fileSizeLimit = 32e6;
+
+const allowedMimeTypes = [
+  '', // epiphany-browser gives this instead of a real MIME type
+  'text/plain',
+  'text/html',
+  'text/rtf',
+  'application/rtf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  // 'application/msword', 'application/vnd.ms-powerpoint', 'application/vnd.ms-excel'
+  'application/vnd.oasis.opendocument.text',
+  'application/x-latex',
+  'application/x-tex',
+];
 
 const DocTranslationForm = ({
+  srcLang,
+  tgtLang,
   cancelLink,
+  setLoading,
 }: {
   cancelLink: string;
   srcLang: string;
@@ -21,26 +45,100 @@ const DocTranslationForm = ({
 }): React.ReactElement => {
   const { t } = useLocalization();
 
+  React.useEffect(() => {
+    const newUrl = buildNewUrl(baseUrlParams({ srcLang, tgtLang }));
+    window.history.replaceState({}, document.title, newUrl);
+  }, [srcLang, tgtLang]);
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const [error, setError] = React.useState<string | null>(null);
+  const translationRef = React.useRef<CancelTokenSource | null>(null);
+
+  const [progress, setProgress] = React.useState<number | null>(null);
+  const [translation, setTranslation] = React.useState<{ href: string; name: string } | null>(null);
+
+  const translate = React.useCallback(() => {
+    if (inputRef.current?.files?.length !== 1) {
+      setError(null);
+      setProgress(null);
+      setTranslation(null);
+      return;
+    }
+
+    const file = inputRef.current.files[0];
+    if (file.size > fileSizeLimit) {
+      setError('File_Too_Large');
+      return;
+    }
+
+    if (!allowedMimeTypes.includes(file.type)) {
+      console.warn('Invalid MIME type', file.type, 'for translation');
+      setError('Format_Not_Supported');
+      return;
+    }
+
+    translationRef.current?.cancel();
+    translationRef.current = null;
+
+    const translateData = new FormData();
+    translateData.append('langpair', `${srcLang}|${tgtLang}`);
+    translateData.append('markUnknown', 'no');
+    translateData.append('file', file);
+
+    const source = axios.CancelToken.source();
+    translationRef.current = source;
+    setLoading(true);
+    setProgress(0);
+
+    void (async () => {
+      try {
+        const response = (
+          await axios.post(`${Config.apyURL}/translateDoc`, translateData, {
+            cancelToken: source.token,
+            validateStatus: (status) => status == 200,
+            onUploadProgress: ({ loaded, total }: ProgressEvent) => {
+              setProgress(Math.floor((loaded / total) * 1000) / 10);
+            },
+            responseType: 'blob',
+          })
+        ).data as Blob;
+
+        setTranslation({
+          href: URL.createObjectURL(response),
+          name: file.name,
+        });
+
+        setProgress(null);
+        setError(null);
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.warn('Translation failed', error);
+          setError('Not_Available');
+        }
+      } finally {
+        setProgress(null);
+        setLoading(false);
+      }
+    })();
+
+    return () => translationRef.current?.cancel();
+  }, [setLoading, srcLang, tgtLang]);
+
+  React.useEffect(() => {
+    window.addEventListener(TranslateEvent, translate, false);
+    return () => window.removeEventListener(TranslateEvent, translate);
+  }, [translate]);
+
   return (
     <Row>
       <Col md="6">
         <Card bg="light">
           <Card.Body>
-            <input
-              accept="text/plain,text/html,text/rtf,application/rtf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/x-latex,application/x-tex"
-              type="file"
-            />
-            <div className="mt-3">
-              <span className="text-danger lead" style={{ display: 'none' }} />
-              <div className="progress mb-0 d-none">
-                <div
-                  aria-valuemax={100}
-                  aria-valuemin={0}
-                  aria-valuenow={0}
-                  className="progress-bar progress-bar-striped progress-bar-animated w-0"
-                  role="progressbar"
-                />
-              </div>
+            <input accept={allowedMimeTypes.filter((t) => t.length > 0).join(',')} ref={inputRef} type="file" />
+            <div className="my-2 d-flex flex-column justify-content-center" style={{ minHeight: '3rem' }}>
+              {progress != null && <ProgressBar animated max={100} min={0} now={50} striped />}
+              {error && <span className="text-danger lead">{t(error)}</span>}
             </div>
             <p dangerouslySetInnerHTML={{ __html: t('Supported_Formats') }} />
             <Button
@@ -55,7 +153,13 @@ const DocTranslationForm = ({
           </Card.Body>
         </Card>
       </Col>
-      <Col md="6" />
+      <Col md="6">
+        {translation && (
+          <a className="text-center lead" download={translation.name} href={translation.href}>
+            <FontAwesomeIcon icon={faFileDownload} /> {translation.name}
+          </a>
+        )}
+      </Col>
     </Row>
   );
 };
