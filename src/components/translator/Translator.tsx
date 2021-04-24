@@ -201,6 +201,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       }}
     >
       <LanguageSelector
+        detectLangEnabled={mode !== Mode.Text}
         loading={loading}
         onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
         pairs={pairs}

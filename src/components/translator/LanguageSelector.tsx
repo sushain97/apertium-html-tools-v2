@@ -26,6 +26,7 @@ type Props = {
   recentTgtLangs: Array<string>;
   onTranslate: () => void;
   loading: boolean;
+  detectLangEnabled: boolean;
 };
 
 const langListIdealRows = 12,
@@ -33,6 +34,8 @@ const langListIdealRows = 12,
   langListMaxColumns = 6,
   langListsBuffer = 50;
 const langListMinColumnWidth = langListMaxWidths / langListMaxColumns;
+
+const detectKey = 'detect';
 
 const TranslateButton = (props: { loading: boolean; onTranslate: () => void } & ButtonProps): React.ReactElement => {
   const { t } = useLocalization();
@@ -70,11 +73,14 @@ const MobileLanguageSelector = ({
   tgtLangs,
   swapLangs,
   loading,
+  detectLangEnabled,
 }: Props & {
   srcLangs: Array<[string, string]>;
   tgtLangs: Array<[string, string]>;
   swapLangs?: () => void;
 }): React.ReactElement => {
+  const { t } = useLocalization();
+
   return (
     <Form.Group className="d-flex d-md-none flex-column">
       <div className="d-flex flex-wrap">
@@ -86,6 +92,9 @@ const MobileLanguageSelector = ({
           style={{ maxWidth: '60%' }}
           value={srcLang}
         >
+          <option disabled={detectLangEnabled} key={detectKey}>
+            {t('Detect_Language')}
+          </option>
           {srcLangs.map(([code, name]) => (
             <option key={code} value={code}>
               {name}
@@ -128,6 +137,7 @@ const DesktopLanguageSelector = ({
   tgtLangs,
   swapLangs,
   loading,
+  detectLangEnabled,
 }: Props & {
   srcLangs: Array<[string, string]>;
   tgtLangs: Array<[string, string]>;
@@ -295,7 +305,14 @@ const DesktopLanguageSelector = ({
               {tLang(lang)}
             </Button>
           ))}
-          <Button size="sm" type="button" variant="secondary">
+          <Button
+            className="language-button"
+            disabled={detectLangEnabled}
+            size="sm"
+            type="button"
+            value={detectKey}
+            variant="secondary"
+          >
             {t('Detect_Language')}
           </Button>
           <DropdownButton
