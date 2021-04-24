@@ -113,14 +113,14 @@ const DocTranslationForm = ({
 
         setProgress(null);
         setError(null);
+        setLoading(false);
       } catch (error) {
         if (!axios.isCancel(error)) {
           console.warn('Translation failed', error);
           setError('Not_Available');
+          setLoading(false);
+          setProgress(null);
         }
-      } finally {
-        setProgress(null);
-        setLoading(false);
       }
     })();
 

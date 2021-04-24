@@ -92,13 +92,13 @@ const WebpageTranslationForm = ({
           };
           setTranslation({ url, html: response.responseData.translatedText });
           setError(false);
+          setLoading(false);
         } catch (error) {
           if (!axios.isCancel(error)) {
             console.warn('Translation failed', error);
             setError(true);
+            setLoading(false);
           }
-        } finally {
-          setLoading(false);
         }
       })();
 
