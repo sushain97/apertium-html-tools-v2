@@ -28,7 +28,7 @@ const SandboxForm = ({
   const requestRef = React.useRef<CancelTokenSource | null>(null);
 
   const handleSubmit = () => {
-    if (requestText.trim().length == 0) {
+    if (requestText.trim().length === 0) {
       return;
     }
 

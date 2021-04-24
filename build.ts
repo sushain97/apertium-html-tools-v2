@@ -22,7 +22,7 @@ const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>
   await axios({
     url: `${Config.apyURL}/${path}`,
     params,
-    validateStatus: (status) => status == 200,
+    validateStatus: (status) => status === 200,
   });
 
 const writeSitemap = async () => {
@@ -77,7 +77,7 @@ void (async () => {
 
   const localeStrings = (await Promise.all(
     (await fs.readdir('src/strings'))
-      .filter((f) => f.endsWith('.json') && f != 'locales.json')
+      .filter((f) => f.endsWith('.json') && f !== 'locales.json')
       .map(async (f) => {
         const locale = path.parse(f).name;
         const response = await apyGet('listLanguageNames', { locale });

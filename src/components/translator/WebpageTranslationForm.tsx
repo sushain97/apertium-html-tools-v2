@@ -53,7 +53,7 @@ const WebpageTranslationForm = ({
 
   const translate = React.useCallback(
     (url: string) => {
-      if (url.trim().length == 0) {
+      if (url.trim().length === 0) {
         setError(false);
         setTranslation(null);
         return;

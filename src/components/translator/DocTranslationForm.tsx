@@ -90,7 +90,7 @@ const DocTranslationForm = ({
           const response = (
             await axios.post(`${Config.apyURL}/translateDoc`, translateData, {
               cancelToken: source.token,
-              validateStatus: (status) => status == 200,
+              validateStatus: (status) => status === 200,
               onUploadProgress: ({ loaded, total }: ProgressEvent) => {
                 setProgress(Math.floor((loaded / total) * 1000) / 10);
               },

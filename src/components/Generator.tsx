@@ -50,7 +50,7 @@ const GeneratorForm = ({
   const generationRef = React.useRef<CancelTokenSource | null>(null);
 
   const handleSubmit = () => {
-    if (text.trim().length == 0) {
+    if (text.trim().length === 0) {
       return;
     }
 

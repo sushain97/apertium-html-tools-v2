@@ -101,7 +101,7 @@ const WithSrcLang = ({
     () => {
       const langs = new Set([srcLang]);
       for (const lang of SrcLangs) {
-        if (langs.size == recentLangsCount) {
+        if (langs.size === recentLangsCount) {
           break;
         }
         langs.add(lang);
@@ -109,7 +109,7 @@ const WithSrcLang = ({
       return Array.from(langs);
     },
     {
-      validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in pairs) && ls.includes(srcLang),
+      validateValue: (ls) => ls.length === recentLangsCount && ls.every((l) => l in pairs) && ls.includes(srcLang),
     },
   );
 
@@ -158,13 +158,13 @@ const WithTgtLang = ({
     () => {
       const langs = new Set([tgtLang]);
       for (const lang of pairs[srcLang].values()) {
-        if (langs.size == recentLangsCount) {
+        if (langs.size === recentLangsCount) {
           break;
         }
         langs.add(lang);
       }
       for (const lang of TgtLangs) {
-        if (langs.size == recentLangsCount) {
+        if (langs.size === recentLangsCount) {
           break;
         }
         langs.add(lang);
@@ -173,7 +173,7 @@ const WithTgtLang = ({
     },
     {
       validateValue: (ls) =>
-        ls.length == recentLangsCount && ls.some((l) => isPair(pairs, srcLang, l)) && ls.includes(tgtLang),
+        ls.length === recentLangsCount && ls.some((l) => isPair(pairs, srcLang, l)) && ls.includes(tgtLang),
     },
   );
 

@@ -19,14 +19,26 @@
     }
   },
   "rules": {
+    "eqeqeq": ["error", "smart"],
+    "complexity": ["error", 40],
+    "no-magic-numbers": ["error", { "ignore": [-1, 0, 1, 2, 3, 4, 10, 100, 200, 1000] }],
     "sort-imports": [
       "error",
       {
         "allowSeparatedGroups": true
       }
     ],
+    "spaced-comment": "error",
     "react/jsx-sort-props": "error",
     "react/self-closing-comp": "error",
     "jsx-a11y/no-autofocus": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.ts", "*.test.tsx"],
+      "rules": {
+        "no-magic-numbers": "off"
+      }
+    }
+  ]
 }

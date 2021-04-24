@@ -2,6 +2,7 @@ import * as queryString from 'query-string';
 
 // https://stackoverflow.com/q/417142/1266600. Preserve enough space for the
 // host and path.
+// eslint-disable-next-line no-magic-numbers
 export const MaxURLLength = 2048 - window.location.origin.length - 25;
 
 export const getUrlParam = (search: string, key: string): string | null => {

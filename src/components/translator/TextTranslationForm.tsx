@@ -66,7 +66,7 @@ const TextTranslationForm = ({
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
   const translate = React.useCallback(() => {
-    if (srcText.trim().length == 0) {
+    if (srcText.trim().length === 0) {
       setTgtText('');
       return;
     }

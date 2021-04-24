@@ -13,7 +13,7 @@ export const apyFetch = (path: string, params?: Record<string, string>): [Cancel
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       cancelToken: source.token,
-      validateStatus: (status) => status == 200,
+      validateStatus: (status) => status === 200,
     }),
   ];
 };

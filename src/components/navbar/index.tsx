@@ -88,7 +88,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                     <Nav.Link
                       active={
                         [TextTranslationPath, WebpageTranslationPath, DocTranslationPath].includes(pathname) ||
-                        (pathname === '/' && defaultMode == Mode.Translation)
+                        (pathname === '/' && defaultMode === Mode.Translation)
                       }
                       onClick={() => history.push(generatePath(TextTranslationPath))}
                     >
@@ -99,7 +99,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Analysis) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname === '/analysis' || (pathname === '/' && defaultMode == Mode.Analysis)}
+                      active={pathname === '/analysis' || (pathname === '/' && defaultMode === Mode.Analysis)}
                       onClick={() => history.push(generatePath('/analysis'))}
                     >
                       {t('Morphological_Analysis')}
@@ -109,7 +109,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Generation) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname === '/generation' || (pathname === '/' && defaultMode == Mode.Generation)}
+                      active={pathname === '/generation' || (pathname === '/' && defaultMode === Mode.Generation)}
                       onClick={() => history.push(generatePath('/generation'))}
                     >
                       {t('Morphological_Generation')}
@@ -119,7 +119,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                 {Config.enabledModes.has(Mode.Sandbox) && (
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
-                      active={pathname === '/sandbox' || (pathname === '/' && defaultMode == Mode.Sandbox)}
+                      active={pathname === '/sandbox' || (pathname === '/' && defaultMode === Mode.Sandbox)}
                       onClick={() => history.push(generatePath('/sandbox'))}
                     >
                       {t('APy_Sandbox')}
