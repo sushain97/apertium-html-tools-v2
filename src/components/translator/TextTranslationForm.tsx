@@ -17,14 +17,14 @@ import { langDirection } from '../../util/languages';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
-// TODO: [parity] textarea height sync
-
 const textUrlParam = 'q';
 
 const instantTranslationPunctuationDelay = 1000,
   instantTranslationDelay = 3000;
 
 const punctuation = new Set(['Period', 'Semicolon', 'Comma', 'Digit1', 'Slash']);
+
+const autoResizeMinimumWidth = 768;
 
 const isKeyUpEvent = (event: React.SyntheticEvent): event is React.KeyboardEvent => event.type === 'keyup';
 
@@ -45,6 +45,7 @@ const TextTranslationForm = ({
   const history = useHistory();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const tgtTextareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const [srcText, setSrcText] = useLocalStorage('srcText', '', {
     overrideValue: getUrlParam(history.location.search, textUrlParam),
@@ -150,6 +151,25 @@ const TextTranslationForm = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(translate, [markUnknown, srcLang, tgtLang]);
 
+  React.useLayoutEffect(() => {
+    if (window.innerWidth < autoResizeMinimumWidth) {
+      return;
+    }
+
+    const { current: srcTextarea } = srcTextareaRef;
+    const { current: tgtTextarea } = tgtTextareaRef;
+    if (!srcTextarea || !tgtTextarea) {
+      return;
+    }
+
+    srcTextarea.style.overflowY = 'hidden';
+    srcTextarea.style.height = 'auto';
+
+    const { scrollHeight } = srcTextarea;
+    srcTextarea.style.height = `${scrollHeight}px`;
+    tgtTextarea.style.height = `${scrollHeight}px`;
+  }, [srcText]);
+
   return (
     <Row>
       <Col md="6" xs="12">
@@ -184,6 +204,7 @@ const TextTranslationForm = ({
           className={classNames('bg-light mb-2', { 'text-danger': error })}
           dir={langDirection(tgtLang)}
           readOnly
+          ref={tgtTextareaRef}
           rows={15}
           spellCheck={false}
           value={error ? t('Not_Available') : tgtText}
