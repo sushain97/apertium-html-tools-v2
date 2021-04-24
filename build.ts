@@ -18,7 +18,7 @@ const watch = process.argv.includes('--watch');
 const version = child_process.execSync('git describe --tags --always').toString().trim();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const apyGet = async (path: string, params: unknown): Promise<AxiosResponse<any>> =>
+const apyGet = async (path: string, params: unknown = {}): Promise<AxiosResponse<any>> =>
   await axios({
     url: `${Config.apyURL}/${path}`,
     params,
@@ -52,14 +52,20 @@ void (async () => {
 
   const indexHtml = await fs.readFile('src/index.html', 'utf-8');
 
-  const pairs = ((await apyGet(`list`, { q: 'pairs' })).data as {
+  const [pairsResponse, analyzersResponse, generatorsResponse] = await Promise.all([
+    apyGet('list', {}),
+    apyGet('list', { q: 'analyzers' }),
+    apyGet('list', { q: 'generators' }),
+  ]);
+
+  const pairs = (pairsResponse.data as {
     responseData: Array<{
       sourceLanguage: string;
       targetLanguage: string;
     }>;
   }).responseData;
-  const analyzers = (await apyGet(`list`, { q: 'analyzers' })).data as Record<string, string>;
-  const generators = (await apyGet(`list`, { q: 'generators' })).data as Record<string, string>;
+  const analyzers = analyzersResponse.data as Record<string, string>;
+  const generators = generatorsResponse.data as Record<string, string>;
 
   let allLangs: Array<string | null> = [
     ...([] as Array<string>).concat(
