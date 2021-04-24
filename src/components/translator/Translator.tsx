@@ -263,34 +263,30 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
         event.preventDefault();
       }}
     >
-      <WithSrcLang mode={mode} pairs={pairs} urlSrcLang={urlSrcLang}>
+      <WithSrcLang {...{ mode, pairs, urlSrcLang }}>
         {({ srcLang, recentSrcLangs, setSrcLang, detectedLang, setDetectedLang }: WithSrcLangsProps) => (
           <WithTgtLang pairs={pairs} srcLang={srcLang} urlTgtLang={urlTgtLang}>
             {({ tgtLang, setTgtLang, recentTgtLangs }: WithTgtLangsProps) => (
               <>
                 <LanguageSelector
                   detectLangEnabled={mode !== Mode.Text}
-                  detectedLang={detectedLang}
-                  loading={loading}
                   onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
-                  pairs={pairs}
-                  recentSrcLangs={recentSrcLangs}
-                  recentTgtLangs={recentTgtLangs}
-                  setDetectedLang={setDetectedLang}
-                  setSrcLang={setSrcLang}
-                  setTgtLang={setTgtLang}
-                  srcLang={srcLang}
-                  tgtLang={tgtLang}
+                  {...{
+                    pairs,
+                    recentSrcLangs,
+                    recentTgtLangs,
+                    setDetectedLang,
+                    setSrcLang,
+                    setTgtLang,
+                    srcLang,
+                    tgtLang,
+                    detectedLang,
+                    loading,
+                  }}
                 />
                 {(mode === Mode.Text || !mode) && (
                   <>
-                    <TextTranslationForm
-                      instantTranslation={instantTranslation}
-                      markUnknown={markUnknown}
-                      setLoading={setLoading}
-                      srcLang={srcLang}
-                      tgtLang={tgtLang}
-                    />
+                    <TextTranslationForm {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang }} />
                     <Row className="mt-2 mb-3">
                       <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
                         <Button
