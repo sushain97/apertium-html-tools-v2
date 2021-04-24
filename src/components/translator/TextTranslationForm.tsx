@@ -17,7 +17,7 @@ import { langDirection } from '../../util/languages';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
-// TODO: textarea height sync
+// TODO: [parity] textarea height sync
 
 const textUrlParam = 'q';
 

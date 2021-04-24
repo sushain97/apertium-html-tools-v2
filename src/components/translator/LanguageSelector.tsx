@@ -14,7 +14,7 @@ import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } 
 import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
 
-// TODO: language detection
+// TODO: [parity] language detection
 
 type Props = {
   pairs: Pairs;
