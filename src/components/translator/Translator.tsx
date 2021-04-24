@@ -75,45 +75,26 @@ const urlFromMode = (mode: Mode): string => {
   }
 };
 
-const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement => {
-  const mode: Mode = initialMode || Mode.Text;
+type WithSrcLangsProps = {
+  srcLang: string;
+  setSrcLang: (lang: string) => void;
+  recentSrcLangs: Array<string>;
+  setRecentSrcLangs: (langs: Array<string>) => void;
+};
 
-  const { t } = useLocalization();
-  const history = useHistory();
-
-  const [loading, setLoading] = React.useState(false);
-
-  const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
-  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
-  const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
-    validateValue: () => Config.translationChaining,
-  });
-
-  const pairs = translationChaining && mode === Mode.Text ? ChainedPairs : DirectPairs;
-
-  let urlSrcLang = null;
-  let urlTgtLang = null;
-  const urlParamPair = getUrlParam(history.location.search, pairUrlParam);
-  if (urlParamPair) {
-    const [src, tgt] = urlParamPair.split('-', 2).map(toAlpha3Code);
-    if (src && tgt && isPair(pairs, src, tgt)) {
-      urlSrcLang = src;
-      urlTgtLang = tgt;
-    }
-  }
-
+const WithSrcLang = ({
+  pairs,
+  urlSrcLang,
+  children,
+}: {
+  pairs: Pairs;
+  urlSrcLang: string | null;
+  children: (props: WithSrcLangsProps) => React.ReactElement;
+}): React.ReactElement => {
   const [srcLang, realSetSrcLang] = useLocalStorage<string>('srcLang', () => defaultSrcLang(pairs), {
     overrideValue: urlSrcLang,
     validateValue: (l) => l in pairs,
   });
-  const [tgtLang, realSetTgtLang] = useLocalStorage<string>(
-    'tgtLang',
-    () => pairs[srcLang].values().next().value as string,
-    {
-      overrideValue: urlTgtLang,
-      validateValue: (l) => pairs[srcLang].has(l),
-    },
-  );
 
   const [recentSrcLangs, setRecentSrcLangs] = useLocalStorage<Array<string>>(
     'recentSrcLangs',
@@ -131,6 +112,47 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       validateValue: (ls) => ls.length == recentLangsCount && ls.every((l) => l in pairs) && ls.includes(srcLang),
     },
   );
+
+  const setSrcLang = React.useCallback(
+    (lang: string) => {
+      realSetSrcLang(lang);
+      if (!recentSrcLangs.includes(lang)) {
+        setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
+      }
+    },
+    [realSetSrcLang, recentSrcLangs, setRecentSrcLangs],
+  );
+
+  return children({ srcLang, setSrcLang, recentSrcLangs, setRecentSrcLangs });
+};
+
+type WithTgtLangsProps = {
+  tgtLang: string;
+  setTgtLang: (lang: string) => void;
+  recentTgtLangs: Array<string>;
+  setRecentTgtLangs: (langs: Array<string>) => void;
+};
+
+const WithTgtLang = ({
+  pairs,
+  srcLang,
+  urlTgtLang,
+  children,
+}: {
+  pairs: Pairs;
+  srcLang: string;
+  urlTgtLang: string | null;
+  children: (props: WithTgtLangsProps) => React.ReactElement;
+}): React.ReactElement => {
+  const [tgtLang, realSetTgtLang] = useLocalStorage<string>(
+    'tgtLang',
+    () => pairs[srcLang].values().next().value as string,
+    {
+      overrideValue: urlTgtLang,
+      validateValue: (l) => pairs[srcLang].has(l),
+    },
+  );
+
   const [recentTgtLangs, setRecentTgtLangs] = useLocalStorage<Array<string>>(
     'recentTgtLangs',
     () => {
@@ -153,16 +175,6 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       validateValue: (ls) =>
         ls.length == recentLangsCount && ls.some((l) => isPair(pairs, srcLang, l)) && ls.includes(tgtLang),
     },
-  );
-
-  const setSrcLang = React.useCallback(
-    (lang: string) => {
-      realSetSrcLang(lang);
-      if (!recentSrcLangs.includes(lang)) {
-        setRecentSrcLangs([lang, ...recentSrcLangs].slice(0, recentLangsCount));
-      }
-    },
-    [realSetSrcLang, recentSrcLangs, setRecentSrcLangs],
   );
 
   const setTgtLang = React.useCallback(
@@ -192,6 +204,36 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     }
   }, [pairs, recentTgtLangs, setTgtLang, srcLang, tgtLang]);
 
+  return children({ tgtLang, setTgtLang, recentTgtLangs, setRecentTgtLangs });
+};
+
+const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement => {
+  const mode: Mode = initialMode || Mode.Text;
+
+  const { t } = useLocalization();
+  const history = useHistory();
+
+  const [loading, setLoading] = React.useState(false);
+
+  const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
+  const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
+  const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
+    validateValue: () => Config.translationChaining,
+  });
+
+  const pairs = translationChaining && mode === Mode.Text ? ChainedPairs : DirectPairs;
+
+  let urlSrcLang = null;
+  let urlTgtLang: string | null = null;
+  const urlParamPair = getUrlParam(history.location.search, pairUrlParam);
+  if (urlParamPair) {
+    const [src, tgt] = urlParamPair.split('-', 2).map(toAlpha3Code);
+    if (src && tgt && isPair(pairs, src, tgt)) {
+      urlSrcLang = src;
+      urlTgtLang = tgt;
+    }
+  }
+
   return (
     <Form
       aria-label={t('Translate')}
@@ -200,83 +242,105 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
         event.preventDefault();
       }}
     >
-      <LanguageSelector
-        detectLangEnabled={mode !== Mode.Text}
-        loading={loading}
-        onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
-        pairs={pairs}
-        recentSrcLangs={recentSrcLangs}
-        recentTgtLangs={recentTgtLangs}
-        setSrcLang={setSrcLang}
-        setTgtLang={setTgtLang}
-        srcLang={srcLang}
-        tgtLang={tgtLang}
-      />
-      {(mode === Mode.Text || !mode) && (
-        <>
-          <TextTranslationForm
-            instantTranslation={instantTranslation}
-            markUnknown={markUnknown}
-            setLoading={setLoading}
-            srcLang={srcLang}
-            tgtLang={tgtLang}
-          />
-          <Row className="mt-2 mb-3">
-            <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
-              <Button className="mb-2" onClick={() => history.push(urlFromMode(Mode.Document))} variant="secondary">
-                <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
-              </Button>
-              <Button className="mb-2" onClick={() => history.push(urlFromMode(Mode.Webpage))} variant="secondary">
-                <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
-              </Button>
-            </Col>
-            <Col className="form-check d-flex flex-column align-items-end justify-content-start w-auto" md="6" xs="12">
-              <label className="mb-1">
-                <input
-                  checked={markUnknown}
-                  onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
-                  type="checkbox"
-                />{' '}
-                <span>{t('Mark_Unknown_Words')}</span>
-              </label>
-              <label className="mb-1">
-                <input
-                  checked={instantTranslation}
-                  onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
-                  type="checkbox"
-                />{' '}
-                <span>{t('Instant_Translation')}</span>
-              </label>
-              {Config.translationChaining && (
-                <label className="mb-1">
-                  <input
-                    checked={translationChaining}
-                    onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
-                    type="checkbox"
-                  />{' '}
-                  <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
-                </label>
-              )}
-            </Col>
-          </Row>
-        </>
-      )}
-      {mode === Mode.Document && (
-        <DocTranslationForm
-          onCancel={() => history.push(urlFromMode(Mode.Text))}
-          setLoading={setLoading}
-          srcLang={srcLang}
-          tgtLang={tgtLang}
-        />
-      )}
-      {mode === Mode.Webpage && (
-        <WebpageTranslationForm
-          onCancel={() => history.push(urlFromMode(Mode.Text))}
-          setLoading={setLoading}
-          srcLang={srcLang}
-          tgtLang={tgtLang}
-        />
-      )}
+      <WithSrcLang pairs={pairs} urlSrcLang={urlSrcLang}>
+        {({ srcLang, recentSrcLangs, setSrcLang }: WithSrcLangsProps) => (
+          <WithTgtLang pairs={pairs} srcLang={srcLang} urlTgtLang={urlTgtLang}>
+            {({ tgtLang, setTgtLang, recentTgtLangs }: WithTgtLangsProps) => (
+              <>
+                <LanguageSelector
+                  detectLangEnabled={mode !== Mode.Text}
+                  loading={loading}
+                  onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
+                  pairs={pairs}
+                  recentSrcLangs={recentSrcLangs}
+                  recentTgtLangs={recentTgtLangs}
+                  setSrcLang={setSrcLang}
+                  setTgtLang={setTgtLang}
+                  srcLang={srcLang}
+                  tgtLang={tgtLang}
+                />
+                {(mode === Mode.Text || !mode) && (
+                  <>
+                    <TextTranslationForm
+                      instantTranslation={instantTranslation}
+                      markUnknown={markUnknown}
+                      setLoading={setLoading}
+                      srcLang={srcLang}
+                      tgtLang={tgtLang}
+                    />
+                    <Row className="mt-2 mb-3">
+                      <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
+                        <Button
+                          className="mb-2"
+                          onClick={() => history.push(urlFromMode(Mode.Document))}
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
+                        </Button>
+                        <Button
+                          className="mb-2"
+                          onClick={() => history.push(urlFromMode(Mode.Webpage))}
+                          variant="secondary"
+                        >
+                          <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
+                        </Button>
+                      </Col>
+                      <Col
+                        className="form-check d-flex flex-column align-items-end justify-content-start w-auto"
+                        md="6"
+                        xs="12"
+                      >
+                        <label className="mb-1">
+                          <input
+                            checked={markUnknown}
+                            onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
+                            type="checkbox"
+                          />{' '}
+                          <span>{t('Mark_Unknown_Words')}</span>
+                        </label>
+                        <label className="mb-1">
+                          <input
+                            checked={instantTranslation}
+                            onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
+                            type="checkbox"
+                          />{' '}
+                          <span>{t('Instant_Translation')}</span>
+                        </label>
+                        {Config.translationChaining && (
+                          <label className="mb-1">
+                            <input
+                              checked={translationChaining}
+                              onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
+                              type="checkbox"
+                            />{' '}
+                            <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
+                          </label>
+                        )}
+                      </Col>
+                    </Row>
+                  </>
+                )}
+                {mode === Mode.Document && (
+                  <DocTranslationForm
+                    onCancel={() => history.push(urlFromMode(Mode.Text))}
+                    setLoading={setLoading}
+                    srcLang={srcLang}
+                    tgtLang={tgtLang}
+                  />
+                )}
+                {mode === Mode.Webpage && (
+                  <WebpageTranslationForm
+                    onCancel={() => history.push(urlFromMode(Mode.Text))}
+                    setLoading={setLoading}
+                    srcLang={srcLang}
+                    tgtLang={tgtLang}
+                  />
+                )}
+              </>
+            )}
+          </WithTgtLang>
+        )}
+      </WithSrcLang>
     </Form>
   );
 };
