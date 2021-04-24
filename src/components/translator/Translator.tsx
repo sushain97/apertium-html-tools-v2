@@ -221,11 +221,11 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
             tgtLang={tgtLang}
           />
           <Row className="mt-2 mb-3">
-            <Col className="d-flex d-sm-block mb-2 flex-wrap translation-modes" md="6" xs="12">
-              <Button onClick={() => history.push(urlFromMode(Mode.Document))} variant="secondary">
+            <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
+              <Button className="mb-2" onClick={() => history.push(urlFromMode(Mode.Document))} variant="secondary">
                 <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
               </Button>
-              <Button onClick={() => history.push(urlFromMode(Mode.Webpage))} variant="secondary">
+              <Button className="mb-2" onClick={() => history.push(urlFromMode(Mode.Webpage))} variant="secondary">
                 <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
               </Button>
             </Col>
