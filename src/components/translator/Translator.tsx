@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-for */
-
 import './translator.css';
 
 import * as React from 'react';
@@ -18,6 +16,7 @@ import WebpageTranslationForm, { Path as WebpageTranslationPath } from './Webpag
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
+import TranslationOptions from './TranslationOptions';
 import { getUrlParam } from '../../util/url';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
@@ -314,32 +313,16 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                         md="6"
                         xs="12"
                       >
-                        <label className="mb-1">
-                          <input
-                            checked={markUnknown}
-                            onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
-                            type="checkbox"
-                          />{' '}
-                          <span>{t('Mark_Unknown_Words')}</span>
-                        </label>
-                        <label className="mb-1">
-                          <input
-                            checked={instantTranslation}
-                            onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
-                            type="checkbox"
-                          />{' '}
-                          <span>{t('Instant_Translation')}</span>
-                        </label>
-                        {Config.translationChaining && (
-                          <label className="mb-1">
-                            <input
-                              checked={translationChaining}
-                              onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
-                              type="checkbox"
-                            />{' '}
-                            <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
-                          </label>
-                        )}
+                        <TranslationOptions
+                          {...{
+                            markUnknown,
+                            setMarkUnknown,
+                            instantTranslation,
+                            setInstantTranslation,
+                            translationChaining,
+                            setTranslationChaining,
+                          }}
+                        />
                       </Col>
                     </Row>
                   </>
