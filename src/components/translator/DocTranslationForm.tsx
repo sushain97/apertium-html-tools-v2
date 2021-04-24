@@ -36,10 +36,10 @@ const allowedMimeTypes = [
 const DocTranslationForm = ({
   srcLang,
   tgtLang,
-  cancelLink,
+  onCancel,
   setLoading,
 }: {
-  cancelLink: string;
+  onCancel: () => void;
   srcLang: string;
   tgtLang: string;
   setLoading: (loading: boolean) => void;
@@ -145,7 +145,7 @@ const DocTranslationForm = ({
             <p dangerouslySetInnerHTML={{ __html: t('Supported_Formats') }} />
             <Button
               className="position-absolute"
-              href={cancelLink}
+              onClick={onCancel}
               size="sm"
               style={{ bottom: '-6px', right: '20px' }}
               variant="secondary"

@@ -1,7 +1,7 @@
 import './navbar.css';
 
 import * as React from 'react';
-import { generatePath, useLocation } from 'react-router-dom';
+import { generatePath, useLocation, useHistory } from 'react-router-dom';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -48,6 +48,8 @@ const TagLine = (): React.ReactElement => {
 const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
   const { t } = useLocalization();
   const { pathname } = useLocation();
+  const history = useHistory();
+
   const { defaultMode } = Config;
 
   return (
@@ -85,7 +87,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                         ['/translation', '/webpageTranslation', '/docTranslation'].includes(pathname) ||
                         (pathname === '/' && defaultMode == Mode.Translation)
                       }
-                      href={`#${generatePath('/translation')}`}
+                      onClick={() => history.push(generatePath('/translation'))}
                     >
                       {t('Translation')}
                     </Nav.Link>
@@ -95,7 +97,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
                       active={pathname === '/analysis' || (pathname === '/' && defaultMode == Mode.Analysis)}
-                      href={`#${generatePath('/analysis')}`}
+                      onClick={() => history.push(generatePath('/analysis'))}
                     >
                       {t('Morphological_Analysis')}
                     </Nav.Link>
@@ -105,7 +107,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
                       active={pathname === '/generation' || (pathname === '/' && defaultMode == Mode.Generation)}
-                      href={`#${generatePath('/generation')}`}
+                      onClick={() => history.push(generatePath('/generation'))}
                     >
                       {t('Morphological_Generation')}
                     </Nav.Link>
@@ -115,7 +117,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
                       active={pathname === '/sandbox' || (pathname === '/' && defaultMode == Mode.Sandbox)}
-                      href={`#${generatePath('/sandbox')}`}
+                      onClick={() => history.push(generatePath('/sandbox'))}
                     >
                       {t('APy_Sandbox')}
                     </Nav.Link>

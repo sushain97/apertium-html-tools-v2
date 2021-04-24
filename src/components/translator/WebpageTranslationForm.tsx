@@ -19,12 +19,12 @@ import { useLocalization } from '../../util/localization';
 const urlUrlParam = 'qW';
 
 const WebpageTranslationForm = ({
-  cancelLink,
+  onCancel,
   srcLang,
   tgtLang,
   setLoading,
 }: {
-  cancelLink: string;
+  onCancel: () => void;
   srcLang: string;
   tgtLang: string;
   setLoading: (loading: boolean) => void;
@@ -171,7 +171,7 @@ const WebpageTranslationForm = ({
     <Row>
       <Col sm="12">
         <div className="d-inline-flex mb-2 w-100">
-          <Button href={cancelLink} variant="secondary">
+          <Button onClick={onCancel} variant="secondary">
             <FontAwesomeIcon icon={faArrowLeft} /> {t('Cancel')}
           </Button>
           <InputGroup className="ml-3">

@@ -67,11 +67,11 @@ const defaultSrcLang = (pairs: Pairs): string => {
 const urlFromMode = (mode: Mode): string => {
   switch (mode) {
     case Mode.Text:
-      return `#${generatePath('/translation')}`;
+      return generatePath('/translation');
     case Mode.Document:
-      return `#${generatePath('/docTranslation')}`;
+      return generatePath('/docTranslation');
     case Mode.Webpage:
-      return `#${generatePath('/webpageTranslation')}`;
+      return generatePath('/webpageTranslation');
   }
 };
 
@@ -222,10 +222,10 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
           />
           <Row className="mt-2 mb-3">
             <Col className="d-flex d-sm-block mb-2 flex-wrap translation-modes" md="6" xs="12">
-              <Button href={urlFromMode(Mode.Document)} variant="secondary">
+              <Button onClick={() => history.push(urlFromMode(Mode.Document))} variant="secondary">
                 <FontAwesomeIcon icon={faFile} /> {t('Translate_Document')}
               </Button>
-              <Button href={urlFromMode(Mode.Webpage)} variant="secondary">
+              <Button onClick={() => history.push(urlFromMode(Mode.Webpage))} variant="secondary">
                 <FontAwesomeIcon icon={faLink} /> {t('Translate_Webpage')}
               </Button>
             </Col>
@@ -262,7 +262,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       )}
       {mode === Mode.Document && (
         <DocTranslationForm
-          cancelLink={urlFromMode(Mode.Text)}
+          onCancel={() => history.push(urlFromMode(Mode.Text))}
           setLoading={setLoading}
           srcLang={srcLang}
           tgtLang={tgtLang}
@@ -270,7 +270,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       )}
       {mode === Mode.Webpage && (
         <WebpageTranslationForm
-          cancelLink={urlFromMode(Mode.Text)}
+          onCancel={() => history.push(urlFromMode(Mode.Text))}
           setLoading={setLoading}
           srcLang={srcLang}
           tgtLang={tgtLang}
