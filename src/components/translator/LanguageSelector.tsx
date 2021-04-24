@@ -187,20 +187,24 @@ const DesktopLanguageSelector = ({
     return () => window.removeEventListener('resize', refreshSizes);
   }, [locale, tgtLangs.length, srcLangs.length, tgtLangsDropdownTriggerRef, srcLangsDropdownTriggerRef]);
 
-  let srcLangsPerCol = Math.ceil(srcLangs.length / numSrcCols),
-    tgtLangsPerCol = Math.ceil(tgtLangs.length / numTgtCols);
+  const [srcLangsPerCol, tgtLangsPerCol] = React.useMemo(() => {
+    let srcLangsPerCol = Math.ceil(srcLangs.length / numSrcCols),
+      tgtLangsPerCol = Math.ceil(tgtLangs.length / numTgtCols);
 
-  for (let i = 0; i < numSrcCols; i++) {
-    while (i * srcLangsPerCol < srcLangs.length && isVariant(srcLangs[i * srcLangsPerCol][0])) {
-      srcLangsPerCol++;
+    for (let i = 0; i < numSrcCols; i++) {
+      while (i * srcLangsPerCol < srcLangs.length && isVariant(srcLangs[i * srcLangsPerCol][0])) {
+        srcLangsPerCol++;
+      }
     }
-  }
 
-  for (let i = 0; i < numTgtCols; i++) {
-    while (i * tgtLangsPerCol < tgtLangs.length && isVariant(tgtLangs[i * tgtLangsPerCol][0])) {
-      tgtLangsPerCol++;
+    for (let i = 0; i < numTgtCols; i++) {
+      while (i * tgtLangsPerCol < tgtLangs.length && isVariant(tgtLangs[i * tgtLangsPerCol][0])) {
+        tgtLangsPerCol++;
+      }
     }
-  }
+
+    return [srcLangsPerCol, tgtLangsPerCol];
+  }, [numSrcCols, numTgtCols, srcLangs, tgtLangs]);
 
   const srcLangCols = [];
   const tgtLangCols = [];
@@ -368,70 +372,79 @@ const LanguageSelector = (props: Props): React.ReactElement => {
     sortLocale = undefined;
   }
 
-  const compareLangCodes = (a: string, b: string): number => {
-    const aVariant = a.split(variantSeperator, 2),
-      bVariant = b.split(variantSeperator, 2);
-    const directCompare = tLang(aVariant[0]).localeCompare(tLang(bVariant[0]), sortLocale);
+  const compareLangCodes = React.useCallback(
+    (a: string, b: string): number => {
+      const aVariant = a.split(variantSeperator, 2),
+        bVariant = b.split(variantSeperator, 2);
+      const directCompare = tLang(aVariant[0]).localeCompare(tLang(bVariant[0]), sortLocale);
 
-    if (aVariant[1] && bVariant[1] && aVariant[0] === bVariant[0]) {
-      return directCompare;
-    } else if (aVariant[1] && aVariant[0] === b) {
-      return 1;
-    } else if (bVariant[1] && bVariant[0] === a) {
-      return -1;
-    } else {
-      return directCompare;
-    }
-  };
-
-  const srcLangs: Array<[string, string]> = [...SrcLangs].sort(compareLangCodes).map((code) => [code, tLang(code)]);
-
-  const tgtLangs: Array<[string, string]> = [...TgtLangs]
-    .sort((a, b) => {
-      const possibleTgtLangs = Array.from(pairs[srcLang]) || [];
-
-      const isFamilyPossible = (lang: string) => {
-        const parent = parentLang(lang);
-        return (
-          isPair(pairs, srcLang, lang) ||
-          possibleTgtLangs.includes(parent) ||
-          possibleTgtLangs.some((possibleLang) => parentLang(possibleLang) === parent)
-        );
-      };
-
-      const aParent = parentLang(a),
-        bParent = parentLang(b);
-      const aFamilyPossible = isFamilyPossible(a),
-        bFamilyPossible = isFamilyPossible(b);
-      if (aFamilyPossible === bFamilyPossible) {
-        if (aParent === bParent) {
-          const aVariant = isVariant(a),
-            bVariant = isVariant(b);
-          if (aVariant && bVariant) {
-            const aPossible = isPair(pairs, srcLang, a),
-              bPossible = isPair(pairs, srcLang, b);
-            if (aPossible === bPossible) {
-              return compareLangCodes(a, b);
-            } else if (aPossible) {
-              return -1;
-            } else {
-              return 1;
-            }
-          } else if (aVariant) {
-            return 1;
-          } else {
-            return -1;
-          }
-        } else {
-          return compareLangCodes(a, b);
-        }
-      } else if (aFamilyPossible) {
+      if (aVariant[1] && bVariant[1] && aVariant[0] === bVariant[0]) {
+        return directCompare;
+      } else if (aVariant[1] && aVariant[0] === b) {
+        return 1;
+      } else if (bVariant[1] && bVariant[0] === a) {
         return -1;
       } else {
-        return 1;
+        return directCompare;
       }
-    })
-    .map((code) => [code, tLang(code)]);
+    },
+    [sortLocale, tLang],
+  );
+
+  const srcLangs: Array<[string, string]> = React.useMemo(
+    () => [...SrcLangs].sort(compareLangCodes).map((code) => [code, tLang(code)]),
+    [compareLangCodes, tLang],
+  );
+
+  const tgtLangs: Array<[string, string]> = React.useMemo(
+    () =>
+      [...TgtLangs]
+        .sort((a, b) => {
+          const possibleTgtLangs = Array.from(pairs[srcLang]) || [];
+
+          const isFamilyPossible = (lang: string, parent: string) => {
+            return (
+              isPair(pairs, srcLang, lang) ||
+              possibleTgtLangs.includes(parent) ||
+              possibleTgtLangs.some((possibleLang) => parentLang(possibleLang) === parent)
+            );
+          };
+
+          const aParent = parentLang(a),
+            bParent = parentLang(b);
+          const aFamilyPossible = isFamilyPossible(a, aParent),
+            bFamilyPossible = isFamilyPossible(b, bParent);
+          if (aFamilyPossible === bFamilyPossible) {
+            if (aParent === bParent) {
+              const aVariant = isVariant(a),
+                bVariant = isVariant(b);
+              if (aVariant && bVariant) {
+                const aPossible = isPair(pairs, srcLang, a),
+                  bPossible = isPair(pairs, srcLang, b);
+                if (aPossible === bPossible) {
+                  return compareLangCodes(a, b);
+                } else if (aPossible) {
+                  return -1;
+                } else {
+                  return 1;
+                }
+              } else if (aVariant) {
+                return 1;
+              } else {
+                return -1;
+              }
+            } else {
+              return compareLangCodes(a, b);
+            }
+          } else if (aFamilyPossible) {
+            return -1;
+          } else {
+            return 1;
+          }
+        })
+        .map((code) => [code, tLang(code)]),
+    [compareLangCodes, pairs, srcLang, tLang],
+  );
 
   const sharedProps = {
     ...props,

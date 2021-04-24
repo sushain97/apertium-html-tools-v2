@@ -54,7 +54,7 @@ export const useLocalization = (): { t: (id: string) => string; tLang: (code: st
   const strings = React.useContext(StringsContext);
   const locale = React.useContext(LocaleContext);
 
-  return { t: t(locale, strings), tLang: tLang(locale, strings) };
+  return React.useMemo(() => ({ t: t(locale, strings), tLang: tLang(locale, strings) }), [strings, locale]);
 };
 
 export const validLocale = (code: string): boolean => {
