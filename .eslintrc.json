@@ -26,6 +26,7 @@
       }
     ],
     "react/jsx-sort-props": "error",
-    "react/self-closing-comp": "error"
+    "react/self-closing-comp": "error",
+    "jsx-a11y/no-autofocus": "off"
   }
 }

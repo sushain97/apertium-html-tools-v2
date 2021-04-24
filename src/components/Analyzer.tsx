@@ -186,6 +186,7 @@ const AnalysisForm = ({
         <Col md="10">
           <Form.Control
             as="textarea"
+            autoFocus
             dir={langDirection(lang)}
             onChange={({ target: { value } }) => setText(value)}
             onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {

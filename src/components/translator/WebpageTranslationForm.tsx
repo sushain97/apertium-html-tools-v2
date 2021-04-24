@@ -182,6 +182,7 @@ const WebpageTranslationForm = ({
             </InputGroup.Prepend>
             <Form.Control
               autoComplete="url"
+              autoFocus
               onChange={({ currentTarget: { value } }) => setUrl(value)}
               placeholder="URL ⏎"
               required

@@ -137,7 +137,12 @@ const DocTranslationForm = ({
       <Col md="6">
         <Card bg="light">
           <Card.Body>
-            <input accept={allowedMimeTypes.filter((t) => t.length > 0).join(',')} ref={inputRef} type="file" />
+            <input
+              accept={allowedMimeTypes.filter((t) => t.length > 0).join(',')}
+              autoFocus
+              ref={inputRef}
+              type="file"
+            />
             <div className="my-2 d-flex flex-column justify-content-center" style={{ minHeight: '3rem' }}>
               {progress != null && <ProgressBar animated max={100} min={0} now={50} striped />}
               {error && <span className="text-danger lead">{t(error)}</span>}

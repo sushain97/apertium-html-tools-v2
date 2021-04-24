@@ -73,6 +73,7 @@ const SandboxForm = ({
         <Col md="10">
           <Form.Control
             as="textarea"
+            autoFocus
             onChange={({ target: { value } }) => setRequestText(value)}
             onKeyDown={(event: React.KeyboardEvent<HTMLTextAreaElement>) => {
               if (event.code === 'Enter' && !event.shiftKey) {

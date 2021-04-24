@@ -156,6 +156,7 @@ const TextTranslationForm = ({
         <Form.Control
           aria-label={t('Input_Text')}
           as="textarea"
+          autoFocus
           className="mb-2"
           dir={langDirection(srcLang)}
           onChange={({ target: { value } }) => setSrcText(value)}
