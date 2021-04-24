@@ -12,12 +12,12 @@ import { useHistory } from 'react-router-dom';
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { TranslateEvent, baseUrlParams } from '.';
 import { apyFetch } from '../../util';
+import { buildUrl as buildWebpageTranslationUrl } from './WebpageTranslationForm';
 import { langDirection } from '../../util/languages';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
 // TODO: textarea height sync
-// TODO: url detection
 
 const textUrlParam = 'q';
 
@@ -108,6 +108,11 @@ const TextTranslationForm = ({
 
   const handleSrcTextChange = React.useCallback(
     (event: React.KeyboardEvent<HTMLTextAreaElement> | React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const { value } = event.currentTarget;
+      if (/^https?:\/\/.+$/.test(value)) {
+        history.push(buildWebpageTranslationUrl(value));
+      }
+
       if (lastPunct.current && isKeyUpEvent(event) && (event.code === 'Space' || event.code === 'Enter')) {
         // Don't override the short timeout for simple space-after-punctuation.
         return;
@@ -132,7 +137,7 @@ const TextTranslationForm = ({
         }
       }, timeout);
     },
-    [translate, instantTranslation],
+    [instantTranslation, history, translate],
   );
 
   React.useEffect(() => {

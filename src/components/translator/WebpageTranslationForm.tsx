@@ -203,4 +203,7 @@ const WebpageTranslationForm = ({
   );
 };
 
+export const Path = '/webpageTranslation';
+export const buildUrl = (url: string): string => `${Path}${buildNewSearch({ [urlUrlParam]: url })}`;
+
 export default WebpageTranslationForm;
