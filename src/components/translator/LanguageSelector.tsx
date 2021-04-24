@@ -124,6 +124,75 @@ const MobileLanguageSelector = ({
   );
 };
 
+const LangsDropdown = ({
+  langs,
+  numCols,
+  setLang,
+  validLang,
+}: {
+  langs: Array<[string, string]>;
+  numCols: number;
+  setLang: (code: string) => void;
+  validLang?: (code: string) => boolean;
+}): React.ReactElement => {
+  const langsPerCol = React.useMemo(() => {
+    let langsPerCol = Math.ceil(langs.length / numCols);
+
+    for (let i = 0; i < numCols; i++) {
+      while (i * langsPerCol < langs.length && isVariant(langs[i * langsPerCol][0])) {
+        langsPerCol++;
+      }
+    }
+
+    return langsPerCol;
+  }, [langs, numCols]);
+
+  const langCols = [];
+
+  for (let i = 0; i < numCols; i++) {
+    const numLang = langsPerCol * i;
+    const langElems: Array<React.ReactElement> = [];
+
+    for (let j = numLang; j < langs.length && j < numLang + langsPerCol; j++) {
+      const [code, name] = langs[j];
+      const valid = !validLang || validLang(code);
+      langElems.push(
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+        <div
+          className={classNames('language-name', {
+            'variant-language-name': isVariant(code),
+            'text-muted': !valid,
+          })}
+          key={code}
+          onClick={
+            valid
+              ? () => {
+                  setLang(code);
+                  document.body.click();
+                }
+              : undefined
+          }
+          role="button"
+          tabIndex={0}
+        >
+          {name}
+        </div>,
+      );
+    }
+    langCols.push(
+      <div className="language-name-col" key={i} style={{ width: `${100.0 / numCols}%` }}>
+        {langElems}
+      </div>,
+    );
+  }
+
+  return (
+    <Row className="d-flex" style={{ minWidth: numCols * langListMinColumnWidth }}>
+      {langCols}
+    </Row>
+  );
+};
+
 const DesktopLanguageSelector = ({
   pairs,
   srcLang,
@@ -197,93 +266,7 @@ const DesktopLanguageSelector = ({
     return () => window.removeEventListener('resize', refreshSizes);
   }, [locale, tgtLangs.length, srcLangs.length, tgtLangsDropdownTriggerRef, srcLangsDropdownTriggerRef]);
 
-  const [srcLangsPerCol, tgtLangsPerCol] = React.useMemo(() => {
-    let srcLangsPerCol = Math.ceil(srcLangs.length / numSrcCols),
-      tgtLangsPerCol = Math.ceil(tgtLangs.length / numTgtCols);
-
-    for (let i = 0; i < numSrcCols; i++) {
-      while (i * srcLangsPerCol < srcLangs.length && isVariant(srcLangs[i * srcLangsPerCol][0])) {
-        srcLangsPerCol++;
-      }
-    }
-
-    for (let i = 0; i < numTgtCols; i++) {
-      while (i * tgtLangsPerCol < tgtLangs.length && isVariant(tgtLangs[i * tgtLangsPerCol][0])) {
-        tgtLangsPerCol++;
-      }
-    }
-
-    return [srcLangsPerCol, tgtLangsPerCol];
-  }, [numSrcCols, numTgtCols, srcLangs, tgtLangs]);
-
-  const srcLangCols = [];
-  const tgtLangCols = [];
-
-  for (let i = 0; i < numSrcCols; i++) {
-    const numSrcLang = srcLangsPerCol * i;
-    const srcLangElems: Array<React.ReactElement> = [];
-
-    for (let j = numSrcLang; j < srcLangs.length && j < numSrcLang + srcLangsPerCol; j++) {
-      const [code, name] = srcLangs[j];
-      srcLangElems.push(
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-        <div
-          className={classNames('language-name', { 'variant-language-name': isVariant(code) })}
-          key={code}
-          onClick={() => {
-            setSrcLang(code);
-            document.body.click();
-          }}
-          role="button"
-          tabIndex={0}
-        >
-          {name}
-        </div>,
-      );
-    }
-    srcLangCols.push(
-      <div className="language-name-col" key={i} style={{ width: `${100.0 / numSrcCols}%` }}>
-        {srcLangElems}
-      </div>,
-    );
-  }
-
-  for (let i = 0; i < numTgtCols; i++) {
-    const numTgtLang = tgtLangsPerCol * i;
-    const tgtLangElems: Array<React.ReactElement> = [];
-
-    for (let j = numTgtLang; j < tgtLangs.length && j < numTgtLang + tgtLangsPerCol; j++) {
-      const [code, name] = tgtLangs[j];
-      const valid = pairs[srcLang].has(code);
-      tgtLangElems.push(
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-        <div
-          className={classNames('language-name', {
-            'variant-language-name': isVariant(code),
-            'text-muted': !valid,
-          })}
-          key={code}
-          onClick={
-            valid
-              ? () => {
-                  setTgtLang(code);
-                  document.body.click();
-                }
-              : undefined
-          }
-          role="button"
-          tabIndex={0}
-        >
-          {name}
-        </div>,
-      );
-    }
-    tgtLangCols.push(
-      <div className="language-name-col" key={i} style={{ width: `${100.0 / numTgtCols}%` }}>
-        {tgtLangElems}
-      </div>,
-    );
-  }
+  const validTgtLang = React.useCallback((lang: string) => isPair(pairs, srcLang, lang), [pairs, srcLang]);
 
   return (
     <Form.Group className="row d-none d-md-block">
@@ -322,9 +305,7 @@ const DesktopLanguageSelector = ({
             title=""
             variant="secondary"
           >
-            <Row className="d-flex" style={{ minWidth: numSrcCols * langListMinColumnWidth }}>
-              {srcLangCols}
-            </Row>
+            <LangsDropdown langs={srcLangs} numCols={numSrcCols} setLang={setSrcLang} />
           </DropdownButton>
         </ButtonGroup>
         <Button disabled={!swapLangs} onClick={swapLangs} size="sm" type="button" variant="secondary">
@@ -358,9 +339,7 @@ const DesktopLanguageSelector = ({
             title=""
             variant="secondary"
           >
-            <Row className="d-flex" style={{ minWidth: numTgtCols * langListMinColumnWidth }}>
-              {tgtLangCols}
-            </Row>
+            <LangsDropdown langs={tgtLangs} numCols={numTgtCols} setLang={setTgtLang} validLang={validTgtLang} />
           </DropdownButton>
         </ButtonGroup>
         <TranslateButton loading={loading} onTranslate={onTranslate} variant="primary" />
