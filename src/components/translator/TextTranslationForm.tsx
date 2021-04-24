@@ -195,4 +195,6 @@ const TextTranslationForm = ({
   );
 };
 
+export const Path = '/translation';
+
 export default TextTranslationForm;

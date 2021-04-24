@@ -166,4 +166,6 @@ const DocTranslationForm = ({
   );
 };
 
+export const Path = '/docTranslation';
+
 export default DocTranslationForm;

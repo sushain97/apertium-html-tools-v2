@@ -12,12 +12,12 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, TranslateEvent, isPair, pairUrlParam } from '.';
+import DocTranslationForm, { Path as DocTranslationPath } from './DocTranslationForm';
+import TextTranslationForm, { Path as TextTranslationPath } from './TextTranslationForm';
+import WebpageTranslationForm, { Path as WebpageTranslationPath } from './WebpageTranslationForm';
 import { parentLang, toAlpha3Code } from '../../util/languages';
 import Config from '../../../config';
-import DocTranslationForm from './DocTranslationForm';
 import LanguageSelector from './LanguageSelector';
-import TextTranslationForm from './TextTranslationForm';
-import WebpageTranslationForm from './WebpageTranslationForm';
 import { getUrlParam } from '../../util/url';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
@@ -67,11 +67,11 @@ const defaultSrcLang = (pairs: Pairs): string => {
 const urlFromMode = (mode: Mode): string => {
   switch (mode) {
     case Mode.Text:
-      return generatePath('/translation');
+      return generatePath(TextTranslationPath);
     case Mode.Document:
-      return generatePath('/docTranslation');
+      return generatePath(DocTranslationPath);
     case Mode.Webpage:
-      return generatePath('/webpageTranslation');
+      return generatePath(WebpageTranslationPath);
   }
 };
 

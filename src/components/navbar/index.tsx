@@ -7,8 +7,11 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 
 import Config from '../../../config';
+import { Path as DocTranslationPath } from '../translator/DocTranslationForm';
 import LocaleSelector from '../LocaleSelector';
 import { Mode } from '../../types';
+import { Path as TextTranslationPath } from '../translator/TextTranslationForm';
+import { Path as WebpageTranslationPath } from '../translator/WebpageTranslationForm';
 import logo from './Apertium_box_white_small.embed.png';
 import { useLocalization } from '../../util/localization';
 
@@ -84,10 +87,10 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
                   <Nav.Item as="li" className="p-1">
                     <Nav.Link
                       active={
-                        ['/translation', '/webpageTranslation', '/docTranslation'].includes(pathname) ||
+                        [TextTranslationPath, WebpageTranslationPath, DocTranslationPath].includes(pathname) ||
                         (pathname === '/' && defaultMode == Mode.Translation)
                       }
-                      onClick={() => history.push(generatePath('/translation'))}
+                      onClick={() => history.push(generatePath(TextTranslationPath))}
                     >
                       {t('Translation')}
                     </Nav.Link>

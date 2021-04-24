@@ -18,11 +18,13 @@ import useLocalStorage from './util/useLocalStorage';
 
 import Translator, { Mode as TranslatorMode } from './components/translator';
 import Analyzer from './components/Analyzer';
+import { Path as DocTranslationPath } from './components/translator/DocTranslationForm';
 import Footer from './components/footer';
 import Generator from './components/Generator';
 import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
+import { Path as WebpageTranslationPath } from './components/translator/WebpageTranslationForm';
 
 // TODO: Add slow request -> download notifications
 // TODO: Add analytics support. If anyone actually wants it?
@@ -148,10 +150,10 @@ const App = () => {
               )}
               {Config.enabledModes.has(Mode.Translation) && (
                 <>
-                  <Route exact path="/docTranslation">
+                  <Route exact path={DocTranslationPath}>
                     <Translator mode={TranslatorMode.Document} />
                   </Route>
-                  <Route exact path="/webpageTranslation">
+                  <Route exact path={WebpageTranslationPath}>
                     <Translator mode={TranslatorMode.Webpage} />
                   </Route>
                 </>
