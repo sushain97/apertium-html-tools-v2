@@ -1,7 +1,7 @@
 import './navbar.css';
 
 import * as React from 'react';
-import { generatePath, useLocation, useHistory } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
