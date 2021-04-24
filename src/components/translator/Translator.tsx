@@ -80,14 +80,18 @@ type WithSrcLangsProps = {
   setSrcLang: (lang: string) => void;
   recentSrcLangs: Array<string>;
   setRecentSrcLangs: (langs: Array<string>) => void;
+  detectedLang: string | null;
+  setDetectedLang: (lang: string | null) => void;
 };
 
 const WithSrcLang = ({
   pairs,
+  mode,
   urlSrcLang,
   children,
 }: {
   pairs: Pairs;
+  mode: Mode;
   urlSrcLang: string | null;
   children: (props: WithSrcLangsProps) => React.ReactElement;
 }): React.ReactElement => {
@@ -123,7 +127,25 @@ const WithSrcLang = ({
     [realSetSrcLang, recentSrcLangs, setRecentSrcLangs],
   );
 
-  return children({ srcLang, setSrcLang, recentSrcLangs, setRecentSrcLangs });
+  const [detectedLang, realSetDetectedLang] = React.useState<string | null>(null);
+
+  const setDetectedLang = React.useCallback(
+    (lang: string | null) => {
+      realSetDetectedLang(lang);
+      if (lang) {
+        setSrcLang(lang);
+      }
+    },
+    [setSrcLang],
+  );
+
+  React.useEffect(() => {
+    if (mode !== Mode.Text) {
+      setDetectedLang(null);
+    }
+  }, [mode, setDetectedLang]);
+
+  return children({ srcLang, setSrcLang, recentSrcLangs, setRecentSrcLangs, detectedLang, setDetectedLang });
 };
 
 type WithTgtLangsProps = {
@@ -242,18 +264,20 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
         event.preventDefault();
       }}
     >
-      <WithSrcLang pairs={pairs} urlSrcLang={urlSrcLang}>
-        {({ srcLang, recentSrcLangs, setSrcLang }: WithSrcLangsProps) => (
+      <WithSrcLang mode={mode} pairs={pairs} urlSrcLang={urlSrcLang}>
+        {({ srcLang, recentSrcLangs, setSrcLang, detectedLang, setDetectedLang }: WithSrcLangsProps) => (
           <WithTgtLang pairs={pairs} srcLang={srcLang} urlTgtLang={urlTgtLang}>
             {({ tgtLang, setTgtLang, recentTgtLangs }: WithTgtLangsProps) => (
               <>
                 <LanguageSelector
                   detectLangEnabled={mode !== Mode.Text}
+                  detectedLang={detectedLang}
                   loading={loading}
                   onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
                   pairs={pairs}
                   recentSrcLangs={recentSrcLangs}
                   recentTgtLangs={recentTgtLangs}
+                  setDetectedLang={setDetectedLang}
                   setSrcLang={setSrcLang}
                   setTgtLang={setTgtLang}
                   srcLang={srcLang}

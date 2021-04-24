@@ -18,15 +18,20 @@ import { useLocalization } from '../../util/localization';
 
 type Props = {
   pairs: Pairs;
-  srcLang: string;
-  setSrcLang: (code: string) => void;
-  tgtLang: string;
-  setTgtLang: (code: string) => void;
-  recentSrcLangs: Array<string>;
-  recentTgtLangs: Array<string>;
   onTranslate: () => void;
   loading: boolean;
+
+  srcLang: string;
+  setSrcLang: (code: string) => void;
+  recentSrcLangs: Array<string>;
+
+  tgtLang: string;
+  setTgtLang: (code: string) => void;
+  recentTgtLangs: Array<string>;
+
   detectLangEnabled: boolean;
+  detectedLang: string | null;
+  setDetectedLang: (lang: string | null) => void;
 };
 
 type NamedLangs = Array<[string, string]>;
@@ -76,12 +81,13 @@ const MobileLanguageSelector = ({
   swapLangs,
   loading,
   detectLangEnabled,
+  detectedLang,
 }: Props & {
   srcLangs: NamedLangs;
   tgtLangs: NamedLangs;
   swapLangs?: () => void;
 }): React.ReactElement => {
-  const { t } = useLocalization();
+  const { t, tLang } = useLocalization();
 
   const onSrcLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
     ({ target: { value } }) => setSrcLang(value),
@@ -104,7 +110,7 @@ const MobileLanguageSelector = ({
           value={srcLang}
         >
           <option disabled={detectLangEnabled} key={detectKey}>
-            {t('Detect_Language')}
+            {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
           </option>
           {srcLangs.map(([code, name]) => (
             <option key={code} value={code}>
@@ -218,6 +224,7 @@ const DesktopLanguageSelector = ({
   swapLangs,
   loading,
   detectLangEnabled,
+  detectedLang,
 }: Props & {
   srcLangs: NamedLangs;
   tgtLangs: NamedLangs;
@@ -307,7 +314,7 @@ const DesktopLanguageSelector = ({
             value={detectKey}
             variant="secondary"
           >
-            {t('Detect_Language')}
+            {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
           </Button>
           <DropdownButton
             className="language-dropdown-button"
