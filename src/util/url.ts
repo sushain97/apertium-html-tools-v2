@@ -4,8 +4,8 @@ import * as queryString from 'query-string';
 // host and path.
 export const MaxURLLength = 2048 - window.location.origin.length - 25;
 
-export const getUrlParam = (key: string): string | null => {
-  const value = queryString.parse(window.location.search)[key];
+export const getUrlParam = (search: string, key: string): string | null => {
+  const value = queryString.parse(search)[key];
   if (value == null) {
     return null;
   }
@@ -15,6 +15,6 @@ export const getUrlParam = (key: string): string | null => {
   return value.length > 0 ? value[0] : null;
 };
 
-export const buildNewUrl = (params: Record<string, string>): string => {
-  return `${window.location.pathname}?${queryString.stringify(params)}${window.location.hash}`;
+export const buildNewSearch = (params: Record<string, string>): string => {
+  return `?${queryString.stringify(params)}`;
 };

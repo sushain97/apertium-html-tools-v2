@@ -7,10 +7,11 @@ import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Row from 'react-bootstrap/Row';
+import { useHistory } from 'react-router-dom';
 
 import { TranslateEvent, baseUrlParams } from '.';
 import Config from '../../../config';
-import { buildNewUrl } from '../../util/url';
+import { buildNewSearch } from '../../util/url';
 import { useLocalization } from '../../util/localization';
 
 // TODO: drag and drop support
@@ -44,11 +45,12 @@ const DocTranslationForm = ({
   setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
+  const history = useHistory();
 
   React.useEffect(() => {
-    const newUrl = buildNewUrl(baseUrlParams({ srcLang, tgtLang }));
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang]);
+    const search = buildNewSearch(baseUrlParams({ srcLang, tgtLang }));
+    history.replace({ search });
+  }, [history, srcLang, tgtLang]);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 

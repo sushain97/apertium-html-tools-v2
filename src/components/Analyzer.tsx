@@ -5,8 +5,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 
-import { MaxURLLength, buildNewUrl, getUrlParam } from '../util/url';
+import { MaxURLLength, buildNewSearch, getUrlParam } from '../util/url';
 import { langDirection, toAlpha3Code } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
 import { apyFetch } from '../util';
@@ -111,21 +112,24 @@ const AnalysisForm = ({
   setAnalysis: React.Dispatch<React.SetStateAction<Array<[string, string]>>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
+  const history = useHistory();
   const { t, tLang } = useLocalization();
 
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], {
-    overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
+    overrideValue: toAlpha3Code(getUrlParam(history.location.search, langUrlParam)),
     validateValue: (l) => l in Analyzers,
   });
-  const [text, setText] = useLocalStorage('analyzerText', '', { overrideValue: getUrlParam(textUrlParam) });
+  const [text, setText] = useLocalStorage('analyzerText', '', {
+    overrideValue: getUrlParam(history.location.search, textUrlParam),
+  });
 
   React.useEffect(() => {
-    let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
-    if (newUrl.length > MaxURLLength) {
-      newUrl = buildNewUrl({ [langUrlParam]: lang });
+    let search = buildNewSearch({ [langUrlParam]: lang, [textUrlParam]: text });
+    if (search.length > MaxURLLength) {
+      search = buildNewSearch({ [langUrlParam]: lang });
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [lang, text]);
+    history.replace({ search });
+  }, [history, lang, text]);
 
   const analysisRef = React.useRef<CancelTokenSource | null>(null);
 

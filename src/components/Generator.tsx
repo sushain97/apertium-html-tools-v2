@@ -4,8 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 
-import { MaxURLLength, buildNewUrl, getUrlParam } from '../util/url';
+import { MaxURLLength, buildNewSearch, getUrlParam } from '../util/url';
 import { langDirection, toAlpha3Code } from '../util/languages';
 import ErrorAlert from './ErrorAlert';
 import { apyFetch } from '../util';
@@ -28,20 +29,23 @@ const GeneratorForm = ({
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
   const { t, tLang } = useLocalization();
+  const history = useHistory();
 
   const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], {
-    overrideValue: toAlpha3Code(getUrlParam(langUrlParam)),
+    overrideValue: toAlpha3Code(getUrlParam(history.location.search, langUrlParam)),
     validateValue: (l) => l in Generators,
   });
-  const [text, setText] = useLocalStorage('generatorText', '', { overrideValue: getUrlParam(textUrlParam) });
+  const [text, setText] = useLocalStorage('generatorText', '', {
+    overrideValue: getUrlParam(history.location.search, textUrlParam),
+  });
 
   React.useEffect(() => {
-    let newUrl = buildNewUrl({ [langUrlParam]: lang, [textUrlParam]: text });
-    if (newUrl.length > MaxURLLength) {
-      newUrl = buildNewUrl({ [langUrlParam]: lang });
+    let search = buildNewSearch({ [langUrlParam]: lang, [textUrlParam]: text });
+    if (search.length > MaxURLLength) {
+      search = buildNewSearch({ [langUrlParam]: lang });
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [lang, text]);
+    history.replace({ search });
+  }, [history, lang, text]);
 
   const generationRef = React.useRef<CancelTokenSource | null>(null);
 

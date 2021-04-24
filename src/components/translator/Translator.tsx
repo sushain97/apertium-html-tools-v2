@@ -4,12 +4,12 @@ import './translator.css';
 
 import * as React from 'react';
 import { faFile, faLink } from '@fortawesome/free-solid-svg-icons';
+import { generatePath, useHistory } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import { generatePath } from 'react-router-dom';
 
 import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, TranslateEvent, isPair, pairUrlParam } from '.';
 import { parentLang, toAlpha3Code } from '../../util/languages';
@@ -79,6 +79,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
   const mode: Mode = initialMode || Mode.Text;
 
   const { t } = useLocalization();
+  const history = useHistory();
 
   const [loading, setLoading] = React.useState(false);
 
@@ -92,7 +93,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
 
   let urlSrcLang = null;
   let urlTgtLang = null;
-  const urlParamPair = getUrlParam(pairUrlParam);
+  const urlParamPair = getUrlParam(history.location.search, pairUrlParam);
   if (urlParamPair) {
     const [src, tgt] = urlParamPair.split('-', 2).map(toAlpha3Code);
     if (src && tgt && isPair(pairs, src, tgt)) {

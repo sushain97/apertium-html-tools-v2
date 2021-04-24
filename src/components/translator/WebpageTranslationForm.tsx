@@ -8,8 +8,9 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 
-import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
+import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { TranslateEvent, baseUrlParams } from '.';
 import { apyFetch } from '../../util';
 import useLocalStorage from '../../util/useLocalStorage';
@@ -29,18 +30,21 @@ const WebpageTranslationForm = ({
   setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
+  const history = useHistory();
 
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
-  const [url, setUrl] = useLocalStorage('srcUrl', '', { overrideValue: getUrlParam(urlUrlParam) });
+  const [url, setUrl] = useLocalStorage('srcUrl', '', {
+    overrideValue: getUrlParam(history.location.search, urlUrlParam),
+  });
   React.useEffect(() => {
     const baseParams = baseUrlParams({ srcLang, tgtLang });
-    let newUrl = buildNewUrl({ ...baseParams, [urlUrlParam]: url });
-    if (newUrl.length > MaxURLLength) {
-      newUrl = buildNewUrl(baseParams);
+    let search = buildNewSearch({ ...baseParams, [urlUrlParam]: url });
+    if (search.length > MaxURLLength) {
+      search = buildNewSearch(baseParams);
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang, url]);
+    history.replace({ search });
+  }, [history, srcLang, tgtLang, url]);
 
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);

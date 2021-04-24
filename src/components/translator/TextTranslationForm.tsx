@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 
-import { MaxURLLength, buildNewUrl, getUrlParam } from '../../util/url';
+import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { TranslateEvent, baseUrlParams } from '.';
 import { apyFetch } from '../../util';
 import { langDirection } from '../../util/languages';
@@ -41,19 +42,22 @@ const TextTranslationForm = ({
   setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
+  const history = useHistory();
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
 
-  const [srcText, setSrcText] = useLocalStorage('srcText', '', { overrideValue: getUrlParam(textUrlParam) });
+  const [srcText, setSrcText] = useLocalStorage('srcText', '', {
+    overrideValue: getUrlParam(history.location.search, textUrlParam),
+  });
 
   React.useEffect(() => {
     const baseParams = baseUrlParams({ srcLang, tgtLang });
-    let newUrl = buildNewUrl({ ...baseParams, [textUrlParam]: srcText });
-    if (newUrl.length > MaxURLLength) {
-      newUrl = buildNewUrl(baseParams);
+    let search = buildNewSearch({ ...baseParams, [textUrlParam]: srcText });
+    if (search.length > MaxURLLength) {
+      search = buildNewSearch(baseParams);
     }
-    window.history.replaceState({}, document.title, newUrl);
-  }, [srcLang, tgtLang, srcText]);
+    history.replace({ search });
+  }, [srcLang, tgtLang, srcText, history]);
 
   const [tgtText, setTgtText] = React.useState('');
 

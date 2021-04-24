@@ -65,7 +65,7 @@ const App = () => {
   // 4. browser's preferred locale from APy
   const urlPathMatch = /index\.(\w{3})\.html/.exec(window.location.pathname);
   const urlPathLocale = urlPathMatch && urlPathMatch[1];
-  const langParam = getUrlParam('lang');
+  const langParam = getUrlParam(window.location.search, 'lang');
   const urlQueryLocale = toAlpha3Code(langParam)?.replace('/', '');
   let shouldLoadBrowserLocale = false;
   const [locale, setLocale] = useLocalStorage(
