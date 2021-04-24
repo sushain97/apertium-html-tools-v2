@@ -29,6 +29,8 @@ type Props = {
   detectLangEnabled: boolean;
 };
 
+type NamedLangs = Array<[string, string]>;
+
 const langListIdealRows = 12,
   langListMaxWidths = 850,
   langListMaxColumns = 6,
@@ -75,11 +77,20 @@ const MobileLanguageSelector = ({
   loading,
   detectLangEnabled,
 }: Props & {
-  srcLangs: Array<[string, string]>;
-  tgtLangs: Array<[string, string]>;
+  srcLangs: NamedLangs;
+  tgtLangs: NamedLangs;
   swapLangs?: () => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
+
+  const onSrcLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
+    ({ target: { value } }) => setSrcLang(value),
+    [setSrcLang],
+  );
+  const onTgtLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
+    ({ target: { value } }) => setTgtLang(value),
+    [setTgtLang],
+  );
 
   return (
     <Form.Group className="d-flex d-md-none flex-column">
@@ -87,7 +98,7 @@ const MobileLanguageSelector = ({
         <Form.Control
           as="select"
           className="d-inline-block mb-2 mr-2"
-          onChange={({ target: { value } }) => setSrcLang(value)}
+          onChange={onSrcLangChange}
           size="sm"
           style={{ maxWidth: '60%' }}
           value={srcLang}
@@ -107,7 +118,7 @@ const MobileLanguageSelector = ({
         <Form.Control
           as="select"
           className="d-inline-block"
-          onChange={({ target: { value } }) => setTgtLang(value)}
+          onChange={onTgtLangChange}
           size="sm"
           style={{ maxWidth: '60%' }}
           value={tgtLang}
@@ -130,7 +141,7 @@ const LangsDropdown = ({
   setLang,
   validLang,
 }: {
-  langs: Array<[string, string]>;
+  langs: NamedLangs;
   numCols: number;
   setLang: (code: string) => void;
   validLang?: (code: string) => boolean;
@@ -208,8 +219,8 @@ const DesktopLanguageSelector = ({
   loading,
   detectLangEnabled,
 }: Props & {
-  srcLangs: Array<[string, string]>;
-  tgtLangs: Array<[string, string]>;
+  srcLangs: NamedLangs;
+  tgtLangs: NamedLangs;
   swapLangs?: () => void;
 }): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
@@ -387,12 +398,12 @@ const LanguageSelector = (props: Props): React.ReactElement => {
     [sortLocale, tLang],
   );
 
-  const srcLangs: Array<[string, string]> = React.useMemo(
+  const srcLangs: NamedLangs = React.useMemo(
     () => [...SrcLangs].sort(compareLangCodes).map((code) => [code, tLang(code)]),
     [compareLangCodes, tLang],
   );
 
-  const tgtLangs: Array<[string, string]> = React.useMemo(
+  const tgtLangs: NamedLangs = React.useMemo(
     () =>
       [...TgtLangs]
         .sort((a, b) => {
