@@ -3,7 +3,7 @@ import './app.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { HashRouter, Route } from 'react-router-dom';
+import { HashRouter, Route, useHistory, useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import axios from 'axios';
 
@@ -60,6 +60,9 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
 };
 
 const App = () => {
+  const history = useHistory();
+  const { pathname } = useLocation();
+
   // Locale selection priority:
   // 1. `lang` parameter from URL
   // 2. locale section from URL path
@@ -85,6 +88,8 @@ const App = () => {
   }, [shouldLoadBrowserLocale, setLocale]);
 
   React.useEffect(() => {
+    // We use the real `window.history` here since we intend to modify the real
+    // URL path, not just the URL hash.
     window.history.pushState({}, '', `index.${locale}.html${window.location.search}${window.location.hash}`);
   }, [locale]);
 
@@ -120,55 +125,69 @@ const App = () => {
     document.title = tt('title', locale, strings);
   }, [locale, strings]);
 
+  React.useEffect(() => {
+    const body = document.getElementsByTagName('body')[0];
+    const handleDragEnter = () => {
+      if (pathname !== DocTranslationPath) {
+        history.push(DocTranslationPath);
+      }
+    };
+    body.addEventListener('dragenter', handleDragEnter);
+    return () => body.removeEventListener('dragenter', handleDragEnter);
+  }, [history, pathname]);
+
   const wrapRef = React.createRef<HTMLDivElement>();
   const pushRef = React.createRef<HTMLDivElement>();
 
   return (
-    <HashRouter>
-      <StringsContext.Provider value={strings}>
-        <LocaleContext.Provider value={locale}>
-          <div
-            ref={wrapRef}
-            style={{
-              height: 'auto !important',
-              margin: '0 auto -60px',
-              minHeight: '99.5%',
-            }}
-          >
-            <Navbar setLocale={setLocale} />
-            <Container>
-              {Object.values(Mode).map(
-                (mode) =>
-                  Config.enabledModes.has(mode) && (
-                    <Route
-                      component={Interfaces[mode]}
-                      exact
-                      key={mode}
-                      path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
-                    />
-                  ),
-              )}
-              {Config.enabledModes.has(Mode.Translation) && (
-                <>
-                  <Route exact path={DocTranslationPath}>
-                    <Translator mode={TranslatorMode.Document} />
-                  </Route>
-                  <Route exact path={WebpageTranslationPath}>
-                    <Translator mode={TranslatorMode.Webpage} />
-                  </Route>
-                </>
-              )}
-              <div className="d-block d-sm-none float-left my-2">
-                <LocaleSelector setLocale={setLocale} />
-              </div>
-            </Container>
-            <div ref={pushRef} style={{ height: '60px' }} />
-          </div>
-          <Footer pushRef={pushRef} wrapRef={wrapRef} />
-        </LocaleContext.Provider>
-      </StringsContext.Provider>
-    </HashRouter>
+    <StringsContext.Provider value={strings}>
+      <LocaleContext.Provider value={locale}>
+        <div
+          ref={wrapRef}
+          style={{
+            height: 'auto !important',
+            margin: '0 auto -60px',
+            minHeight: '99.5%',
+          }}
+        >
+          <Navbar setLocale={setLocale} />
+          <Container>
+            {Object.values(Mode).map(
+              (mode) =>
+                Config.enabledModes.has(mode) && (
+                  <Route
+                    component={Interfaces[mode]}
+                    exact
+                    key={mode}
+                    path={mode == Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
+                  />
+                ),
+            )}
+            {Config.enabledModes.has(Mode.Translation) && (
+              <>
+                <Route exact path={DocTranslationPath}>
+                  <Translator mode={TranslatorMode.Document} />
+                </Route>
+                <Route exact path={WebpageTranslationPath}>
+                  <Translator mode={TranslatorMode.Webpage} />
+                </Route>
+              </>
+            )}
+            <div className="d-block d-sm-none float-left my-2">
+              <LocaleSelector setLocale={setLocale} />
+            </div>
+          </Container>
+          <div ref={pushRef} style={{ height: '60px' }} />
+        </div>
+        <Footer pushRef={pushRef} wrapRef={wrapRef} />
+      </LocaleContext.Provider>
+    </StringsContext.Provider>
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('react-mount'));
+ReactDOM.render(
+  <HashRouter>
+    <App />
+  </HashRouter>,
+  document.getElementById('react-mount'),
+);
