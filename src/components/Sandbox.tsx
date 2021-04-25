@@ -61,7 +61,7 @@ const SandboxForm = ({
   };
 
   return (
-    <Form>
+    <Form onSubmit={(event) => event.preventDefault()}>
       <legend>
         <span>{t('APy_Sandbox_Help')}</span>
         <a className="float-right" href="http://wiki.apertium.org/wiki/Apertium-apy" rel="noreferrer" target="_blank">

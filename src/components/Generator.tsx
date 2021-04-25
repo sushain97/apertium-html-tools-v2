@@ -79,7 +79,7 @@ const GeneratorForm = ({
   };
 
   return (
-    <Form aria-label={t('Morphological_Generation')}>
+    <Form aria-label={t('Morphological_Generation')} onSubmit={(event) => event.preventDefault()}>
       <Form.Group className="row" controlId="generator-lang">
         <Form.Label className="col-md-2 col-lg-1 col-form-label text-md-right">{t('Language')}</Form.Label>
         <Col md="3">
