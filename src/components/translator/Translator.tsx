@@ -9,7 +9,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
-import { ChainedPairs, DirectPairs, Mode, Pairs, SrcLangs, TgtLangs, TranslateEvent, isPair, pairUrlParam } from '.';
+import {
+  ChainedPairs,
+  DirectPairs,
+  Mode,
+  PairPrefValues,
+  Pairs,
+  SrcLangs,
+  TgtLangs,
+  TranslateEvent,
+  isPair,
+  pairUrlParam,
+} from '.';
 import DocTranslationForm, { Path as DocTranslationPath } from './DocTranslationForm';
 import TextTranslationForm, { Path as TextTranslationPath } from './TextTranslationForm';
 import WebpageTranslationForm, { Path as WebpageTranslationPath } from './WebpageTranslationForm';
@@ -152,17 +163,23 @@ type WithTgtLangsProps = {
   setTgtLang: (lang: string) => void;
   recentTgtLangs: Array<string>;
   setRecentTgtLangs: (langs: Array<string>) => void;
+  pairPrefs: PairPrefValues;
+  setPairPrefs: (prefs: PairPrefValues) => void;
 };
 
 const WithTgtLang = ({
   pairs,
   srcLang,
   urlTgtLang,
+  selectedPrefs,
+  setSelectedPrefs,
   children,
 }: {
   pairs: Pairs;
   srcLang: string;
   urlTgtLang: string | null;
+  selectedPrefs: Record<string, PairPrefValues>;
+  setSelectedPrefs: (prefs: Record<string, PairPrefValues>) => void;
   children: (props: WithTgtLangsProps) => React.ReactElement;
 }): React.ReactElement => {
   const [tgtLang, realSetTgtLang] = useLocalStorage<string>(
@@ -225,7 +242,16 @@ const WithTgtLang = ({
     }
   }, [pairs, recentTgtLangs, setTgtLang, srcLang, tgtLang]);
 
-  return children({ tgtLang, setTgtLang, recentTgtLangs, setRecentTgtLangs });
+  const pair = `${srcLang}-${tgtLang}`;
+  const pairPrefs = selectedPrefs[pair] || {};
+  const setPairPrefs = React.useCallback(
+    (prefs: PairPrefValues) => {
+      setSelectedPrefs({ ...selectedPrefs, [pair]: prefs });
+    },
+    [pair, selectedPrefs, setSelectedPrefs],
+  );
+
+  return children({ tgtLang, setTgtLang, recentTgtLangs, setRecentTgtLangs, pairPrefs, setPairPrefs });
 };
 
 const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement => {
@@ -241,6 +267,8 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
   const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
     validateValue: () => Config.translationChaining,
   });
+
+  const [selectedPrefs, setSelectedPrefs] = useLocalStorage<Record<string, PairPrefValues>>('translationPrefs', {});
 
   const pairs = translationChaining && mode === Mode.Text ? ChainedPairs : DirectPairs;
 
@@ -265,8 +293,8 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     >
       <WithSrcLang {...{ mode, pairs, urlSrcLang }}>
         {({ srcLang, recentSrcLangs, setSrcLang, detectedLang, setDetectedLang }: WithSrcLangsProps) => (
-          <WithTgtLang pairs={pairs} srcLang={srcLang} urlTgtLang={urlTgtLang}>
-            {({ tgtLang, setTgtLang, recentTgtLangs }: WithTgtLangsProps) => (
+          <WithTgtLang {...{ pairs, srcLang, urlTgtLang, selectedPrefs, setSelectedPrefs }}>
+            {({ tgtLang, setTgtLang, recentTgtLangs, pairPrefs, setPairPrefs }: WithTgtLangsProps) => (
               <>
                 <LanguageSelector
                   detectLangEnabled={mode !== Mode.Text}
@@ -286,7 +314,9 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                 />
                 {(mode === Mode.Text || !mode) && (
                   <>
-                    <TextTranslationForm {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang }} />
+                    <TextTranslationForm
+                      {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang, pairPrefs }}
+                    />
                     <Row className="mt-2 mb-3">
                       <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
                         <Button
@@ -311,12 +341,16 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                       >
                         <TranslationOptions
                           {...{
+                            srcLang,
+                            tgtLang,
                             markUnknown,
                             setMarkUnknown,
                             instantTranslation,
                             setInstantTranslation,
                             translationChaining,
                             setTranslationChaining,
+                            pairPrefs,
+                            setPairPrefs,
                           }}
                         />
                       </Col>

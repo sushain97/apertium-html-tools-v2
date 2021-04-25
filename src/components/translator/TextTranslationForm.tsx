@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
-import { TranslateEvent, baseUrlParams } from '.';
+import { PairPrefValues, TranslateEvent, baseUrlParams } from '.';
 import { apyFetch } from '../../util';
 import { buildUrl as buildWebpageTranslationUrl } from './WebpageTranslationForm';
 import { langDirection } from '../../util/languages';
@@ -33,12 +33,14 @@ const TextTranslationForm = ({
   tgtLang,
   markUnknown,
   instantTranslation,
+  pairPrefs,
   setLoading,
 }: {
   srcLang: string;
   tgtLang: string;
   instantTranslation: boolean;
   markUnknown: boolean;
+  pairPrefs: PairPrefValues;
   setLoading: (loading: boolean) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
@@ -65,6 +67,11 @@ const TextTranslationForm = ({
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
+  const prefs = Object.entries(pairPrefs)
+    .filter(([, selected]) => selected)
+    .map(([id]) => id)
+    .join(',');
+
   const translate = React.useCallback(() => {
     if (srcText.trim().length === 0) {
       setTgtText('');
@@ -78,6 +85,7 @@ const TextTranslationForm = ({
       q: srcText,
       langpair: `${srcLang}|${tgtLang}`,
       markUnknown: markUnknown ? 'yes' : 'no',
+      prefs,
     });
     translationRef.current = ref;
     setLoading(true);
@@ -102,7 +110,7 @@ const TextTranslationForm = ({
     })();
 
     return () => translationRef.current?.cancel();
-  }, [markUnknown, setLoading, srcLang, srcText, tgtLang]);
+  }, [markUnknown, prefs, setLoading, srcLang, srcText, tgtLang]);
 
   const translationTimer = React.useRef<number | null>(null);
   const lastPunct = React.useRef(false);
@@ -149,7 +157,7 @@ const TextTranslationForm = ({
   // `translate` is explicitly excluded here to avoid making a translate request
   // on each keypress.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(translate, [markUnknown, srcLang, tgtLang]);
+  React.useEffect(translate, [markUnknown, prefs, srcLang, tgtLang]);
 
   React.useLayoutEffect(() => {
     if (window.innerWidth < autoResizeMinimumWidth) {

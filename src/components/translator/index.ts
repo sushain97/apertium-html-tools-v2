@@ -58,6 +58,20 @@ TgtLangs.forEach((lang) => {
 
 export const isPair = (pairs: Pairs, src: string, tgt: string): boolean => pairs[src] && pairs[src].has(tgt);
 
+// eslint-disable-next-line
+const pairPrefs = (window as any).PAIR_PREFS as Record<string, Record<string, Record<string, string>>>;
+
+export type PairPrefs = Record<string, string>;
+export type PairPrefValues = Record<string, boolean>;
+
+export const getPairPrefs = (locale: string, srcLang: string, tgtLang: string): PairPrefs => {
+  const localizedPrefs: Record<string, string> = {};
+  Object.entries(pairPrefs[`${srcLang}-${tgtLang}`] || {}).forEach(([id, prefs]) => {
+    localizedPrefs[id] = prefs[locale] || Object.values(prefs)[0];
+  });
+  return localizedPrefs;
+};
+
 export default Translator;
 
 export enum Mode {

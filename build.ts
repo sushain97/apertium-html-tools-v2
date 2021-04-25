@@ -67,6 +67,13 @@ void (async () => {
   const analyzers = analyzersResponse.data as Record<string, string>;
   const generators = generatorsResponse.data as Record<string, string>;
 
+  let pairPrefs = {};
+  try {
+    pairPrefs = (await apyGet('pairprefs')).data as Record<string, unknown>;
+  } catch (error) {
+    console.warn('Unable to fetch pair prefs, defaulting to empty');
+  }
+
   let allLangs: Array<string | null> = [
     ...([] as Array<string>).concat(
       ...pairs.map(({ sourceLanguage, targetLanguage }) => [sourceLanguage, targetLanguage]),
@@ -148,6 +155,7 @@ void (async () => {
     define: {
       'window.VERSION': JSON.stringify(version),
       'window.PAIRS': JSON.stringify(pairs),
+      'window.PAIR_PREFS': JSON.stringify(pairPrefs),
       'window.ANALYZERS': JSON.stringify(analyzers),
       'window.GENERATORS': JSON.stringify(generators),
     },
