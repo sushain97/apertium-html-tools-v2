@@ -1,6 +1,5 @@
-/* eslint-disable jsx-a11y/label-has-for */
-
 import * as React from 'react';
+import Form from 'react-bootstrap/Form';
 
 import Config from '../../../config';
 import { useLocalization } from '../../util/localization';
@@ -24,31 +23,28 @@ const TranslationOptions = ({
 
   return (
     <>
-      <label className="mb-1">
-        <input
-          checked={markUnknown}
-          onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
-          type="checkbox"
-        />{' '}
-        <span>{t('Mark_Unknown_Words')}</span>
-      </label>
-      <label className="mb-1">
-        <input
-          checked={instantTranslation}
-          onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
-          type="checkbox"
-        />{' '}
-        <span>{t('Instant_Translation')}</span>
-      </label>
+      <Form.Check
+        checked={markUnknown}
+        custom
+        id="mark-unknown-words"
+        label={t('Mark_Unknown_Words')}
+        onChange={({ currentTarget }) => setMarkUnknown(currentTarget.checked)}
+      />
+      <Form.Check
+        checked={instantTranslation}
+        custom
+        id="instant-translation"
+        label={t('Instant_Translation')}
+        onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
+      />
       {Config.translationChaining && (
-        <label className="mb-1">
-          <input
-            checked={translationChaining}
-            onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
-            type="checkbox"
-          />{' '}
-          <span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />
-        </label>
+        <Form.Check
+          checked={translationChaining}
+          custom
+          id="translation-chaining"
+          label={<span dangerouslySetInnerHTML={{ __html: t('Multi_Step_Translation') }} />}
+          onChange={({ currentTarget }) => setTranslationChaining(currentTarget.checked)}
+        />
       )}
     </>
   );
