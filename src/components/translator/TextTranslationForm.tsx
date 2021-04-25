@@ -232,7 +232,15 @@ const TextTranslationForm = ({
           spellCheck={false}
           value={error ? t('Not_Available') : tgtText}
         />
-        <Button className="position-absolute copy-text-button" variant="muted">
+        <Button
+          className="position-absolute copy-text-button"
+          onClick={() => {
+            tgtTextareaRef.current?.select();
+            document.execCommand('copy');
+            tgtTextareaRef.current?.blur();
+          }}
+          variant="muted"
+        >
           <FontAwesomeIcon fixedWidth icon={faCopy} />
         </Button>
       </Col>
