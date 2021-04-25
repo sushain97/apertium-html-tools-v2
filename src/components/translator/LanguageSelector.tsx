@@ -109,7 +109,7 @@ const MobileLanguageSelector = ({
           style={{ maxWidth: '60%' }}
           value={srcLang}
         >
-          <option disabled={detectLangEnabled} key={detectKey}>
+          <option disabled={!detectLangEnabled} key={detectKey}>
             {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
           </option>
           {srcLangs.map(([code, name]) => (
@@ -308,7 +308,7 @@ const DesktopLanguageSelector = ({
           ))}
           <Button
             className="language-button"
-            disabled={detectLangEnabled}
+            disabled={!detectLangEnabled}
             size="sm"
             type="button"
             value={detectKey}

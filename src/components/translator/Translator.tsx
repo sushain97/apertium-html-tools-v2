@@ -297,7 +297,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
             {({ tgtLang, setTgtLang, recentTgtLangs, pairPrefs, setPairPrefs }: WithTgtLangsProps) => (
               <>
                 <LanguageSelector
-                  detectLangEnabled={mode !== Mode.Text}
+                  detectLangEnabled={mode === Mode.Text}
                   onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
                   {...{
                     pairs,
