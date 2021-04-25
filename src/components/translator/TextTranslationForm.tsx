@@ -52,6 +52,7 @@ const TextTranslationForm = ({
   const [srcText, setSrcText] = useLocalStorage('srcText', '', {
     overrideValue: getUrlParam(history.location.search, textUrlParam),
   });
+  const [tgtText, setTgtText] = React.useState('');
 
   React.useEffect(() => {
     const baseParams = baseUrlParams({ srcLang, tgtLang });
@@ -62,8 +63,6 @@ const TextTranslationForm = ({
     history.replace({ search });
   }, [srcLang, tgtLang, srcText, history]);
 
-  const [tgtText, setTgtText] = React.useState('');
-
   const [error, setError] = React.useState(false);
   const translationRef = React.useRef<CancelTokenSource | null>(null);
 
@@ -72,45 +71,63 @@ const TextTranslationForm = ({
     .map(([id]) => id)
     .join(',');
 
-  const translate = React.useCallback(() => {
-    if (srcText.trim().length === 0) {
-      setTgtText('');
-      return;
-    }
+  const previousTranslationProps = React.useRef<Record<string, unknown>>();
 
-    translationRef.current?.cancel();
-    translationRef.current = null;
+  const translate = React.useCallback(
+    (force = false) => {
+      if (srcText.trim().length === 0) {
+        setTgtText('');
+        return;
+      }
 
-    const [ref, request] = apyFetch('translate', {
-      q: srcText,
-      langpair: `${srcLang}|${tgtLang}`,
-      markUnknown: markUnknown ? 'yes' : 'no',
-      prefs,
-    });
-    translationRef.current = ref;
-    setLoading(true);
+      const translationProps: Record<string, unknown> = { srcLang, tgtLang, markUnknown, prefs };
 
-    void (async () => {
-      try {
-        const response = (await request).data as {
-          responseData: { translatedText: string };
-          responseDetails: unknown;
-          responseStatus: number;
-        };
-        setTgtText(response.responseData.translatedText);
-        setError(false);
-        setLoading(false);
-      } catch (error) {
-        if (!axios.isCancel(error)) {
-          console.warn('Translation failed', error);
-          setError(true);
-          setLoading(false);
+      // If none of these props have changed, skip translating until our instant
+      // translation timer fires or the user manually clicks the translate
+      // buttton.
+      const { current } = previousTranslationProps;
+      if (current != null && !force) {
+        if (Object.keys(current).every((key: string) => translationProps[key] === current[key])) {
+          return;
         }
       }
-    })();
 
-    return () => translationRef.current?.cancel();
-  }, [markUnknown, prefs, setLoading, srcLang, srcText, tgtLang]);
+      translationRef.current?.cancel();
+      translationRef.current = null;
+
+      const [ref, request] = apyFetch('translate', {
+        q: srcText,
+        langpair: `${srcLang}|${tgtLang}`,
+        markUnknown: markUnknown ? 'yes' : 'no',
+        prefs,
+      });
+      translationRef.current = ref;
+      previousTranslationProps.current = translationProps;
+      setLoading(true);
+
+      void (async () => {
+        try {
+          const response = (await request).data as {
+            responseData: { translatedText: string };
+            responseDetails: unknown;
+            responseStatus: number;
+          };
+          setTgtText(response.responseData.translatedText);
+          setError(false);
+          setLoading(false);
+        } catch (error) {
+          if (!axios.isCancel(error)) {
+            console.warn('Translation failed', error);
+            setError(true);
+            setLoading(false);
+          }
+        }
+      })();
+
+      return () => translationRef.current?.cancel();
+    },
+    [markUnknown, prefs, setLoading, srcLang, srcText, tgtLang],
+  );
 
   const translationTimer = React.useRef<number | null>(null);
   const lastPunct = React.useRef(false);
@@ -142,7 +159,7 @@ const TextTranslationForm = ({
 
       translationTimer.current = window.setTimeout(() => {
         if (instantTranslation) {
-          translate();
+          translate(true);
         }
       }, timeout);
     },
@@ -150,14 +167,12 @@ const TextTranslationForm = ({
   );
 
   React.useEffect(() => {
-    window.addEventListener(TranslateEvent, translate, false);
-    return () => window.removeEventListener(TranslateEvent, translate);
+    const forceTranslate = () => translate(true);
+    window.addEventListener(TranslateEvent, forceTranslate, false);
+    return () => window.removeEventListener(TranslateEvent, forceTranslate);
   }, [translate]);
 
-  // `translate` is explicitly excluded here to avoid making a translate request
-  // on each keypress.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(translate, [markUnknown, prefs, srcLang, tgtLang]);
+  React.useEffect(translate, [translate]);
 
   React.useLayoutEffect(() => {
     if (window.innerWidth < autoResizeMinimumWidth) {
