@@ -1,6 +1,6 @@
 all: cleanup update-readme
 
-cleanup: $(shell find . -regextype sed -regex ".*/[a-z]\{3\}\.json" -printf "%f ")
+cleanup: $(shell find . -name '*.json' | egrep '/[a-z]{3}\.json')
 	./localisation-tools.py cleanup $?
 
 update-readme: README.md
