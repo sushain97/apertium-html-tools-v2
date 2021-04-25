@@ -20,6 +20,12 @@ const renderAnalyzer = (options?: MemoryHistoryBuildOptions): MemoryHistory => {
   return history;
 };
 
+const type = (input: string): HTMLTextAreaElement => {
+  const textbox = screen.getByRole('textbox');
+  userEvent.type(textbox, input);
+  return textbox as HTMLTextAreaElement;
+};
+
 it('allows selecting a language', () => {
   renderAnalyzer();
 
@@ -32,18 +38,15 @@ it('allows selecting a language', () => {
 it('allows typing an input', () => {
   renderAnalyzer();
 
-  const textbox = screen.getByRole('textbox');
-  userEvent.type(textbox, input);
-
-  expect((textbox as HTMLSelectElement).value).toBe(input);
+  const textbox = type(input);
+  expect(textbox.value).toBe(input);
 });
 
 describe('URL state management', () => {
   it('persists language and input', () => {
     const history = renderAnalyzer();
 
-    const textbox = screen.getByRole('textbox');
-    userEvent.type(textbox, input);
+    type(input);
 
     expect(history.location.search).toBe(`?aLang=eng&aQ=${input}`);
   });
@@ -86,14 +89,9 @@ describe('URL state management', () => {
 
 describe('browser storage management', () => {
   it('persists language and input', () => {
-    {
-      renderAnalyzer();
-
-      const textbox = screen.getByRole('textbox');
-      userEvent.type(textbox, input);
-
-      cleanup();
-    }
+    renderAnalyzer();
+    type(input);
+    cleanup();
 
     renderAnalyzer();
 
@@ -102,14 +100,9 @@ describe('browser storage management', () => {
   });
 
   it('prefers URL parameters', () => {
-    {
-      renderAnalyzer();
-
-      const textbox = screen.getByRole('textbox');
-      userEvent.type(textbox, 'qux');
-
-      cleanup();
-    }
+    renderAnalyzer();
+    type('qux');
+    cleanup();
 
     renderAnalyzer({ initialEntries: [`/?aLang=spa&aQ=${input}`] });
 

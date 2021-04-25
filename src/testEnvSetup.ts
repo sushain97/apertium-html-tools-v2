@@ -1,1 +1,6 @@
-afterEach(() => window.localStorage.clear());
+import mockAxios from 'jest-mock-axios';
+
+afterEach(() => {
+  mockAxios.reset();
+  window.localStorage.clear();
+});

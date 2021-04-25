@@ -143,6 +143,7 @@ const Generator = (): React.ReactElement => {
         className={classNames({
           blurred: loading,
         })}
+        role="region"
       >
         {generation.map(([analysis, stem], i) => (
           <div key={i}>

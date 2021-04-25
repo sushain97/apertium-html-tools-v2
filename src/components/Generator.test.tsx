@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { MemoryHistory, MemoryHistoryBuildOptions, createMemoryHistory } from 'history';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { Router } from 'react-router-dom';
+import mockAxios from 'jest-mock-axios';
 import userEvent from '@testing-library/user-event';
 
 import Generator from './Generator';
@@ -20,6 +21,12 @@ const renderGenerator = (options?: MemoryHistoryBuildOptions): MemoryHistory => 
   return history;
 };
 
+const type = (input: string): HTMLTextAreaElement => {
+  const textbox = screen.getByRole('textbox');
+  userEvent.type(textbox, input);
+  return textbox as HTMLTextAreaElement;
+};
+
 it('allows selecting a language', () => {
   renderGenerator();
 
@@ -32,18 +39,15 @@ it('allows selecting a language', () => {
 it('allows typing an input', () => {
   renderGenerator();
 
-  const textbox = screen.getByRole('textbox');
-  userEvent.type(textbox, input);
-
-  expect((textbox as HTMLSelectElement).value).toBe(input);
+  const textbox = type(input);
+  expect(textbox.value).toBe(input);
 });
 
 describe('URL state management', () => {
   it('persists language and input', () => {
     const history = renderGenerator();
 
-    const textbox = screen.getByRole('textbox');
-    userEvent.type(textbox, input);
+    type(input);
 
     expect(history.location.search).toBe(`?gLang=eng&gQ=${input}`);
   });
@@ -51,8 +55,7 @@ describe('URL state management', () => {
   it('restores language and input', () => {
     renderGenerator({ initialEntries: [`/?gLang=spa&gQ=${input}`] });
 
-    const textbox = screen.getByRole('textbox');
-    expect((textbox as HTMLSelectElement).value).toBe(input);
+    type(input);
 
     const selector = screen.getByRole('combobox');
     expect((selector as HTMLSelectElement).value).toBe('spa');
@@ -86,14 +89,9 @@ describe('URL state management', () => {
 
 describe('browser storage management', () => {
   it('persists language and input', () => {
-    {
-      renderGenerator();
-
-      const textbox = screen.getByRole('textbox');
-      userEvent.type(textbox, input);
-
-      cleanup();
-    }
+    renderGenerator();
+    type(input);
+    cleanup();
 
     renderGenerator();
 
@@ -102,14 +100,9 @@ describe('browser storage management', () => {
   });
 
   it('prefers URL parameters', () => {
-    {
-      renderGenerator();
-
-      const textbox = screen.getByRole('textbox');
-      userEvent.type(textbox, 'qux');
-
-      cleanup();
-    }
+    renderGenerator();
+    type('qux');
+    cleanup();
 
     renderGenerator({ initialEntries: [`/?gLang=spa&gQ=${input}`] });
 
@@ -118,5 +111,58 @@ describe('browser storage management', () => {
 
     const selector = screen.getByRole('combobox');
     expect((selector as HTMLSelectElement).value).toBe('spa');
+  });
+});
+
+describe('generation', () => {
+  it('no-ops an empty input', () => {
+    renderGenerator();
+
+    const submit = screen.getByRole('button');
+    userEvent.click(submit);
+
+    expect(mockAxios.post).not.toBeCalled();
+  });
+
+  it('generates on button click', async () => {
+    renderGenerator();
+
+    const input = '^kick<vblex><pp>$';
+    type(input);
+
+    const submit = screen.getByRole('button');
+    userEvent.click(submit);
+
+    mockAxios.mockResponse({ data: [['kicked/kick<vblex><pp>/kick<vblex><past>', 'kicked']] });
+    await waitFor(() =>
+      expect(mockAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/generate'),
+        'lang=eng&q=%5Ekick%3Cvblex%3E%3Cpp%3E%24',
+        expect.anything(),
+      ),
+    );
+
+    const output = screen.getByRole('region');
+    expect(output.textContent).toBe('kicked  ↬  kicked/kick<vblex><pp>/kick<vblex><past>');
+  });
+
+  it('generates on enter', async () => {
+    renderGenerator();
+
+    type('^kick<vblex><pp>${enter}');
+
+    mockAxios.mockResponse({ data: [['kicked/kick<vblex><pp>/kick<vblex><past>', 'kicked']] });
+    await waitFor(() => expect(mockAxios.post).toHaveBeenCalledTimes(1));
+
+    const output = screen.getByRole('region');
+    expect(output.textContent).toBe('kicked  ↬  kicked/kick<vblex><pp>/kick<vblex><past>');
+  });
+
+  it('does not generate on shift+enter', () => {
+    renderGenerator();
+
+    type('^kick<vblex><pp>${shift}{enter}');
+
+    expect(mockAxios.post).not.toBeCalled();
   });
 });
