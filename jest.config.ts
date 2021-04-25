@@ -13,5 +13,6 @@ export default {
     '\\.(css|gif|png|jpg)$': 'identity-obj-proxy',
   },
   setupFiles: ['./src/testSetup.ts'],
+  setupFilesAfterEnv: ['./src/testEnvSetup.ts'],
   collectCoverageFrom: ['src/**/*.ts', 'src/**/*.tsx'],
 } as Config.InitialOptions;
