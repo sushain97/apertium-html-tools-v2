@@ -8,3 +8,9 @@ defaultStrings['Maintainer'] = '{{maintainer}}-Default';
 
 // eslint-disable-next-line
 (window as any).PRELOADED_STRINGS = { eng: defaultStrings };
+
+// eslint-disable-next-line
+(window as any).GENERATORS = { eng: 'eng-gener' };
+
+// eslint-disable-next-line
+(window as any).ANALYZERS = { eng: 'eng-morph' };
