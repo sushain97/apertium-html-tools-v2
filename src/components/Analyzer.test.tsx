@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { MemoryHistory, MemoryHistoryBuildOptions, createMemoryHistory } from 'history';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { Router } from 'react-router-dom';
+import mockAxios from 'jest-mock-axios';
 import userEvent from '@testing-library/user-event';
 
 import Analyzer from './Analyzer';
@@ -25,6 +26,8 @@ const type = (input: string): HTMLTextAreaElement => {
   userEvent.type(textbox, input);
   return textbox as HTMLTextAreaElement;
 };
+
+const submit = () => userEvent.click(screen.getByRole('button'));
 
 it('allows selecting a language', () => {
   renderAnalyzer();
@@ -111,5 +114,40 @@ describe('browser storage management', () => {
 
     const selector = screen.getByRole('combobox');
     expect((selector as HTMLSelectElement).value).toBe('spa');
+  });
+});
+
+describe('analysis', () => {
+  it('no-ops an empty input', () => {
+    renderAnalyzer();
+    submit();
+    expect(mockAxios.post).not.toBeCalled();
+  });
+
+  it('shows errors', async () => {
+    renderAnalyzer();
+    type(input);
+    submit();
+
+    mockAxios.mockError({
+      response: {
+        data: { status: 'error', code: 400, message: 'Bad Request', explanation: 'That mode is not installed' },
+      },
+    });
+    await waitFor(() => expect(mockAxios.post).toHaveBeenCalledTimes(1));
+
+    const error = screen.getByRole('alert');
+    expect(error.textContent).toContain('That mode is not installed');
+  });
+
+  it('cancels pending requests', async () => {
+    renderAnalyzer();
+    type(input);
+
+    submit();
+    submit();
+
+    await waitFor(() => expect(mockAxios.post).toHaveBeenCalledTimes(2));
+    expect(mockAxios.queue()).toHaveLength(1);
   });
 });
