@@ -27,6 +27,8 @@ const type = (input: string): HTMLTextAreaElement => {
   return textbox as HTMLTextAreaElement;
 };
 
+const submit = () => userEvent.click(screen.getByRole('button'));
+
 it('allows selecting a language', () => {
   renderGenerator();
 
@@ -117,11 +119,35 @@ describe('browser storage management', () => {
 describe('generation', () => {
   it('no-ops an empty input', () => {
     renderGenerator();
-
-    const submit = screen.getByRole('button');
-    userEvent.click(submit);
-
+    submit();
     expect(mockAxios.post).not.toBeCalled();
+  });
+
+  it('shows errors', async () => {
+    renderGenerator();
+    type(input);
+    submit();
+
+    mockAxios.mockError({
+      response: {
+        data: { status: 'error', code: 400, message: 'Bad Request', explanation: 'That mode is not installed' },
+      },
+    });
+    await waitFor(() => expect(mockAxios.post).toHaveBeenCalledTimes(1));
+
+    const error = screen.getByRole('alert');
+    expect(error.textContent).toContain('That mode is not installed');
+  });
+
+  it('cancels pending requests', async () => {
+    renderGenerator();
+    type(input);
+
+    submit();
+    submit();
+
+    await waitFor(() => expect(mockAxios.post).toHaveBeenCalledTimes(2));
+    expect(mockAxios.queue()).toHaveLength(1);
   });
 
   it('generates on button click', async () => {
@@ -130,8 +156,7 @@ describe('generation', () => {
     const input = '^kick<vblex><pp>$';
     type(input);
 
-    const submit = screen.getByRole('button');
-    userEvent.click(submit);
+    submit();
 
     mockAxios.mockResponse({ data: [['kicked/kick<vblex><pp>/kick<vblex><past>', 'kicked']] });
     await waitFor(() =>
