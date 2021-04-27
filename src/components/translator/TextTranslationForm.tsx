@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
-import { PairPrefValues, TranslateEvent, baseUrlParams } from '.';
+import { PairPrefValues, TranslateEvent, baseUrlParams, DetectEvent } from '.';
 import { apyFetch } from '../../util';
 import { buildUrl as buildWebpageTranslationUrl } from './WebpageTranslationForm';
 import { langDirection } from '../../util/languages';
@@ -42,6 +42,7 @@ const TextTranslationForm = ({
   markUnknown: boolean;
   pairPrefs: PairPrefValues;
   setLoading: (loading: boolean) => void;
+  setDetectedLang: (lang: string) => void;
 }): React.ReactElement => {
   const { t } = useLocalization();
   const history = useHistory();
@@ -173,6 +174,35 @@ const TextTranslationForm = ({
   }, [translate]);
 
   React.useEffect(translate, [translate]);
+
+  const detectRef = React.useRef<CancelTokenSource | null>(null);
+
+  const detectLang = React.useCallback(() => {
+    detectRef.current?.cancel();
+    detectRef.current = null;
+
+    const [ref, request] = apyFetch('identifyLang', { q: srcText });
+    detectRef.current = ref;
+
+    void (async () => {
+      try {
+        const response = (await request).data as Record<string, number>;
+        console.log(response); // TODO: handle success.
+      } catch (error) {
+        if (!axios.isCancel(error)) {
+          console.warn('Language detection failed', error);
+          // TODO: handle failure.
+        }
+      }
+    })();
+
+    return () => detectRef.current?.cancel();
+  }, [srcText]);
+
+  React.useEffect(() => {
+    window.addEventListener(DetectEvent, detectLang, false);
+    return () => window.removeEventListener(DetectEvent, detectLang);
+  }, [detectLang, translate]);
 
   React.useLayoutEffect(() => {
     if (window.innerWidth < autoResizeMinimumWidth) {

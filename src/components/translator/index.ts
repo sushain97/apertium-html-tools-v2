@@ -88,3 +88,4 @@ export const baseUrlParams = ({ srcLang, tgtLang }: { srcLang: string; tgtLang: 
 };
 
 export const TranslateEvent = 'translate';
+export const DetectEvent = 'detect-language';

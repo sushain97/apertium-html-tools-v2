@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 
-import { Pairs, SrcLangs, TgtLangs, isPair } from '.';
+import { DetectEvent, Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } from '../../util/languages';
 import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
@@ -32,6 +32,15 @@ type Props = {
   detectLangEnabled: boolean;
   detectedLang: string | null;
   setDetectedLang: (lang: string | null) => void;
+};
+
+type SharedProps = Props & {
+  srcLangs: NamedLangs;
+  tgtLangs: NamedLangs;
+  swapLangs?: () => void;
+  detectingLang: boolean;
+  setDetectingLang: (detecting: boolean) => void;
+  onDetectLang: () => void;
 };
 
 type NamedLangs = Array<[string, string]>;
@@ -82,11 +91,7 @@ const MobileLanguageSelector = ({
   loading,
   detectLangEnabled,
   detectedLang,
-}: Props & {
-  srcLangs: NamedLangs;
-  tgtLangs: NamedLangs;
-  swapLangs?: () => void;
-}): React.ReactElement => {
+}: SharedProps): React.ReactElement => {
   const { t, tLang } = useLocalization();
 
   const onSrcLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
@@ -225,11 +230,10 @@ const DesktopLanguageSelector = ({
   loading,
   detectLangEnabled,
   detectedLang,
-}: Props & {
-  srcLangs: NamedLangs;
-  tgtLangs: NamedLangs;
-  swapLangs?: () => void;
-}): React.ReactElement => {
+  setDetectingLang,
+  detectingLang,
+  onDetectLang,
+}: SharedProps): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
   const { t, tLang } = useLocalization();
 
@@ -292,10 +296,11 @@ const DesktopLanguageSelector = ({
         <ButtonGroup className="d-flex flex-wrap pl-0">
           {recentSrcLangs.map((lang) => (
             <Button
-              active={lang === srcLang}
+              active={lang === srcLang && !detectingLang}
               className="language-button"
               key={lang}
               onClick={({ currentTarget }) => {
+                setDetectingLang(false);
                 setSrcLang(lang);
                 currentTarget.blur();
               }}
@@ -307,8 +312,10 @@ const DesktopLanguageSelector = ({
             </Button>
           ))}
           <Button
+            active={detectingLang}
             className="language-button"
             disabled={!detectLangEnabled}
+            onClick={onDetectLang}
             size="sm"
             type="button"
             value={detectKey}
@@ -460,11 +467,21 @@ const LanguageSelector = (props: Props): React.ReactElement => {
     [compareLangCodes, pairs, srcLang, tLang],
   );
 
+  const [detectingLang, setDetectingLang] = React.useState(false);
+
+  const onDetectLang = React.useCallback(() => {
+    setDetectingLang(true);
+    window.dispatchEvent(new Event(DetectEvent));
+  }, []);
+
   const sharedProps = {
     ...props,
     srcLangs,
     tgtLangs,
     swapLangs,
+    setDetectingLang,
+    detectingLang,
+    onDetectLang,
   };
 
   return (

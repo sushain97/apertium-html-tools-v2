@@ -315,7 +315,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                 {(mode === Mode.Text || !mode) && (
                   <>
                     <TextTranslationForm
-                      {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang, pairPrefs }}
+                      {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang, pairPrefs, setDetectedLang }}
                     />
                     <Row className="mt-2 mb-3">
                       <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">
