@@ -328,7 +328,13 @@ const DesktopLanguageSelector = ({
             value={detectKey}
             variant="secondary"
           >
-            {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
+            {detectedLang ? (
+              `${tLang(detectedLang)} - ${t('detected')}`
+            ) : (
+              <>
+                {detectingLang && <FontAwesomeIcon className="mr-1" icon={faSpinner} spin />} {t('Detect_Language')}
+              </>
+            )}
           </Button>
           <DropdownButton
             className="language-dropdown-button"
