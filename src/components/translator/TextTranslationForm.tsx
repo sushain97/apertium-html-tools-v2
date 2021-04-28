@@ -9,8 +9,8 @@ import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
-import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { DetectCompleteEvent, DetectEvent, PairPrefValues, TranslateEvent, baseUrlParams } from '.';
+import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { apyFetch } from '../../util';
 import { buildUrl as buildWebpageTranslationUrl } from './WebpageTranslationForm';
 import { langDirection } from '../../util/languages';
