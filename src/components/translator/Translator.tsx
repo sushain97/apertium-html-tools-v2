@@ -292,7 +292,14 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
       }}
     >
       <WithSrcLang {...{ mode, pairs, urlSrcLang }}>
-        {({ srcLang, recentSrcLangs, setSrcLang, detectedLang, setDetectedLang }: WithSrcLangsProps) => (
+        {({
+          srcLang,
+          recentSrcLangs,
+          setSrcLang,
+          setRecentSrcLangs,
+          detectedLang,
+          setDetectedLang,
+        }: WithSrcLangsProps) => (
           <WithTgtLang {...{ pairs, srcLang, urlTgtLang, selectedPrefs, setSelectedPrefs }}>
             {({ tgtLang, setTgtLang, recentTgtLangs, pairPrefs, setPairPrefs }: WithTgtLangsProps) => (
               <>
@@ -305,6 +312,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                     recentTgtLangs,
                     setDetectedLang,
                     setSrcLang,
+                    setRecentSrcLangs,
                     setTgtLang,
                     srcLang,
                     tgtLang,
@@ -315,7 +323,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
                 {(mode === Mode.Text || !mode) && (
                   <>
                     <TextTranslationForm
-                      {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang, pairPrefs, setDetectedLang }}
+                      {...{ instantTranslation, markUnknown, setLoading, srcLang, tgtLang, pairPrefs }}
                     />
                     <Row className="mt-2 mb-3">
                       <Col className="d-flex d-sm-block flex-wrap translation-modes" md="6" xs="12">

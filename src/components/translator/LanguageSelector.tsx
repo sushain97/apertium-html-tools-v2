@@ -9,12 +9,10 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import classNames from 'classnames';
 
-import { DetectEvent, Pairs, SrcLangs, TgtLangs, isPair } from '.';
+import { DetectCompleteEvent, DetectEvent, Pairs, SrcLangs, TgtLangs, isPair } from '.';
 import { isVariant, langDirection, parentLang, toAlpha2Code, variantSeperator } from '../../util/languages';
 import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
-
-// TODO: [parity] language detection
 
 type Props = {
   pairs: Pairs;
@@ -24,6 +22,7 @@ type Props = {
   srcLang: string;
   setSrcLang: (code: string) => void;
   recentSrcLangs: Array<string>;
+  setRecentSrcLangs: (langs: Array<string>) => void;
 
   tgtLang: string;
   setTgtLang: (code: string) => void;
@@ -89,14 +88,22 @@ const MobileLanguageSelector = ({
   tgtLangs,
   swapLangs,
   loading,
+  onDetectLang,
   detectLangEnabled,
   detectedLang,
+  detectingLang,
 }: SharedProps): React.ReactElement => {
   const { t, tLang } = useLocalization();
 
   const onSrcLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
-    ({ target: { value } }) => setSrcLang(value),
-    [setSrcLang],
+    ({ target: { value } }) => {
+      if (value === detectKey) {
+        onDetectLang();
+      } else {
+        setSrcLang(value);
+      }
+    },
+    [onDetectLang, setSrcLang],
   );
   const onTgtLangChange = React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(
     ({ target: { value } }) => setTgtLang(value),
@@ -112,9 +119,9 @@ const MobileLanguageSelector = ({
           onChange={onSrcLangChange}
           size="sm"
           style={{ maxWidth: '60%' }}
-          value={srcLang}
+          value={detectingLang || detectedLang ? detectKey : srcLang}
         >
-          <option disabled={!detectLangEnabled} key={detectKey}>
+          <option disabled={!detectLangEnabled} key={detectKey} value={detectKey}>
             {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
           </option>
           {srcLangs.map(([code, name]) => (
@@ -296,7 +303,7 @@ const DesktopLanguageSelector = ({
         <ButtonGroup className="d-flex flex-wrap pl-0">
           {recentSrcLangs.map((lang) => (
             <Button
-              active={lang === srcLang && !detectingLang}
+              active={lang === srcLang && !detectingLang && !detectedLang}
               className="language-button"
               key={lang}
               onClick={({ currentTarget }) => {
@@ -312,7 +319,7 @@ const DesktopLanguageSelector = ({
             </Button>
           ))}
           <Button
-            active={detectingLang}
+            active={detectingLang || detectedLang !== null}
             className="language-button"
             disabled={!detectLangEnabled}
             onClick={onDetectLang}
@@ -376,7 +383,7 @@ const DesktopLanguageSelector = ({
 const LanguageSelector = (props: Props): React.ReactElement => {
   const { tLang } = useLocalization();
 
-  const { pairs, srcLang, setSrcLang, tgtLang, setTgtLang } = props;
+  const { pairs, srcLang, setSrcLang, recentSrcLangs, setRecentSrcLangs, tgtLang, setTgtLang, setDetectedLang } = props;
 
   const swapLangs = isPair(pairs, tgtLang, srcLang)
     ? () => {
@@ -473,6 +480,38 @@ const LanguageSelector = (props: Props): React.ReactElement => {
     setDetectingLang(true);
     window.dispatchEvent(new Event(DetectEvent));
   }, []);
+
+  React.useEffect(() => {
+    const langDetected = (event_: Event) => {
+      setDetectingLang(false);
+
+      const { detail } = event_ as CustomEvent<Record<string, number> | null>;
+      if (detail == null) {
+        return;
+      }
+
+      const possibleLanguages: Array<[string, number]> = Object.entries(detail).map(([lang, prob]) => [lang, prob]);
+      possibleLanguages.sort(([, a], [, b]) => b - a);
+
+      let newRecentSrcLangs: Array<string> = [];
+      possibleLanguages.forEach(([lang]) => {
+        if (newRecentSrcLangs.length < recentSrcLangs.length && lang in pairs) {
+          newRecentSrcLangs.push(lang);
+        }
+      });
+      newRecentSrcLangs = newRecentSrcLangs.concat(recentSrcLangs);
+      if (newRecentSrcLangs.length > recentSrcLangs.length) {
+        newRecentSrcLangs = newRecentSrcLangs.slice(0, recentSrcLangs.length);
+      }
+
+      setRecentSrcLangs(newRecentSrcLangs);
+      setSrcLang(newRecentSrcLangs[0]);
+      setDetectedLang(newRecentSrcLangs[0]);
+    };
+
+    window.addEventListener(DetectCompleteEvent, langDetected, false);
+    return () => window.removeEventListener(DetectCompleteEvent, langDetected);
+  }, [pairs, recentSrcLangs, setDetectedLang, setRecentSrcLangs, setSrcLang]);
 
   const sharedProps = {
     ...props,
