@@ -21,6 +21,7 @@ import Analyzer from './components/Analyzer';
 import { Path as DocTranslationPath } from './components/translator/DocTranslationForm';
 import Footer from './components/footer';
 import Generator from './components/Generator';
+import InstallationAlert from './components/InstallationAlert';
 import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
@@ -144,6 +145,7 @@ const App = () => {
   return (
     <StringsContext.Provider value={strings}>
       <LocaleContext.Provider value={locale}>
+        <InstallationAlert />
         <div
           ref={wrapRef}
           style={{
