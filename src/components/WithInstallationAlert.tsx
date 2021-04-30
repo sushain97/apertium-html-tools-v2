@@ -27,6 +27,7 @@ const InstallationAlert = ({ show, onClose }: { show: boolean; onClose: () => vo
       scheduleClose();
     } else if (current) {
       window.clearTimeout(current);
+      openTimeoutRef.current = null;
     }
   }, [onClose, scheduleClose, show]);
 
@@ -34,6 +35,7 @@ const InstallationAlert = ({ show, onClose }: { show: boolean; onClose: () => vo
     const { current } = openTimeoutRef;
     if (current) {
       window.clearTimeout(current);
+      openTimeoutRef.current = null;
     }
   }, []);
 

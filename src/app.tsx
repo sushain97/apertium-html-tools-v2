@@ -27,10 +27,10 @@ import Sandbox from './components/Sandbox';
 import { Path as WebpageTranslationPath } from './components/translator/WebpageTranslationForm';
 import WithInstallationAlert from './components/WithInstallationAlert';
 
-// TODO: [parity] Add slow request -> download notifications
 // TODO: [not before landing] Add analytics support. If anyone actually wants it?
 // TOOD: [currently broken] back to top support
 // TODO: [not before landing] language filtering
+// TODO: [not before landing] themes
 
 const Interfaces = {
   [Mode.Translation]: Translator,
