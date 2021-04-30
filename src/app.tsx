@@ -21,11 +21,11 @@ import Analyzer from './components/Analyzer';
 import { Path as DocTranslationPath } from './components/translator/DocTranslationForm';
 import Footer from './components/footer';
 import Generator from './components/Generator';
-import InstallationAlert from './components/InstallationAlert';
 import LocaleSelector from './components/LocaleSelector';
 import Navbar from './components/navbar';
 import Sandbox from './components/Sandbox';
 import { Path as WebpageTranslationPath } from './components/translator/WebpageTranslationForm';
+import WithInstallationAlert from './components/WithInstallationAlert';
 
 // TODO: [parity] Add slow request -> download notifications
 // TODO: [not before landing] Add analytics support. If anyone actually wants it?
@@ -145,45 +145,46 @@ const App = () => {
   return (
     <StringsContext.Provider value={strings}>
       <LocaleContext.Provider value={locale}>
-        <InstallationAlert />
-        <div
-          ref={wrapRef}
-          style={{
-            height: 'auto !important',
-            margin: '0 auto -60px',
-            minHeight: '99.5%',
-          }}
-        >
-          <Navbar setLocale={setLocale} />
-          <Container>
-            {Object.values(Mode).map(
-              (mode) =>
-                Config.enabledModes.has(mode) && (
-                  <Route
-                    component={Interfaces[mode]}
-                    exact
-                    key={mode}
-                    path={mode === Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
-                  />
-                ),
-            )}
-            {Config.enabledModes.has(Mode.Translation) && (
-              <>
-                <Route exact path={DocTranslationPath}>
-                  <Translator mode={TranslatorMode.Document} />
-                </Route>
-                <Route exact path={WebpageTranslationPath}>
-                  <Translator mode={TranslatorMode.Webpage} />
-                </Route>
-              </>
-            )}
-            <div className="d-block d-sm-none float-left my-2">
-              <LocaleSelector setLocale={setLocale} />
-            </div>
-          </Container>
-          <div ref={pushRef} style={{ height: '60px' }} />
-        </div>
-        <Footer pushRef={pushRef} wrapRef={wrapRef} />
+        <WithInstallationAlert>
+          <div
+            ref={wrapRef}
+            style={{
+              height: 'auto !important',
+              margin: '0 auto -60px',
+              minHeight: '99.5%',
+            }}
+          >
+            <Navbar setLocale={setLocale} />
+            <Container>
+              {Object.values(Mode).map(
+                (mode) =>
+                  Config.enabledModes.has(mode) && (
+                    <Route
+                      component={Interfaces[mode]}
+                      exact
+                      key={mode}
+                      path={mode === Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
+                    />
+                  ),
+              )}
+              {Config.enabledModes.has(Mode.Translation) && (
+                <>
+                  <Route exact path={DocTranslationPath}>
+                    <Translator mode={TranslatorMode.Document} />
+                  </Route>
+                  <Route exact path={WebpageTranslationPath}>
+                    <Translator mode={TranslatorMode.Webpage} />
+                  </Route>
+                </>
+              )}
+              <div className="d-block d-sm-none float-left my-2">
+                <LocaleSelector setLocale={setLocale} />
+              </div>
+            </Container>
+            <div ref={pushRef} style={{ height: '60px' }} />
+          </div>
+          <Footer pushRef={pushRef} wrapRef={wrapRef} />
+        </WithInstallationAlert>
       </LocaleContext.Provider>
     </StringsContext.Provider>
   );
