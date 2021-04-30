@@ -48,13 +48,67 @@ const TagLine = (): React.ReactElement => {
   );
 };
 
-const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
-  const { t } = useLocalization();
-  const { pathname } = useLocation();
-  const history = useHistory();
-
+const NavbarNav = (): React.ReactElement => {
   const { defaultMode } = Config;
 
+  const { t } = useLocalization();
+  const history = useHistory();
+  const { pathname } = useLocation();
+
+  return (
+    <Nav as="ul" className="mt-1 ml-auto">
+      {Config.enabledModes.size > 1 && (
+        <>
+          {Config.enabledModes.has(Mode.Translation) && (
+            <Nav.Item as="li" className="p-1">
+              <Nav.Link
+                active={
+                  [TextTranslationPath, WebpageTranslationPath, DocTranslationPath].includes(pathname) ||
+                  (pathname === '/' && defaultMode === Mode.Translation)
+                }
+                onClick={() => history.push(generatePath(TextTranslationPath))}
+              >
+                {t('Translation')}
+              </Nav.Link>
+            </Nav.Item>
+          )}
+          {Config.enabledModes.has(Mode.Analysis) && (
+            <Nav.Item as="li" className="p-1">
+              <Nav.Link
+                active={pathname === '/analysis' || (pathname === '/' && defaultMode === Mode.Analysis)}
+                onClick={() => history.push(generatePath('/analysis'))}
+              >
+                {t('Morphological_Analysis')}
+              </Nav.Link>
+            </Nav.Item>
+          )}
+          {Config.enabledModes.has(Mode.Generation) && (
+            <Nav.Item as="li" className="p-1">
+              <Nav.Link
+                active={pathname === '/generation' || (pathname === '/' && defaultMode === Mode.Generation)}
+                onClick={() => history.push(generatePath('/generation'))}
+              >
+                {t('Morphological_Generation')}
+              </Nav.Link>
+            </Nav.Item>
+          )}
+          {Config.enabledModes.has(Mode.Sandbox) && (
+            <Nav.Item as="li" className="p-1">
+              <Nav.Link
+                active={pathname === '/sandbox' || (pathname === '/' && defaultMode === Mode.Sandbox)}
+                onClick={() => history.push(generatePath('/sandbox'))}
+              >
+                {t('APy_Sandbox')}
+              </Nav.Link>
+            </Nav.Item>
+          )}
+        </>
+      )}
+    </Nav>
+  );
+};
+
+const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
   return (
     <BootstrapNavbar bg="dark" className="navbar navbar-default mb-4 pt-0" expand="md" variant="dark">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
@@ -80,55 +134,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
         </div>
         <BootstrapNavbar.Toggle />
         <BootstrapNavbar.Collapse>
-          <Nav as="ul" className="mt-1 ml-auto">
-            {Config.enabledModes.size > 1 && (
-              <>
-                {Config.enabledModes.has(Mode.Translation) && (
-                  <Nav.Item as="li" className="p-1">
-                    <Nav.Link
-                      active={
-                        [TextTranslationPath, WebpageTranslationPath, DocTranslationPath].includes(pathname) ||
-                        (pathname === '/' && defaultMode === Mode.Translation)
-                      }
-                      onClick={() => history.push(generatePath(TextTranslationPath))}
-                    >
-                      {t('Translation')}
-                    </Nav.Link>
-                  </Nav.Item>
-                )}
-                {Config.enabledModes.has(Mode.Analysis) && (
-                  <Nav.Item as="li" className="p-1">
-                    <Nav.Link
-                      active={pathname === '/analysis' || (pathname === '/' && defaultMode === Mode.Analysis)}
-                      onClick={() => history.push(generatePath('/analysis'))}
-                    >
-                      {t('Morphological_Analysis')}
-                    </Nav.Link>
-                  </Nav.Item>
-                )}
-                {Config.enabledModes.has(Mode.Generation) && (
-                  <Nav.Item as="li" className="p-1">
-                    <Nav.Link
-                      active={pathname === '/generation' || (pathname === '/' && defaultMode === Mode.Generation)}
-                      onClick={() => history.push(generatePath('/generation'))}
-                    >
-                      {t('Morphological_Generation')}
-                    </Nav.Link>
-                  </Nav.Item>
-                )}
-                {Config.enabledModes.has(Mode.Sandbox) && (
-                  <Nav.Item as="li" className="p-1">
-                    <Nav.Link
-                      active={pathname === '/sandbox' || (pathname === '/' && defaultMode === Mode.Sandbox)}
-                      onClick={() => history.push(generatePath('/sandbox'))}
-                    >
-                      {t('APy_Sandbox')}
-                    </Nav.Link>
-                  </Nav.Item>
-                )}
-              </>
-            )}
-          </Nav>
+          <NavbarNav />
         </BootstrapNavbar.Collapse>
       </Container>
     </BootstrapNavbar>

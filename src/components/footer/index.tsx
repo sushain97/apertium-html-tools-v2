@@ -30,6 +30,40 @@ const Tabs: Record<Tab, (props: ModalProps) => React.ReactElement> = {
   [Tab.Contact]: ContactModal,
 };
 
+const FooterNav_ = ({
+  setOpenTab,
+}: {
+  setOpenTab: React.Dispatch<React.SetStateAction<Tab | undefined>>;
+}): React.ReactElement => {
+  const { t } = useLocalization();
+
+  return (
+    <Nav as="ul" role="navigation" style={{ cursor: 'pointer' }} variant="pills">
+      <Nav.Item as="li">
+        <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.About)}>
+          <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item as="li">
+        <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Download)}>
+          <FontAwesomeIcon icon={faDownload} /> {t('Download')}
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item as="li">
+        <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Documentation)}>
+          <FontAwesomeIcon icon={faBook} /> {t('Documentation')}
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item as="li">
+        <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Contact)}>
+          <FontAwesomeIcon icon={faEnvelope} /> {t('Contact')}
+        </Nav.Link>
+      </Nav.Item>
+    </Nav>
+  );
+};
+const FooterNav = React.memo(FooterNav_);
+
 const Footer = ({
   wrapRef,
   pushRef,
@@ -62,28 +96,7 @@ const Footer = ({
       <div className="d-flex flex-column container" ref={footerRef}>
         <div className="d-flex flex-column container">
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
-            <Nav as="ul" role="navigation" style={{ cursor: 'pointer' }} variant="pills">
-              <Nav.Item as="li">
-                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.About)}>
-                  <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item as="li">
-                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Download)}>
-                  <FontAwesomeIcon icon={faDownload} /> {t('Download')}
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item as="li">
-                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Documentation)}>
-                  <FontAwesomeIcon icon={faBook} /> {t('Documentation')}
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item as="li">
-                <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.Contact)}>
-                  <FontAwesomeIcon icon={faEnvelope} /> {t('Contact')}
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
+            <FooterNav setOpenTab={setOpenTab} />
 
             <div className="card d-inline-block bg-light mr-3 mb-4 ml-3 p-2">
               <span>{t('Notice_Mistake')}</span>{' '}

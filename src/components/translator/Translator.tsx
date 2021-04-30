@@ -283,6 +283,8 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
     }
   }
 
+  const onTranslate = React.useCallback(() => window.dispatchEvent(new Event(TranslateEvent)), []);
+
   return (
     <Form
       aria-label={t('Translate')}
@@ -305,7 +307,7 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
               <>
                 <LanguageSelector
                   detectLangEnabled={mode === Mode.Text}
-                  onTranslate={() => window.dispatchEvent(new Event(TranslateEvent))}
+                  onTranslate={onTranslate}
                   {...{
                     pairs,
                     recentSrcLangs,

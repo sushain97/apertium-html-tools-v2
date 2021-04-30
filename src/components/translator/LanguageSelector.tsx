@@ -110,6 +110,35 @@ const MobileLanguageSelector = ({
     [setTgtLang],
   );
 
+  const srcLangOptions = React.useMemo(
+    () => (
+      <>
+        <option disabled={!detectLangEnabled} key={detectKey} value={detectKey}>
+          {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
+        </option>
+        {srcLangs.map(([code, name]) => (
+          <option key={code} value={code}>
+            {name}
+          </option>
+        ))}
+      </>
+    ),
+    [detectLangEnabled, detectedLang, srcLangs, t, tLang],
+  );
+
+  const tgtLangOptions = React.useMemo(
+    () => (
+      <>
+        {tgtLangs.map(([code, name]) => (
+          <option disabled={!pairs[srcLang].has(code)} key={code} value={code}>
+            {name}
+          </option>
+        ))}
+      </>
+    ),
+    [pairs, srcLang, tgtLangs],
+  );
+
   return (
     <Form.Group className="d-flex d-md-none flex-column">
       <div className="d-flex flex-wrap">
@@ -121,14 +150,7 @@ const MobileLanguageSelector = ({
           style={{ maxWidth: '60%' }}
           value={detectingLang || detectedLang ? detectKey : srcLang}
         >
-          <option disabled={!detectLangEnabled} key={detectKey} value={detectKey}>
-            {detectedLang ? `${tLang(detectedLang)} - ${t('detected')}` : t('Detect_Language')}
-          </option>
-          {srcLangs.map(([code, name]) => (
-            <option key={code} value={code}>
-              {name}
-            </option>
-          ))}
+          {srcLangOptions}
         </Form.Control>
         <Button className="mb-2" disabled={!swapLangs} onClick={swapLangs} size="sm" type="button" variant="secondary">
           <FontAwesomeIcon icon={faExchangeAlt} />
@@ -141,11 +163,7 @@ const MobileLanguageSelector = ({
           style={{ maxWidth: '60%' }}
           value={tgtLang}
         >
-          {tgtLangs.map(([code, name]) => (
-            <option disabled={!pairs[srcLang].has(code)} key={code} value={code}>
-              {name}
-            </option>
-          ))}
+          {tgtLangOptions}
         </Form.Control>
         <TranslateButton loading={loading} onTranslate={onTranslate} variant="primary" />
       </div>
@@ -391,12 +409,16 @@ const LanguageSelector = (props: Props): React.ReactElement => {
 
   const { pairs, srcLang, setSrcLang, recentSrcLangs, setRecentSrcLangs, tgtLang, setTgtLang, setDetectedLang } = props;
 
-  const swapLangs = isPair(pairs, tgtLang, srcLang)
-    ? () => {
-        setSrcLang(tgtLang);
-        setTgtLang(srcLang);
-      }
-    : undefined;
+  const swapLangs = React.useMemo(
+    () =>
+      isPair(pairs, tgtLang, srcLang)
+        ? () => {
+            setSrcLang(tgtLang);
+            setTgtLang(srcLang);
+          }
+        : undefined,
+    [pairs, setSrcLang, setTgtLang, srcLang, tgtLang],
+  );
 
   const locale = React.useContext(LocaleContext);
 
