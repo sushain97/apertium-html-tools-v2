@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 
 import { DetectCompleteEvent, DetectEvent, PairPrefValues, TranslateEvent, baseUrlParams } from '.';
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
-import { apyFetch } from '../../util';
+import { APyContext } from '../../context';
 import { buildUrl as buildWebpageTranslationUrl } from './WebpageTranslationForm';
 import { langDirection } from '../../util/languages';
 import useLocalStorage from '../../util/useLocalStorage';
@@ -45,6 +45,7 @@ const TextTranslationForm = ({
 }): React.ReactElement => {
   const { t } = useLocalization();
   const history = useHistory();
+  const apyFetch = React.useContext(APyContext);
 
   const srcTextareaRef = React.useRef<HTMLTextAreaElement>(null);
   const tgtTextareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -126,7 +127,7 @@ const TextTranslationForm = ({
 
       return () => translationRef.current?.cancel();
     },
-    [markUnknown, prefs, setLoading, srcLang, srcText, tgtLang],
+    [apyFetch, markUnknown, prefs, setLoading, srcLang, srcText, tgtLang],
   );
 
   const translationTimer = React.useRef<number | null>(null);
@@ -196,7 +197,7 @@ const TextTranslationForm = ({
     })();
 
     return () => detectRef.current?.cancel();
-  }, [srcText]);
+  }, [apyFetch, srcText]);
 
   React.useEffect(() => {
     window.addEventListener(DetectEvent, detectLang, false);

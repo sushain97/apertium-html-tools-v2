@@ -60,7 +60,7 @@ const InstallationAlert = ({ show, onClose }: { show: boolean; onClose: () => vo
   );
 };
 
-const WithInstallationAlert = ({ children }: { children: React.ReactChildren }): React.ReactElement => {
+const WithInstallationAlert = ({ children }: { children: React.ReactNode }): React.ReactElement => {
   const [show, setShow] = React.useState(false);
 
   const requestTimings = React.useRef<Array<number>>([]);

@@ -9,8 +9,8 @@ import { useHistory } from 'react-router-dom';
 
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../util/url';
 import { langDirection, toAlpha3Code } from '../util/languages';
+import { APyContext } from '../context';
 import ErrorAlert from './ErrorAlert';
-import { apyFetch } from '../util';
 import useLocalStorage from '../util/useLocalStorage';
 import { useLocalization } from '../util/localization';
 
@@ -114,6 +114,7 @@ const AnalysisForm = ({
 }): React.ReactElement => {
   const history = useHistory();
   const { t, tLang } = useLocalization();
+  const apyFetch = React.useContext(APyContext);
 
   const [lang, setLang] = useLocalStorage('analyzerLang', Object.keys(Analyzers)[0], {
     overrideValue: toAlpha3Code(getUrlParam(history.location.search, langUrlParam)),

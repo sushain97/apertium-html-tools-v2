@@ -8,8 +8,8 @@ import { useHistory } from 'react-router-dom';
 
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../util/url';
 import { langDirection, toAlpha3Code } from '../util/languages';
+import { APyContext } from '../context';
 import ErrorAlert from './ErrorAlert';
-import { apyFetch } from '../util';
 import useLocalStorage from '../util/useLocalStorage';
 import { useLocalization } from '../util/localization';
 
@@ -30,6 +30,7 @@ const GeneratorForm = ({
 }): React.ReactElement => {
   const { t, tLang } = useLocalization();
   const history = useHistory();
+  const apyFetch = React.useContext(APyContext);
 
   const [lang, setLang] = useLocalStorage('generatorLang', Object.keys(Generators)[0], {
     overrideValue: toAlpha3Code(getUrlParam(history.location.search, langUrlParam)),

@@ -7,8 +7,8 @@ import Form from 'react-bootstrap/Form';
 import classNames from 'classnames';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
+import { APyContext } from '../context';
 import ErrorAlert from './ErrorAlert';
-import { apyFetch } from '../util';
 import useLocalStorage from '../util/useLocalStorage';
 import { useLocalization } from '../util/localization';
 
@@ -22,6 +22,7 @@ const SandboxForm = ({
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 }): React.ReactElement => {
   const { t } = useLocalization();
+  const apyFetch = React.useContext(APyContext);
 
   const [requestText, setRequestText] = useLocalStorage('sandboxRequest', '');
 

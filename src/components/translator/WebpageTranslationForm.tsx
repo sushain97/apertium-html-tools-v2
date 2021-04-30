@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 
 import { MaxURLLength, buildNewSearch, getUrlParam } from '../../util/url';
 import { TranslateEvent, baseUrlParams } from '.';
-import { apyFetch } from '../../util';
+import { APyContext } from '../../context';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
 
@@ -31,6 +31,7 @@ const WebpageTranslationForm = ({
 }): React.ReactElement => {
   const { t } = useLocalization();
   const history = useHistory();
+  const apyFetch = React.useContext(APyContext);
 
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
@@ -104,7 +105,7 @@ const WebpageTranslationForm = ({
 
       return () => translationRef.current?.cancel();
     },
-    [setLoading, srcLang, tgtLang],
+    [apyFetch, setLoading, srcLang, tgtLang],
   );
 
   React.useEffect(() => {
