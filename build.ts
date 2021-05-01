@@ -158,7 +158,7 @@ void (async () => {
 
   await fs.writeFile(
     path.join(DIST, 'index.html'),
-    indexHtml.replace('{{PRELOADED_STRINGS}}', JSON.stringify({ [Config.defaultLocale]: defaultStrings })),
+    indexHtml.replace('{{PRELOADED_STRINGS}}', JSON.stringify({ [defaultLocale]: defaultStrings })),
   );
 
   await writeSitemap();
