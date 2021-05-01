@@ -47,7 +47,7 @@ Alternatively, if you'd like to avoid polluting your host system with build
 dependencies, use Docker:
 
     docker build -t apertium-html-tools .
-    docker run --rm -v $(pwd)/./dist:/root/dist apertium-html-tools
+    docker run --rm -v $(pwd)/dist:/root/dist apertium-html-tools
 
 ## Contributing
 
