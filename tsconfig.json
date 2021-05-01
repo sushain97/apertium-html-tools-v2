@@ -3,6 +3,7 @@
     "jsx": "react",
     "strict": true,
     "incremental": true,
+    "lib": ["es2019", "dom"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true

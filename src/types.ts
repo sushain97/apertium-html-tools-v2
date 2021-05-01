@@ -11,6 +11,9 @@ export type Config = {
   apyURL: string;
   stringReplacements: Record<string, string>;
 
+  allowedLangs?: Set<string>;
+  allowedVariants?: Set<string>;
+
   defaultMode: Mode;
   enabledModes: Set<Mode>;
   translationChaining: boolean;

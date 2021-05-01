@@ -29,7 +29,6 @@ import WithInstallationAlert from './components/WithInstallationAlert';
 
 // TODO: [not before landing] Add analytics support. If anyone actually wants it?
 // TOOD: [currently broken] back to top support
-// TODO: [not before landing] language filtering
 // TODO: [not before landing] themes
 
 const Interfaces = {

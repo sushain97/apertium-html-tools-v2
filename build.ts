@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import * as esbuild from 'esbuild';
 import axios, { AxiosResponse } from 'axios';
 
-import { languages, parentLang, toAlpha2Code, toAlpha3Code } from './src/util/languages';
+import { languages, parentLang, toAlpha2Code, toAlpha3Code, variantSeperator } from './src/util/languages';
 import Config from './config';
 import locales from './src/strings/locales.json';
 
@@ -16,6 +16,8 @@ const prod = process.argv.includes('--prod');
 const watch = process.argv.includes('--watch');
 
 const version = child_process.execSync('git describe --tags --always').toString().trim();
+
+const { allowedLangs, allowedVariants, defaultLocale } = Config;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const apyGet = async (path: string, params: unknown = {}): Promise<AxiosResponse<any>> =>
@@ -47,6 +49,20 @@ const writeSitemap = async () => {
   );
 };
 
+const allowedLang = (code: string): boolean => {
+  const [parent, variant] = code.split(variantSeperator, 2);
+
+  if (allowedLangs != null && !allowedLangs.has(parent)) {
+    return false;
+  }
+
+  if (allowedVariants != null && variant && !allowedVariants.has(variant)) {
+    return false;
+  }
+
+  return true;
+};
+
 void (async () => {
   let defaultStrings: unknown;
 
@@ -63,9 +79,15 @@ void (async () => {
       sourceLanguage: string;
       targetLanguage: string;
     }>;
-  }).responseData;
-  const analyzers = analyzersResponse.data as Record<string, string>;
-  const generators = generatorsResponse.data as Record<string, string>;
+  }).responseData.filter(
+    ({ sourceLanguage, targetLanguage }) => allowedLang(sourceLanguage) && allowedLang(targetLanguage),
+  );
+  const analyzers = Object.fromEntries(
+    Object.entries(analyzersResponse.data as Record<string, string>).filter(([code]) => allowedLang(code)),
+  );
+  const generators = Object.fromEntries(
+    Object.entries(generatorsResponse.data as Record<string, string>).filter(([code]) => allowedLang(code)),
+  );
 
   let pairPrefs = {};
   try {
@@ -75,9 +97,7 @@ void (async () => {
   }
 
   let allLangs: Array<string | null> = [
-    ...([] as Array<string>).concat(
-      ...pairs.map(({ sourceLanguage, targetLanguage }) => [sourceLanguage, targetLanguage]),
-    ),
+    ...pairs.flatMap(({ sourceLanguage, targetLanguage }) => [sourceLanguage, targetLanguage]),
     ...Object.keys(analyzers),
     ...Object.keys(generators),
     ...Object.keys(languages),
@@ -112,7 +132,7 @@ void (async () => {
         }
         strings['@langNames'] = langNames;
 
-        if (f === `${Config.defaultLocale}.json`) {
+        if (f === `${defaultLocale}.json`) {
           defaultStrings = strings;
         }
 
@@ -128,7 +148,7 @@ void (async () => {
         path.join(DIST, `index.${locale}.html`),
         indexHtml.replace(
           '{{PRELOADED_STRINGS}}',
-          JSON.stringify({ [Config.defaultLocale]: defaultStrings, [locale]: strings }),
+          JSON.stringify({ [defaultLocale]: defaultStrings, [locale]: strings }),
         ),
       ),
     ),
