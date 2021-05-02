@@ -10,7 +10,8 @@ export default {
     ],
   },
   moduleNameMapper: {
-    '\\.(css|gif|png|jpg)$': 'identity-obj-proxy',
+    '\\.(css)$': 'identity-obj-proxy',
+    '\\.(gif|png|jpg)$': '<rootDir>/src/__mocks__/file.ts',
   },
   setupFiles: ['./src/testSetup.ts'],
   setupFilesAfterEnv: ['./src/testEnvSetup.ts'],

@@ -10,7 +10,10 @@ defaultStrings['Maintainer'] = '{{maintainer}}-Default';
 (window as any).PRELOADED_STRINGS = { eng: defaultStrings };
 
 // eslint-disable-next-line
-(window as any).GENERATORS = { eng: 'eng-gener', spa: 'spa-gener' };
+(window as any).PAIRS = [];
 
 // eslint-disable-next-line
 (window as any).ANALYZERS = { eng: 'eng-morph', spa: 'spa-morph' };
+
+// eslint-disable-next-line
+(window as any).GENERATORS = { eng: 'eng-gener', spa: 'spa-gener' };
