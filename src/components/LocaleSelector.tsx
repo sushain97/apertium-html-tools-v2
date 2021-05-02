@@ -7,23 +7,27 @@ import locales from '../strings/locales.json';
 
 const LocaleSelector = ({
   setLocale,
+  inverse,
 }: {
+  inverse?: boolean;
   setLocale: React.Dispatch<React.SetStateAction<string>>;
 }): React.ReactElement => {
   const locale = React.useContext(LocaleContext);
 
   return (
-    <>
+    <div className="mt-2">
       <FontAwesomeIcon
-        className="float-right pt-2"
+        className="float-right ml-2"
         icon={faGlobe}
-        inverse
-        size="2x"
-        style={{ padding: '0 5px 0 0', marginLeft: '0.3em', marginTop: '1px' }}
+        inverse={inverse}
+        style={{
+          fontSize: '25px',
+          height: '25px',
+        }}
       />
       {/* eslint-disable-next-line jsx-a11y/no-onchange */}
       <select
-        className="float-right mt-2"
+        className="float-right"
         onChange={({ target: { value } }) => setLocale(value)}
         style={{
           fontSize: '14px',
@@ -41,7 +45,7 @@ const LocaleSelector = ({
             </option>
           ))}
       </select>
-    </>
+    </div>
   );
 };
 

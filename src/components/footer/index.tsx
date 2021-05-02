@@ -38,7 +38,7 @@ const FooterNav_ = ({
   const { t } = useLocalization();
 
   return (
-    <Nav as="ul" role="navigation" style={{ cursor: 'pointer' }} variant="pills">
+    <Nav as="ul" className="p-0" role="navigation" style={{ cursor: 'pointer' }} variant="pills">
       <Nav.Item as="li">
         <Nav.Link className="footer-link" onClick={() => setOpenTab(Tab.About)}>
           <FontAwesomeIcon icon={faQuestionCircle} /> {t('About')}
@@ -98,7 +98,7 @@ const Footer = ({
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
             <FooterNav setOpenTab={setOpenTab} />
 
-            <div className="card d-inline-block bg-light mr-3 mb-4 ml-3 p-2">
+            <div className="card d-inline-block bg-light mb-4 p-2">
               <span>{t('Notice_Mistake')}</span>{' '}
               <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
                 {t('Help_Improve')}
@@ -114,7 +114,7 @@ const Footer = ({
               <small>{version}</small>
             </a>
           </div>
-          <div className="align-self-end card card-body d-block bg-light d-md-none mt-2 mr-0 mb-0 p-2">
+          <div className="align-self-end card card-body d-block bg-light d-md-none my-2 p-2">
             <span>{t('Notice_Mistake')}</span>{' '}
             <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
               {t('Help_Improve')}

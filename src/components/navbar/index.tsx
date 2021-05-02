@@ -130,7 +130,7 @@ const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<
             width: '35%',
           }}
         >
-          <LocaleSelector setLocale={setLocale} />
+          <LocaleSelector inverse setLocale={setLocale} />
         </div>
         <BootstrapNavbar.Toggle />
         <BootstrapNavbar.Collapse>

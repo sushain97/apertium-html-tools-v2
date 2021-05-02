@@ -1,5 +1,6 @@
 import './bootstrap.css';
 import './app.css';
+import './rtl.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
