@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 import { LocaleContext } from '../context';
+import { langDirection } from '../util/languages';
 import locales from '../strings/locales.json';
 
 const height = '1.5rem';
@@ -31,7 +32,7 @@ const LocaleSelector = ({
             return a.toLowerCase().localeCompare(b.toLowerCase());
           })
           .map(([locale, name]) => (
-            <option key={locale} value={locale}>
+            <option dir={langDirection(locale)} key={locale} value={locale}>
               {name}
             </option>
           ))}
