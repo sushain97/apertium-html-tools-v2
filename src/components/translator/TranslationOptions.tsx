@@ -4,9 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Form from 'react-bootstrap/Form';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
+import { ConfigContext, LocaleContext } from '../../context';
 import { PairPrefValues, getPairPrefs } from '.';
-import Config from '../../../config';
-import { LocaleContext } from '../../context';
 import { useLocalization } from '../../util/localization';
 
 const TranslationOptions = ({
@@ -34,6 +33,7 @@ const TranslationOptions = ({
 }): React.ReactElement => {
   const { t } = useLocalization();
   const locale = React.useContext(LocaleContext);
+  const config = React.useContext(ConfigContext);
 
   const prefs = React.useMemo(() => getPairPrefs(locale, srcLang, tgtLang), [locale, srcLang, tgtLang]);
   const [showPrefDropdown, setShowPrefDropdown] = React.useState(false);
@@ -91,7 +91,7 @@ const TranslationOptions = ({
         label={t('Instant_Translation')}
         onChange={({ currentTarget }) => setInstantTranslation(currentTarget.checked)}
       />
-      {Config.translationChaining && (
+      {config.translationChaining && (
         <Form.Check
           checked={translationChaining}
           custom

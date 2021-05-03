@@ -25,12 +25,12 @@ import DocTranslationForm, { Path as DocTranslationPath } from './DocTranslation
 import TextTranslationForm, { Path as TextTranslationPath } from './TextTranslationForm';
 import WebpageTranslationForm, { Path as WebpageTranslationPath } from './WebpageTranslationForm';
 import { parentLang, toAlpha3Code } from '../../util/languages';
-import Config from '../../../config';
 import LanguageSelector from './LanguageSelector';
 import TranslationOptions from './TranslationOptions';
 import { getUrlParam } from '../../util/url';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
+import { ConfigContext } from '../../context';
 
 const recentLangsCount = 3;
 
@@ -259,13 +259,14 @@ const Translator = ({ mode: initialMode }: { mode?: Mode }): React.ReactElement 
 
   const { t } = useLocalization();
   const history = useHistory();
+  const config = React.useContext(ConfigContext);
 
   const [loading, setLoading] = React.useState(false);
 
   const [markUnknown, setMarkUnknown] = useLocalStorage('markUnknown', false);
   const [instantTranslation, setInstantTranslation] = useLocalStorage('instantTranslation', true);
   const [translationChaining, setTranslationChaining] = useLocalStorage('translationChaining', false, {
-    validateValue: () => Config.translationChaining,
+    validateValue: () => config.translationChaining,
   });
 
   const [selectedPrefs, setSelectedPrefs] = useLocalStorage<Record<string, PairPrefValues>>('translationPrefs', {});

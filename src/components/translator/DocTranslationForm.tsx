@@ -11,7 +11,7 @@ import Row from 'react-bootstrap/Row';
 import { useHistory } from 'react-router-dom';
 
 import { TranslateEvent, baseUrlParams } from '.';
-import Config from '../../../config';
+import { ConfigContext } from '../../context';
 import { buildNewSearch } from '../../util/url';
 import { useLocalization } from '../../util/localization';
 
@@ -45,6 +45,7 @@ const DocTranslationForm = ({
 }): React.ReactElement => {
   const { t } = useLocalization();
   const history = useHistory();
+  const { apyURL } = React.useContext(ConfigContext);
 
   React.useEffect(() => {
     const search = buildNewSearch(baseUrlParams({ srcLang, tgtLang }));
@@ -88,7 +89,7 @@ const DocTranslationForm = ({
       void (async () => {
         try {
           const response = (
-            await axios.post(`${Config.apyURL}/translateDoc`, translateData, {
+            await axios.post(`${apyURL}/translateDoc`, translateData, {
               cancelToken: source.token,
               validateStatus: (status) => status === 200,
               onUploadProgress: ({ loaded, total }: ProgressEvent) => {

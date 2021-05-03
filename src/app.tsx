@@ -8,10 +8,9 @@ import { HashRouter, Route, useHistory, useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import axios from 'axios';
 
-import { LocaleContext, StringsContext } from './context';
+import { ConfigContext, LocaleContext, StringsContext } from './context';
 import { PRELOADED_STRINGS, Strings, tt, validLocale } from './util/localization';
 import { langDirection, toAlpha2Code, toAlpha3Code } from './util/languages';
-import Config from '../config';
 import { Mode } from './types';
 import { apyFetch } from './util';
 import { getUrlParam } from './util/url';
@@ -41,7 +40,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
     try {
       locales = (await apyFetch('getLocale')[1]).data as Array<string>;
     } catch (error) {
-      console.warn(`Failed to fetch browser locale, falling back to default ${Config.defaultLocale}`, error);
+      console.warn('Failed to fetch browser locale, falling back to default', error);
       return;
     }
 
@@ -61,6 +60,7 @@ const loadBrowserLocale = (setLocale: React.Dispatch<React.SetStateAction<string
 const App = () => {
   const history = useHistory();
   const { pathname } = useLocation();
+  const { defaultLocale, defaultMode, enabledModes } = React.useContext(ConfigContext);
 
   // Locale selection priority:
   // 1. `lang` parameter from URL
@@ -76,7 +76,7 @@ const App = () => {
     'locale',
     () => {
       shouldLoadBrowserLocale = true;
-      return Config.defaultLocale;
+      return defaultLocale;
     },
     { overrideValue: urlQueryLocale || urlPathLocale, validateValue: validLocale },
   );
@@ -105,13 +105,13 @@ const App = () => {
         localeStrings = (await axios({ url: `strings/${locale}.json`, validateStatus: (status) => status === 200 }))
           .data as Strings;
       } catch (error) {
-        console.warn(`Failed to fetch strings, falling back to default ${Config.defaultLocale}`, error);
+        console.warn(`Failed to fetch strings, falling back to default ${defaultLocale}`, error);
         return;
       }
 
       setStrings((strings) => ({ ...strings, [locale]: localeStrings }));
     })();
-  }, [locale, strings]);
+  }, [defaultLocale, locale, strings]);
 
   // Update global strings on locale change.
   React.useEffect(() => {
@@ -154,16 +154,16 @@ const App = () => {
             <Container>
               {Object.values(Mode).map(
                 (mode) =>
-                  Config.enabledModes.has(mode) && (
+                  enabledModes.has(mode) && (
                     <Route
                       component={Interfaces[mode]}
                       exact
                       key={mode}
-                      path={mode === Config.defaultMode ? ['/', `/${mode}`] : `/${mode}`}
+                      path={mode === defaultMode ? ['/', `/${mode}`] : `/${mode}`}
                     />
                   ),
               )}
-              {Config.enabledModes.has(Mode.Translation) && (
+              {enabledModes.has(Mode.Translation) && (
                 <>
                   <Route exact path={DocTranslationPath}>
                     <Translator mode={TranslatorMode.Document} />

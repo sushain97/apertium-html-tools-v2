@@ -6,7 +6,7 @@ import BootstrapNavbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 
-import Config from '../../../config';
+import { ConfigContext } from '../../context';
 import { Path as DocTranslationPath } from '../translator/DocTranslationForm';
 import LocaleSelector from '../LocaleSelector';
 import { Mode } from '../../types';
@@ -49,17 +49,16 @@ const TagLine = (): React.ReactElement => {
 };
 
 const NavbarNav = (): React.ReactElement => {
-  const { defaultMode } = Config;
-
   const { t } = useLocalization();
   const history = useHistory();
   const { pathname } = useLocation();
+  const { enabledModes, defaultMode } = React.useContext(ConfigContext);
 
   return (
     <Nav as="ul" className="mt-1 ml-auto">
-      {Config.enabledModes.size > 1 && (
+      {enabledModes.size > 1 && (
         <>
-          {Config.enabledModes.has(Mode.Translation) && (
+          {enabledModes.has(Mode.Translation) && (
             <Nav.Item as="li" className="p-1">
               <Nav.Link
                 active={
@@ -72,7 +71,7 @@ const NavbarNav = (): React.ReactElement => {
               </Nav.Link>
             </Nav.Item>
           )}
-          {Config.enabledModes.has(Mode.Analysis) && (
+          {enabledModes.has(Mode.Analysis) && (
             <Nav.Item as="li" className="p-1">
               <Nav.Link
                 active={pathname === '/analysis' || (pathname === '/' && defaultMode === Mode.Analysis)}
@@ -82,7 +81,7 @@ const NavbarNav = (): React.ReactElement => {
               </Nav.Link>
             </Nav.Item>
           )}
-          {Config.enabledModes.has(Mode.Generation) && (
+          {enabledModes.has(Mode.Generation) && (
             <Nav.Item as="li" className="p-1">
               <Nav.Link
                 active={pathname === '/generation' || (pathname === '/' && defaultMode === Mode.Generation)}
@@ -92,7 +91,7 @@ const NavbarNav = (): React.ReactElement => {
               </Nav.Link>
             </Nav.Item>
           )}
-          {Config.enabledModes.has(Mode.Sandbox) && (
+          {enabledModes.has(Mode.Sandbox) && (
             <Nav.Item as="li" className="p-1">
               <Nav.Link
                 active={pathname === '/sandbox' || (pathname === '/' && defaultMode === Mode.Sandbox)}
@@ -109,15 +108,17 @@ const NavbarNav = (): React.ReactElement => {
 };
 
 const Navbar = ({ setLocale }: { setLocale: React.Dispatch<React.SetStateAction<string>> }): React.ReactElement => {
+  const { subtitle, subtitleColor } = React.useContext(ConfigContext);
+
   return (
     <BootstrapNavbar bg="dark" className="navbar navbar-default mb-4 pt-0" expand="md" variant="dark">
       <Container className="position-relative" style={{ lineHeight: '1.5em' }}>
         <div>
           <div>
             <Logo />
-            {Config.subtitle && (
-              <span className="apertium-sublogo" style={Config.subtitleColor ? { color: Config.subtitleColor } : {}}>
-                {Config.subtitle}
+            {subtitle && (
+              <span className="apertium-sublogo" style={subtitleColor ? { color: subtitleColor } : {}}>
+                {subtitle}
               </span>
             )}
             <span className="apertium-logo">Apertium</span>
