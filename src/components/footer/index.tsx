@@ -98,21 +98,22 @@ const Footer = ({
           <div className="d-none d-md-flex flex-wrap flex-row justify-content-between position-relative row">
             <FooterNav setOpenTab={setOpenTab} />
 
-            <div className="card d-inline-block bg-light mb-4 p-2">
-              <span>{t('Notice_Mistake')}</span>{' '}
-              <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
-                {t('Help_Improve')}
-              </Button>
+            <div className="mb-4 d-flex flex-column">
+              <div className="card d-inline-block bg-light p-2">
+                <span>{t('Notice_Mistake')}</span>{' '}
+                <Button className="p-0" onClick={() => setOpenTab(Tab.About)} tabIndex={0} variant="link">
+                  {t('Help_Improve')}
+                </Button>
+              </div>
+              <a
+                className="text-muted d-none d-lg-block version align-self-end"
+                href="https://github.com/apertium/apertium-html-tools"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <small>{version}</small>
+              </a>
             </div>
-
-            <a
-              className="text-muted d-none d-lg-block version"
-              href="https://github.com/apertium/apertium-html-tools"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <small>{version}</small>
-            </a>
           </div>
           <div className="align-self-end card card-body d-block bg-light d-md-none my-2 p-2">
             <span>{t('Notice_Mistake')}</span>{' '}

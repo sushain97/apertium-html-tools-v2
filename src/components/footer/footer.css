@@ -10,12 +10,6 @@ body,
   }
 }
 
-.version {
-  position: absolute;
-  right: 15px;
-  top: 40px;
-}
-
 .version:hover,
 .version:active,
 .version:focus {
@@ -23,5 +17,5 @@ body,
 }
 
 .footer-link {
-  font-size: 16px;
+  font-size: 1rem;
 }
