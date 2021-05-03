@@ -4,16 +4,21 @@ import { getAllByRole, render, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 
+import Config from '../../../config';
+import { ConfigContext } from '../../context';
+import { Config as ConfigType } from '../../types';
 import Navbar from '.';
 
-const renderNavbar = (options?: MemoryHistoryBuildOptions): MemoryHistory => {
+const renderNavbar = (options?: MemoryHistoryBuildOptions, config: Partial<ConfigType> = {}): MemoryHistory => {
   const history = createMemoryHistory(options);
   const setLocale = jest.fn();
 
   render(
-    <Router history={history}>
-      <Navbar setLocale={setLocale} />
-    </Router>,
+    <ConfigContext.Provider value={{ ...Config, ...config }}>
+      <Router history={history}>
+        <Navbar setLocale={setLocale} />
+      </Router>
+    </ConfigContext.Provider>,
   );
 
   return history;
@@ -32,6 +37,26 @@ it('defaults to translation', () => {
   renderNavbar();
 
   expect(screen.getByText('Translation-Default').className).toContain('active');
+});
+
+describe('subtitle', () => {
+  const subtitle = 'I am a subtitle';
+
+  it('renders text', () => {
+    renderNavbar(undefined, { subtitle });
+    expect(screen.getByText(subtitle)).toBeDefined();
+  });
+
+  it('renders with color', () => {
+    const subtitleColor = 'green';
+    renderNavbar(undefined, { subtitle, subtitleColor });
+    expect(screen.getByText(subtitle).style.color).toBe('green');
+  });
+
+  it('renders without color', () => {
+    renderNavbar(undefined, { subtitle, subtitleColor: undefined });
+    expect(screen.getByText(subtitle).style.color).toBe('');
+  });
 });
 
 describe('translation navigation', () => {
