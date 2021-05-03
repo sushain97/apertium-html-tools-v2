@@ -8,6 +8,19 @@ import { ConfigContext, LocaleContext } from '../../context';
 import { PairPrefValues, getPairPrefs } from '.';
 import { useLocalization } from '../../util/localization';
 
+export type Props = {
+  markUnknown: boolean;
+  setMarkUnknown: React.Dispatch<React.SetStateAction<boolean>>;
+  instantTranslation: boolean;
+  setInstantTranslation: React.Dispatch<React.SetStateAction<boolean>>;
+  translationChaining: boolean;
+  setTranslationChaining: React.Dispatch<React.SetStateAction<boolean>>;
+  srcLang: string;
+  tgtLang: string;
+  pairPrefs: PairPrefValues;
+  setPairPrefs: (prefs: PairPrefValues) => void;
+};
+
 const TranslationOptions = ({
   markUnknown,
   setMarkUnknown,
@@ -19,18 +32,7 @@ const TranslationOptions = ({
   tgtLang,
   pairPrefs,
   setPairPrefs,
-}: {
-  markUnknown: boolean;
-  setMarkUnknown: React.Dispatch<React.SetStateAction<boolean>>;
-  instantTranslation: boolean;
-  setInstantTranslation: React.Dispatch<React.SetStateAction<boolean>>;
-  translationChaining: boolean;
-  setTranslationChaining: React.Dispatch<React.SetStateAction<boolean>>;
-  srcLang: string;
-  tgtLang: string;
-  pairPrefs: PairPrefValues;
-  setPairPrefs: (prefs: PairPrefValues) => void;
-}): React.ReactElement => {
+}: Props): React.ReactElement => {
   const { t } = useLocalization();
   const locale = React.useContext(LocaleContext);
   const config = React.useContext(ConfigContext);
