@@ -25,12 +25,12 @@ import DocTranslationForm, { Path as DocTranslationPath } from './DocTranslation
 import TextTranslationForm, { Path as TextTranslationPath } from './TextTranslationForm';
 import WebpageTranslationForm, { Path as WebpageTranslationPath } from './WebpageTranslationForm';
 import { parentLang, toAlpha3Code } from '../../util/languages';
+import { ConfigContext } from '../../context';
 import LanguageSelector from './LanguageSelector';
 import TranslationOptions from './TranslationOptions';
 import { getUrlParam } from '../../util/url';
 import useLocalStorage from '../../util/useLocalStorage';
 import { useLocalization } from '../../util/localization';
-import { ConfigContext } from '../../context';
 
 const recentLangsCount = 3;
 

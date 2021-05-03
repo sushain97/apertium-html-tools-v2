@@ -119,7 +119,7 @@ const DocTranslationForm = ({
 
       return () => translationRef.current?.cancel();
     },
-    [setLoading, srcLang, tgtLang],
+    [apyURL, setLoading, srcLang, tgtLang],
   );
 
   React.useEffect(() => {
