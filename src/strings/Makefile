@@ -8,3 +8,6 @@ update-readme: README.md
 	echo "<!--table-->" >> $^.tmp
 	./progresstable.sh md >> $^.tmp
 	mv $^.tmp $^
+
+test: README.md
+	git diff --exit-code .
